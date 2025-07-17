@@ -5,3 +5,5 @@ from .logs import Logs
 from .tickets import Tickets
 from .assets import Assets
 from .playbook import Playbook
+from .software import Software
+from .vulnerabilities import Vulnerabilities
