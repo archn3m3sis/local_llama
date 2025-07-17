@@ -3,7 +3,7 @@
 import reflex as rx
 
 from rxconfig import config
-
+from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets
 
 class State(rx.State):
     """The app state."""
@@ -33,4 +33,10 @@ def index() -> rx.Component:
 
 
 app = rx.App()
-app.add_page(index)
+app.add_page(index, route="/")
+app.add_page(Dashboard, route="/dashboard")
+app.add_page(Dats, route="/dats")
+app.add_page(Images, route="/images")
+app.add_page(Logs, route="/logs")
+app.add_page(Tickets, route="/tickets")
+app.add_page(Assets, route="/assets")
