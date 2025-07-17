@@ -1,3 +1,7 @@
+assets/external/
+.web
+.states
+*.db
 # Python
 __pycache__/
 *.py[cod]
@@ -81,3 +85,4 @@ runs/
 config.json
 secrets.json
 api_keys.txt
+rxconfig.py
