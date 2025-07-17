@@ -48,7 +48,7 @@ local_llama/
 ### Database Models
 Key models include:
 - `Employee`: Staff information
-- `AppUser`: Application users
+- `AppUser`: Application users with foreign keys to Department and PrivilegeLevel
 - `Project`: Project management
 - `HardwareManufacturer` & `SWManufacturer`: Vendor information
 - `AVVersion` & `DatVersion`: Asset versioning
