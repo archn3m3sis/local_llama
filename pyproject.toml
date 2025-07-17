@@ -1,0 +1,35 @@
+[project]
+name = "local-llama"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.12.14",
+    "asyncio>=3.4.3",
+    "bs4>=0.0.2",
+    "dynaconf>=3.2.11",
+    "firecrawl>=2.16.1",
+    "langchain>=0.3.26",
+    "langgraph>=0.5.3",
+    "llama-index>=0.12.49",
+    "matplotlib>=3.10.3",
+    "mcp>=1.11.0",
+    "nodeenv>=1.9.1",
+    "ollama>=0.5.1",
+    "openai>=1.97.0",
+    "pydantic>=2.11.7",
+    "pyodbc>=5.2.0",
+    "python-decouple>=3.8",
+    "python-dotenv>=1.1.1",
+    "reflex>=0.8.2",
+    "reflex-ag-grid>=0.0.11",
+    "reflex-chakra>=0.8.1",
+    "reflex-enterprise>=0.3.0",
+    "reflex-local-auth>=0.3.0",
+    "reflex-monaco>=0.0.3",
+    "reflex-motion>=0.0.1",
+    "reflex-type-animation>=0.0.1",
+    "requests>=2.32.4",
+    "sqlalchemy>=2.0.41",
+    "sqlmodel>=0.0.24",
+    "torch>=2.7.1",
+]
