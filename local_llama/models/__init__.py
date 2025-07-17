@@ -3,3 +3,7 @@ from .app_user import AppUser
 from .project import Project
 from .hardware_manufacturer import HardwareManufacturer
 from .sw_manufacturer import SWManufacturer
+from .av_version import AVVersion
+from .dat_version import DatVersion
+from .privilege_level import PrivilegeLevel
+from .department import Department
