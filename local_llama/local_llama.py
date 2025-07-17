@@ -3,7 +3,7 @@
 import reflex as rx
 
 from rxconfig import config
-from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook
+from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, Software, Vulnerabilities
 
 class State(rx.State):
     """The app state."""
@@ -41,3 +41,5 @@ app.add_page(Logs, route="/logs")
 app.add_page(Tickets, route="/tickets")
 app.add_page(Assets, route="/assets")
 app.add_page(Playbook, route="/playbook")
+app.add_page(Software, route="/software")
+app.add_page(Vulnerabilities, route="/vulnerabilities")
