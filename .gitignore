@@ -32,7 +32,6 @@ venv.bak/
 *.onnx
 *.pkl
 *.joblib
-models/
 checkpoints/
 weights/
 
@@ -42,7 +41,6 @@ weights/
 *.jsonl
 *.parquet
 *.feather
-data/
 datasets/
 corpus/
 embeddings/
