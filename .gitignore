@@ -1,0 +1,83 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+.env
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Model files (these are usually large)
+*.bin
+*.safetensors
+*.ckpt
+*.pth
+*.pt
+*.h5
+*.onnx
+*.pkl
+*.joblib
+models/
+checkpoints/
+weights/
+
+# Data files
+*.csv
+*.json
+*.jsonl
+*.parquet
+*.feather
+data/
+datasets/
+corpus/
+embeddings/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+
+# Logs
+*.log
+logs/
+wandb/
+tensorboard/
+mlruns/
+
+# Cache
+.cache/
+.huggingface/
+transformers_cache/
+
+# Output directories
+output/
+results/
+experiments/
+runs/
+
+# Config files with secrets
+config.json
+secrets.json
+api_keys.txt
