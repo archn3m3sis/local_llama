@@ -27,6 +27,7 @@ dependencies = [
     "reflex-local-auth>=0.3.0",
     "reflex-monaco>=0.0.3",
     "reflex-motion>=0.0.1",
+    "reflex-spline>=0.0.1",
     "reflex-type-animation>=0.0.1",
     "requests>=2.32.4",
     "sqlalchemy>=2.0.41",

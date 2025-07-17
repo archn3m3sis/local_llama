@@ -1356,6 +1356,7 @@ dependencies = [
     { name = "reflex-local-auth" },
     { name = "reflex-monaco" },
     { name = "reflex-motion" },
+    { name = "reflex-spline" },
     { name = "reflex-type-animation" },
     { name = "requests" },
     { name = "sqlalchemy" },
@@ -1389,6 +1390,7 @@ requires-dist = [
     { name = "reflex-local-auth", specifier = ">=0.3.0" },
     { name = "reflex-monaco", specifier = ">=0.0.3" },
     { name = "reflex-motion", specifier = ">=0.0.1" },
+    { name = "reflex-spline", specifier = ">=0.0.1" },
     { name = "reflex-type-animation", specifier = ">=0.0.1" },
     { name = "requests", specifier = ">=2.32.4" },
     { name = "sqlalchemy", specifier = ">=2.0.41" },
@@ -2503,6 +2505,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/8a/8c/85f74b9e5729448c7fc81f958f2a53d0757d31b80fcc88b13efb3c30018b/reflex-motion-0.0.1.tar.gz", hash = "sha256:1d404d270ae725fce8c8a2dd7c1dba4bbc4e821ac5858b25419cc27e56449e38", size = 2924, upload-time = "2024-03-08T20:45:29.45Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4b/9e/5c7c2f414fd77c3c3e229a2175223f3c89c8cca05c6ebefd1bd7c2d2ab2e/reflex_motion-0.0.1-py3-none-any.whl", hash = "sha256:3c76b47920ab6d979f9e93728108d97c9da41dad3fc239493f53fba17ae43202", size = 3043, upload-time = "2024-03-08T20:45:28.134Z" },
+]
+
+[[package]]
+name = "reflex-spline"
+version = "0.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "reflex" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/32/85/3838657be61fb4df3aa014c1c01d2ae4b11e689f4189cdab2a3f359a9eaf/reflex-spline-0.0.1.tar.gz", hash = "sha256:aea2d8794fac02e38cd77f21599256cdc16c8f0a0c15ea91f6edbe02561fe8d4", size = 2481, upload-time = "2024-02-27T23:42:12.862Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/33/e9/ab792b62ed1e76536f8cd38c4d72a5277116530fdb9264844cca919a5078/reflex_spline-0.0.1-py3-none-any.whl", hash = "sha256:cb2ebeb47cf597812a7fbee212d39f7602680c37a670f405ea63cc02f6cb0537", size = 2465, upload-time = "2024-02-27T23:42:10.465Z" },
 ]
 
 [[package]]
