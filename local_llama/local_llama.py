@@ -8,7 +8,7 @@ import reflex_type_animation as ta
 
 from rxconfig import config
 from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, Software, Vulnerabilities, Analytics
-from .models import Employee, AppUser, Project, HardwareManufacturer, SWManufacturer, LogType
+from .models import Employee, AppUser, Project, HardwareManufacturer, SWManufacturer, LogType, ImagingMethod
 from .components import advanced_smoke_system, page_wrapper
 
 load_dotenv()
