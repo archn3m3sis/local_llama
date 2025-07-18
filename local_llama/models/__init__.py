@@ -16,3 +16,4 @@ from .os_version import OSVersion
 from .os_edition import OSEdition
 from .log_type import LogType
 from .imaging_method import ImagingMethod
+from .sys_architecture import SysArchitecture
