@@ -7,9 +7,9 @@ from dotenv import load_dotenv
 import reflex_type_animation as ta
 
 from rxconfig import config
-from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, Software, Vulnerabilities
+from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, Software, Vulnerabilities, Analytics
 from .models import Employee, AppUser, Project, HardwareManufacturer, SWManufacturer
-from .components import advanced_smoke_system
+from .components import advanced_smoke_system, page_wrapper
 
 load_dotenv()
 
@@ -376,7 +376,148 @@ def hero_section() -> rx.Component:
 def index() -> rx.Component:
     # xAI-style Landing Page with Authentication
     return clerk.clerk_provider(
-        rx.box(
+        clerk.clerk_loaded(
+            # If signed in, show content with redirect
+            clerk.signed_in(
+                rx.box(
+                    rx.vstack(
+                        rx.text("Welcome back!", color="white", font_size="2xl"),
+                        rx.text("Redirecting to dashboard...", color="gray.300"),
+                        rx.spinner(size="3", color="white"),
+                        rx.link(
+                            rx.button("Go to Dashboard", color_scheme="blue"),
+                            href="/dashboard",
+                        ),
+                        spacing="4",
+                        align="center",
+                    ),
+                    width="100%",
+                    height="100vh",
+                    display="flex",
+                    align_items="center",
+                    justify_content="center",
+                    background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)",
+                ),
+                rx.script("""
+                    console.log('User is signed in, attempting redirect...');
+                    setTimeout(() => {
+                        console.log('Executing redirect to dashboard...');
+                        console.log('Current URL:', window.location.href);
+                        try {
+                            window.location.replace('/dashboard');
+                        } catch (e) {
+                            console.error('Redirect failed:', e);
+                            // Fallback method
+                            window.location.href = '/dashboard';
+                        }
+                    }, 1000);
+                """)
+            ),
+            # If signed out, show landing page
+            clerk.signed_out(
+                landing_page_content()
+            )
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4",
+                    align="center",
+                ),
+                width="100%",
+                height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)",
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+def landing_page_content() -> rx.Component:
+    """The main landing page content for signed-out users."""
+    return rx.box(
+        # Global CSS for Clerk components
+        rx.html("""
+        <style>
+            .cl-userButtonPopoverCard {
+                background: #1a1a1a !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                border-radius: 0.5rem !important;
+                color: #ffffff !important;
+            }
+            
+            .cl-userButtonPopoverActionButton {
+                color: #ffffff !important;
+                background-color: transparent !important;
+            }
+            
+            .cl-userButtonPopoverActionButton:hover {
+                background-color: rgba(255, 255, 255, 0.1) !important;
+            }
+            
+            .cl-userButtonPopoverActionButtonText {
+                color: #ffffff !important;
+            }
+            
+            .cl-userButtonPopoverActionButtonIcon {
+                color: #ffffff !important;
+            }
+            
+            .cl-userPreviewTextContainer {
+                color: #ffffff !important;
+            }
+            
+            .cl-userPreviewSecondaryIdentifier {
+                color: #cccccc !important;
+            }
+            
+            .cl-userButtonPopoverFooter {
+                background: #0a0a0a !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+            
+            /* Additional selectors for different Clerk versions */
+            [data-clerk-element="userButtonPopoverCard"] {
+                background: #1a1a1a !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                border-radius: 0.5rem !important;
+                color: #ffffff !important;
+            }
+            
+            [data-clerk-element="userButtonPopoverActionButton"] {
+                color: #ffffff !important;
+                background-color: transparent !important;
+            }
+            
+            [data-clerk-element="userButtonPopoverActionButton"]:hover {
+                background-color: rgba(255, 255, 255, 0.1) !important;
+            }
+            
+            [data-clerk-element="userButtonPopoverActionButtonText"] {
+                color: #ffffff !important;
+            }
+            
+            [data-clerk-element="userButtonPopoverActionButtonIcon"] {
+                color: #ffffff !important;
+            }
+            
+            [data-clerk-element="userPreviewTextContainer"] {
+                color: #ffffff !important;
+            }
+            
+            [data-clerk-element="userPreviewSecondaryIdentifier"] {
+                color: #cccccc !important;
+            }
+            
+            [data-clerk-element="userButtonPopoverFooter"] {
+                background: #0a0a0a !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+        </style>
+        """),
             # Clean dark background
             rx.box(
                 position="absolute",
@@ -464,11 +605,7 @@ def index() -> rx.Component:
             height="100vh",
             overflow="hidden",
             position="relative",
-        ),
-        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
-        secret_key=os.environ["CLERK_SECRET_KEY"],
-        register_user_state=True,
-    )
+        )
 
 
 def protected_page(page_component):
@@ -477,22 +614,39 @@ def protected_page(page_component):
         return clerk.clerk_provider(
             clerk.clerk_loaded(
                 clerk.signed_in(
-                    page_component()
-                ),
-                clerk.signed_out(
-                    rx.vstack(
-                        rx.heading("Access Denied", size="6"),
-                        rx.text("Please sign in to access this page."),
-                        rx.link(
-                            rx.button("Go to Home", color_scheme="blue"),
-                            href="/",
-                        ),
-                        spacing="4",
-                        align="center",
-                        justify="center",
-                        min_height="85vh",
+                    page_wrapper(
+                        page_component()
                     )
                 ),
+                clerk.signed_out(
+                    page_wrapper(
+                        rx.vstack(
+                            rx.heading("Access Denied", size="6", color="white"),
+                            rx.text("Please sign in to access this page.", color="gray.300"),
+                            rx.link(
+                                rx.button("Go to Home", color_scheme="blue"),
+                                href="/",
+                            ),
+                            spacing="4",
+                            align="center",
+                            justify="center",
+                            min_height="85vh",
+                        )
+                    )
+                ),
+            ),
+            clerk.clerk_loading(
+                rx.center(
+                    rx.vstack(
+                        rx.spinner(size="3", color="white"),
+                        rx.text("Loading...", color="white"),
+                        spacing="4",
+                        align="center",
+                    ),
+                    width="100%",
+                    height="100vh",
+                    background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)",
+                )
             ),
             publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
             secret_key=os.environ["CLERK_SECRET_KEY"],
@@ -513,3 +667,4 @@ app.add_page(protected_page(Assets), route="/assets")
 app.add_page(protected_page(Playbook), route="/playbook")
 app.add_page(protected_page(Software), route="/software")
 app.add_page(protected_page(Vulnerabilities), route="/vulnerabilities")
+app.add_page(protected_page(Analytics), route="/analytics")

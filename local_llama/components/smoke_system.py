@@ -33,16 +33,26 @@ def advanced_smoke_system() -> rx.Component:
             }
         ),
         rx.script("""
-            // Initialize tsparticles
+            // Robust particle system with DOM observer
             (async () => {
-                const { tsParticles } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/engine@3.0.3/+esm");
-                const { loadBasic } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/basic@3.0.3/+esm");
-                const { loadExternalAttractInteraction } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/interaction-external-attract@3.0.3/+esm");
-                const { loadExternalRepulseInteraction } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/interaction-external-repulse@3.0.3/+esm");
+                // Skip if already initializing
+                if (window.particlesInitializing) return;
+                window.particlesInitializing = true;
                 
-                await loadBasic(tsParticles);
-                await loadExternalAttractInteraction(tsParticles);
-                await loadExternalRepulseInteraction(tsParticles);
+                try {
+                    // Load tsParticles modules if not already loaded
+                    if (!window.tsParticlesEngine) {
+                        const { tsParticles } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/engine@3.0.3/+esm");
+                        const { loadBasic } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/basic@3.0.3/+esm");
+                        const { loadExternalAttractInteraction } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/interaction-external-attract@3.0.3/+esm");
+                        const { loadExternalRepulseInteraction } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/interaction-external-repulse@3.0.3/+esm");
+                        
+                        await loadBasic(tsParticles);
+                        await loadExternalAttractInteraction(tsParticles);
+                        await loadExternalRepulseInteraction(tsParticles);
+                        
+                        window.tsParticlesEngine = tsParticles;
+                    }
                 
                 const options = {
                     background: {
@@ -133,10 +143,58 @@ def advanced_smoke_system() -> rx.Component:
                     smooth: true,
                 };
                 
-                await tsParticles.load({
-                    id: "tsparticles-smoke",
-                    options: options
+                // Create a robust particle initialization function
+                window.initializeParticles = async () => {
+                    const tsParticles = window.tsParticlesEngine;
+                    if (!tsParticles) return;
+                    
+                    try {
+                        // Clear any existing particles
+                        const existingContainer = tsParticles.domItem(0);
+                        if (existingContainer) {
+                            await existingContainer.destroy();
+                        }
+                        
+                        // Wait for DOM to be ready
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        
+                        // Check if the container exists
+                        const container = document.getElementById('tsparticles-smoke');
+                        if (container) {
+                            await tsParticles.load({
+                                id: "tsparticles-smoke",
+                                options: options
+                            });
+                        }
+                    } catch (error) {
+                        console.log('Particle initialization error:', error);
+                    }
+                };
+                
+                // Set up DOM observer to watch for particle container
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        mutation.addedNodes.forEach((node) => {
+                            if (node.nodeType === 1 && (node.id === 'tsparticles-smoke' || node.querySelector('#tsparticles-smoke'))) {
+                                setTimeout(() => window.initializeParticles(), 100);
+                            }
+                        });
+                    });
                 });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+                
+                // Initial load
+                await window.initializeParticles();
+                
+                } catch (error) {
+                    console.log('Particle system error:', error);
+                } finally {
+                    window.particlesInitializing = false;
+                }
             })();
         """)
     )

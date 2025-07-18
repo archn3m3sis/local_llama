@@ -66,6 +66,19 @@ Pages are organized by functionality:
 - `/images`: Image management
 - `/logs`: Log viewing
 - `/tickets`: Ticket management
+- `/analytics`: Analytics and reporting
+
+### Universal Background System
+All protected pages now use a universal background system that includes:
+- **Animated particle effects** - Interactive smoke/particle system using TSParticles
+- **Mouse-following glow effect** - Subtle white glow that follows cursor movement
+- **Gradient backgrounds** - Dark themed with subtle overlays
+- **Consistent styling** - All pages have the same visual foundation
+
+The universal background is implemented via:
+- `components/universal_background.py` - Contains the background components
+- `page_wrapper()` function - Wraps page content with universal background
+- `protected_page()` function - Automatically applies universal background to all protected pages
 
 ### Configuration
 - `rxconfig.py`: Reflex configuration with database URL and plugins
