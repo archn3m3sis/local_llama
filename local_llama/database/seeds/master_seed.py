@@ -21,6 +21,8 @@ from local_llama.models.cpu_type import CPUType
 from local_llama.models.gpu_type import GPUType
 from local_llama.models.privilege_level import PrivilegeLevel
 from local_llama.models.department import Department
+from local_llama.models.av_version import AVVersion
+from local_llama.models.dat_version import DatVersion
 import os
 from dotenv import load_dotenv
 
@@ -1004,6 +1006,72 @@ def seed_departments():
         else:
             print("All departments already exist in the database.")
 
+def seed_avversions():
+    """Seed the AVVersion table with predefined antivirus version data."""
+    
+    # Create database engine
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is not set")
+    
+    engine = create_engine(database_url)
+    
+    # AVVersion data to insert
+    avversions_data = [
+        {"av_version": "Version 2", "av_description": "McAfee VirusScan Enterprise"},
+        {"av_version": "Version 3", "av_description": "Trellix Endpoint Security"},
+    ]
+    
+    with Session(engine) as session:
+        # Check if AV versions already exist to avoid duplicates
+        existing_avversions = session.exec(select(AVVersion)).all()
+        existing_av_versions = {av.av_version for av in existing_avversions}
+        
+        avversions_to_add = []
+        for av_data in avversions_data:
+            if av_data["av_version"] not in existing_av_versions:
+                avversions_to_add.append(AVVersion(**av_data))
+        
+        if avversions_to_add:
+            session.add_all(avversions_to_add)
+            session.commit()
+            print(f"Added {len(avversions_to_add)} AV versions to the database.")
+        else:
+            print("All AV versions already exist in the database.")
+
+def seed_datversions():
+    """Seed the DatVersion table with predefined DAT version data."""
+    
+    # Create database engine
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is not set")
+    
+    engine = create_engine(database_url)
+    
+    # DatVersion data to insert
+    datversions_data = [
+        {"datversion_name": "Version02 Datfiles", "avversion_id": 1},
+        {"datversion_name": "Version03 Datfiles", "avversion_id": 2},
+    ]
+    
+    with Session(engine) as session:
+        # Check if DAT versions already exist to avoid duplicates
+        existing_datversions = session.exec(select(DatVersion)).all()
+        existing_datversion_names = {dv.datversion_name for dv in existing_datversions}
+        
+        datversions_to_add = []
+        for dat_data in datversions_data:
+            if dat_data["datversion_name"] not in existing_datversion_names:
+                datversions_to_add.append(DatVersion(**dat_data))
+        
+        if datversions_to_add:
+            session.add_all(datversions_to_add)
+            session.commit()
+            print(f"Added {len(datversions_to_add)} DAT versions to the database.")
+        else:
+            print("All DAT versions already exist in the database.")
+
 def run_all_seeds():
     """Run all seed functions in the correct order to avoid foreign key constraint errors."""
     print("Starting database seeding process...")
@@ -1025,6 +1093,8 @@ def run_all_seeds():
     seed_gputypes()
     seed_privilegelevels()
     seed_departments()
+    seed_avversions()
+    seed_datversions()
     
     print("Database seeding process completed.")
 
