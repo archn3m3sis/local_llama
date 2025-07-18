@@ -17,6 +17,8 @@ from local_llama.models.os_version import OSVersion
 from local_llama.models.log_type import LogType
 from local_llama.models.imaging_method import ImagingMethod
 from local_llama.models.sys_architecture import SysArchitecture
+from local_llama.models.cpu_type import CPUType
+from local_llama.models.gpu_type import GPUType
 import os
 from dotenv import load_dotenv
 
@@ -854,6 +856,80 @@ def seed_sysarchitectures():
         else:
             print("All system architectures already exist in the database.")
 
+def seed_cputypes():
+    """Seed the CPUType table with predefined CPU type data."""
+    
+    # Create database engine
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is not set")
+    
+    engine = create_engine(database_url)
+    
+    # CPUType data to insert (abbreviated list for master seed file)
+    cputypes_data = [
+        {"cpu_name": "Intel Core i3"}, {"cpu_name": "Intel Core i5"}, {"cpu_name": "Intel Core i7"}, {"cpu_name": "Intel Core i9"},
+        {"cpu_name": "AMD Ryzen 3 1200"}, {"cpu_name": "AMD Ryzen 5 1600"}, {"cpu_name": "AMD Ryzen 7 1700"}, {"cpu_name": "AMD Ryzen 9 3900X"},
+        {"cpu_name": "ARM Cortex-A53"}, {"cpu_name": "ARM Cortex-A57"}, {"cpu_name": "ARM Cortex-A72"}, {"cpu_name": "ARM Cortex-A78"},
+        {"cpu_name": "Apple M1"}, {"cpu_name": "Apple M2"}, {"cpu_name": "Apple M3"}, {"cpu_name": "Apple M4"},
+        {"cpu_name": "Qualcomm Snapdragon 855"}, {"cpu_name": "Qualcomm Snapdragon 888"}, {"cpu_name": "Qualcomm Snapdragon 8 Gen 3"},
+        {"cpu_name": "Intel Xeon E5-2600"}, {"cpu_name": "AMD EPYC 7002 Rome"}, {"cpu_name": "IBM POWER9"}
+    ]
+    
+    with Session(engine) as session:
+        # Check if CPU types already exist to avoid duplicates
+        existing_cputypes = session.exec(select(CPUType)).all()
+        existing_cpu_names = {cpu.cpu_name for cpu in existing_cputypes}
+        
+        cputypes_to_add = []
+        for cpu_data in cputypes_data:
+            if cpu_data["cpu_name"] not in existing_cpu_names:
+                cputypes_to_add.append(CPUType(**cpu_data))
+        
+        if cputypes_to_add:
+            session.add_all(cputypes_to_add)
+            session.commit()
+            print(f"Added {len(cputypes_to_add)} CPU types to the database.")
+        else:
+            print("All CPU types already exist in the database.")
+
+def seed_gputypes():
+    """Seed the GPUType table with predefined GPU type data."""
+    
+    # Create database engine
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is not set")
+    
+    engine = create_engine(database_url)
+    
+    # GPUType data to insert (abbreviated list for master seed file)
+    gputypes_data = [
+        {"gpu_name": "NVIDIA GeForce RTX 4090"}, {"gpu_name": "NVIDIA GeForce RTX 4080"}, {"gpu_name": "NVIDIA GeForce RTX 4070"},
+        {"gpu_name": "NVIDIA GeForce RTX 3090"}, {"gpu_name": "NVIDIA GeForce RTX 3080"}, {"gpu_name": "NVIDIA GeForce RTX 3070"},
+        {"gpu_name": "AMD Radeon RX 7900 XTX"}, {"gpu_name": "AMD Radeon RX 7800 XT"}, {"gpu_name": "AMD Radeon RX 6900 XT"},
+        {"gpu_name": "Intel Arc A770"}, {"gpu_name": "Intel Arc A750"}, {"gpu_name": "Intel UHD Graphics 630"},
+        {"gpu_name": "Apple GPU M1"}, {"gpu_name": "Apple GPU M2"}, {"gpu_name": "Apple GPU M3"},
+        {"gpu_name": "ARM Mali-G78"}, {"gpu_name": "Qualcomm Adreno 750"}, {"gpu_name": "NVIDIA A100"}
+    ]
+    
+    with Session(engine) as session:
+        # Check if GPU types already exist to avoid duplicates
+        existing_gputypes = session.exec(select(GPUType)).all()
+        existing_gpu_names = {gpu.gpu_name for gpu in existing_gputypes}
+        
+        gputypes_to_add = []
+        for gpu_data in gputypes_data:
+            if gpu_data["gpu_name"] not in existing_gpu_names:
+                gputypes_to_add.append(GPUType(**gpu_data))
+        
+        if gputypes_to_add:
+            session.add_all(gputypes_to_add)
+            session.commit()
+            print(f"Added {len(gputypes_to_add)} GPU types to the database.")
+        else:
+            print("All GPU types already exist in the database.")
+
 def run_all_seeds():
     """Run all seed functions in the correct order to avoid foreign key constraint errors."""
     print("Starting database seeding process...")
@@ -871,6 +947,8 @@ def run_all_seeds():
     seed_logtypes()
     seed_imagingmethods()
     seed_sysarchitectures()
+    seed_cputypes()
+    seed_gputypes()
     
     print("Database seeding process completed.")
 
