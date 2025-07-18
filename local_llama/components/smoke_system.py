@@ -1,0 +1,142 @@
+import reflex as rx
+
+def advanced_smoke_system() -> rx.Component:
+    """Advanced smoke particle system component using tsparticles."""
+    return rx.fragment(
+        rx.el.div(
+            id="tsparticles-smoke",
+            style={
+                "position": "absolute",
+                "top": "0",
+                "left": "0", 
+                "width": "100%",
+                "height": "100%",
+                "pointer_events": "none",
+                "z_index": "5",
+            }
+        ),
+        rx.el.div(
+            "✨ Interactive Particles - Hover and Click",
+            style={
+                "position": "absolute",
+                "top": "1.25rem",
+                "left": "1.25rem",
+                "z_index": "10",
+                "background": "rgba(0, 0, 0, 0.6)",
+                "color": "white",
+                "font_size": "0.875rem",
+                "font_family": "monospace",
+                "padding": "0.5rem 0.75rem",
+                "border_radius": "0.25rem",
+                "border": "1px solid rgba(255, 255, 255, 0.3)",
+                "backdrop_filter": "blur(10px)",
+            }
+        ),
+        rx.script("""
+            // Initialize tsparticles
+            (async () => {
+                const { tsParticles } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/engine@3.0.3/+esm");
+                const { loadBasic } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/basic@3.0.3/+esm");
+                const { loadExternalAttractInteraction } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/interaction-external-attract@3.0.3/+esm");
+                const { loadExternalRepulseInteraction } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/interaction-external-repulse@3.0.3/+esm");
+                
+                await loadBasic(tsParticles);
+                await loadExternalAttractInteraction(tsParticles);
+                await loadExternalRepulseInteraction(tsParticles);
+                
+                const options = {
+                    background: {
+                        color: {
+                            value: 'transparent',
+                        },
+                    },
+                    fpsLimit: 60,
+                    interactivity: {
+                        events: {
+                            onClick: {
+                                enable: true,
+                                mode: 'repulse',
+                            },
+                            onHover: {
+                                enable: true,
+                                mode: 'attract',
+                            },
+                            resize: true,
+                        },
+                        modes: {
+                            attract: {
+                                distance: 150,
+                                duration: 0.4,
+                                factor: 5,
+                                maxSpeed: 50,
+                                speed: 1,
+                            },
+                            repulse: {
+                                distance: 200,
+                                duration: 0.4,
+                                factor: 100,
+                                speed: 1,
+                            },
+                        },
+                    },
+                    particles: {
+                        color: {
+                            value: ['#ffffff', '#f8f9fa', '#e9ecef', '#cbd5e1', '#94a3b8'],
+                        },
+                        links: {
+                            enable: false,
+                        },
+                        move: {
+                            direction: 'none',
+                            enable: true,
+                            outModes: {
+                                default: 'bounce',
+                            },
+                            random: true,
+                            speed: 0.5,
+                            straight: false,
+                        },
+                        number: {
+                            density: {
+                                enable: true,
+                                area: 300,
+                            },
+                            value: 600,
+                        },
+                        opacity: {
+                            value: {
+                                min: 0.1,
+                                max: 0.6,
+                            },
+                            animation: {
+                                enable: true,
+                                speed: 1,
+                                sync: false,
+                            },
+                        },
+                        shape: {
+                            type: 'circle',
+                        },
+                        size: {
+                            value: {
+                                min: 0.5,
+                                max: 2,
+                            },
+                            animation: {
+                                enable: true,
+                                speed: 3,
+                                sync: false,
+                            },
+                        },
+                    },
+                    detectRetina: true,
+                    smooth: true,
+                };
+                
+                await tsParticles.load({
+                    id: "tsparticles-smoke",
+                    options: options
+                });
+            })();
+        """)
+    )
