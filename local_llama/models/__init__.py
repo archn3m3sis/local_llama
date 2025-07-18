@@ -14,3 +14,4 @@ from .sys_type import SysType
 from .operating_system import OperatingSystem
 from .os_version import OSVersion
 from .os_edition import OSEdition
+from .log_type import LogType
