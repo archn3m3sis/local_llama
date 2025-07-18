@@ -15,10 +15,10 @@ def seed_floors():
     
     engine = create_engine(database_url)
     
-    # Floor data to insert
+    # Floor data to insert (generic floor levels)
     floors_data = [
         {"floor_name": "Floor 001"},
-        {"floor_name": "Floor_002"},
+        {"floor_name": "Floor 002"},
         {"floor_name": "Floor Ground"},
     ]
     

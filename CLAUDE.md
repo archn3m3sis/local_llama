@@ -49,30 +49,46 @@ local_llama/
 - Authentication state managed through Clerk provider
 
 ### Database Models
-Key models include:
-- `Employee`: Staff information (id, first_name, last_name, email, department)
-- `AppUser`: Application users with foreign keys to Department and PrivilegeLevel
-- `Project`: Project management (project_id, project_name, created_at, updated_at, is_active)
-- `HardwareManufacturer` & `SWManufacturer`: Vendor information
-- `AVVersion` & `DatVersion`: Asset versioning
-- `PrivilegeLevel`: User privilege levels (priv_id, priv_name, priv_description)
+
+#### Core Organizational Models
+- `Employee`: Staff information with **required** department_id foreign key
+- `AppUser`: Application users with **required** department_id and priv_level_id foreign keys
 - `Department`: Department information (dept_id, dept_name, dept_description)
+- `PrivilegeLevel`: User privilege levels (priv_id, priv_name, priv_description)
+
+#### Project & Location Models
+- `Project`: Project management
 - `Building`: Building information (building_id, building_name)
-- `Floor`: Floor information (floor_id, floor_name)
-- `Room`: Room information (room_id, floor_id, building_id)
-- `SysType`: System types (systype_id, systype_name)
-- `OperatingSystem`: Operating systems (os_id, os_name)
-- `OSEdition`: OS editions (osedition_id, osedition_name)
-- `OSVersion`: OS versions (osversion_id, os_id, osedition_id, osversion_name)
-- `CPUType`: CPU types (cpu_id, cpu_name)
-- `GPUType`: GPU types (gpu_id, gpu_name)
-- `Asset`: Main asset table with extensive foreign key relationships to all location, hardware, and OS tables
-- `DatUpdate`: DAT file update tracking (datupdate_id, date_of_update, employee_id, datversion_id, asset_id, project_id, datfile_name, update_result, update_comments)
-- `LogType`: Log types (logtype_id, logtype)
-- `LogCollection`: Log collection tracking (logcollection_id, logcollection_date, employee_id, asset_id, project_id, logtype_id, logcollection_result, logcollection_comments)
-- `ImagingMethod`: Imaging methods (imgmethod_id, img_method)
-- `ImageCollection`: Image collection tracking (imgcollection_id, imgcollection_date, employee_id, asset_id, project_id, img_size_mb, imgmethod_id, imaging_result, imaging_comments)
-- `TEMTicket`: TEM ticket system (temticket_id, submission_date, global_ticket_id, asset_id, project_id, submission_emp, submission_description, response_date, response_emp, response_reference_link, response_result, response_comments, status, resolution_date, time_to_respond, time_to_resolve)
+- `Floor`: Floor information with building_id foreign key
+- `Room`: Room information with floor_id and building_id foreign keys
+
+#### Asset Management Models
+- `Asset`: Core asset tracking with multiple foreign keys (project, location, system specs)
+- `SysType`: System type lookup (systype_id, sys_type)
+- `SysArchitecture`: System architecture lookup (46 architectures: x86_64, ARM, etc.)
+- `CPUType`: CPU type lookup (498 CPU types)
+- `GPUType`: GPU type lookup (187 GPU types)
+
+#### Operating System Models
+- `OperatingSystem`: OS lookup (os_id, os_name)
+- `OSEdition`: OS edition lookup (osedition_id, osedition_name)
+- `OSVersion`: OS version with foreign keys to OperatingSystem and OSEdition
+
+#### Hardware & Software Models
+- `HardwareManufacturer`: Hardware vendor information
+- `SWManufacturer`: Software vendor information
+- `AVVersion`: Antivirus version information
+- `DatVersion`: DAT version with avversion_id foreign key
+
+#### Activity Tracking Models
+- `DatUpdate`: DAT update tracking with employee, asset, project foreign keys
+- `LogCollection`: Log collection tracking with employee, asset, project, logtype foreign keys
+- `ImageCollection`: Image collection tracking with employee, asset, project, imgmethod foreign keys
+- `LogType`: Log type lookup
+- `ImagingMethod`: Imaging method lookup
+
+#### Support Models
+- `TEMTicket`: Test Equipment Maintenance tickets with asset, project, employee foreign keys
 
 ### Database Seed Data Directory
 - `seeds` is a directory intended to hold the seed data for information that will need to be inserted to the database. this information will contain known good data to prepopulate the database with some baseline data for the initial testing of certain relationships and to be able to display the appropriate data visuals within the application.
@@ -173,3 +189,47 @@ Based on the overview, the system will include:
 - Always use reflex db makemigrations and reflex db migrate to manage database migrations
 - Always update your CLAUDE.md file with any changes to pages or database schema as well as project tree
 - Always ensure if there are repeated obstacles that are solved after a time, that you log the instructions to properly execute in your claude.md file
+
+## Common Issues and Solutions
+
+### Database Migration Issues
+- **Character Encoding Errors**: If seeding fails with character encoding errors (e.g., Unicode characters), replace problematic characters with ASCII equivalents
+- **Migration Dependency Order**: Always run seeds in dependency order - reference tables first, then tables with foreign keys
+- **DateTime Field Defaults**: Use `Optional[datetime] = Field(default=None)` instead of `default_factory=datetime.now` to avoid migration errors
+
+### Foreign Key Constraint Management
+- **Required vs Optional**: Core organizational relationships (department, privilege level) should be required; optional relationships (hardware specs, assignments) should be nullable
+- **Existing Data**: Before making foreign keys required, ensure all existing data has valid relationships
+- **Seed Data Updates**: When changing foreign key constraints, update corresponding seed files to match new requirements
+
+### Model Import Issues
+- **Missing Model Imports**: When creating new models, add them to `models/__init__.py` and import in main app before running migrations
+- **Table Name Conflicts**: Ensure model class names match expected table names in foreign key references
+
+### Database Seeding Best Practices
+- **Duplicate Prevention**: All seed scripts should check for existing records before insertion
+- **Master Seed Script**: Use `master_seed.py` to run all seeds in proper dependency order
+- **Foreign Key Validation**: Seed scripts should validate foreign key relationships before insertion
+
+### Complete Seed File List (21 files)
+- `appuser_seed.py` - 9 app users with FK relationships
+- `avversion_seed.py` - 2 antivirus versions
+- `building_seed.py` - Building data
+- `cputype_seed.py` - 498 CPU types
+- `datversion_seed.py` - 2 DAT versions with AV FK
+- `department_seed.py` - 7 departments
+- `employee_seed.py` - 9 employees with department FK
+- `floor_seed.py` - Floor data with building FK
+- `gputype_seed.py` - 187 GPU types
+- `hardware_manufacturer_seed.py` - Hardware manufacturers
+- `imagingmethod_seed.py` - Imaging methods
+- `logtype_seed.py` - Log types
+- `master_seed.py` - Master script running all seeds
+- `operating_system_seed.py` - Operating systems
+- `osedition_seed.py` - OS editions
+- `osversion_seed.py` - OS versions with FK
+- `privilegelevel_seed.py` - 3 privilege levels
+- `project_seed.py` - Project data
+- `swmanufacturer_seed.py` - Software manufacturers
+- `sysarchitecture_seed.py` - 46 system architectures
+- `systype_seed.py` - System types
