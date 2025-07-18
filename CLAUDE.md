@@ -34,10 +34,13 @@ Ensure you have a `.env` file with:
 local_llama/
 ├── local_llama.py          # Main app entry point with authentication
 ├── pages/                  # Page components (dashboard, assets, etc.)
-├── models/                 # SQLModel database models
+├── models/                 # SQLModel database models (25+ tables)
 ├── components/             # Reusable UI components
-├── database/               # Database utilities and data
-└── states/                 # Reflex state management
+├── database/               # Database utilities and seeding system
+│   └── seeds/              # Database seed files (11 seed scripts)
+├── states/                 # Reflex state management
+└── alembic/                # Database migration files
+    └── versions/           # Migration version files
 ```
 
 ### Authentication
@@ -100,6 +103,50 @@ The universal background is implemented via:
 - `components/universal_background.py` - Contains the background components
 - `page_wrapper()` function - Wraps page content with universal background
 - `protected_page()` function - Automatically applies universal background to all protected pages
+
+### Database Seeding System
+
+The project includes a comprehensive seeding system for populating lookup tables:
+
+#### Available Seed Files
+- `master_seed.py`: Master seed script that runs all seeds in dependency order
+- `department_seed.py`: 7 departments (System Administrators, Cybersecurity, etc.)
+- `privilege_level_seed.py`: 3 privilege levels (Standard User, Power User, Administrator)
+- `employee_seed.py`: 9 employees with department foreign keys
+- `appuser_seed.py`: 9 app users with employee, department, and privilege level foreign keys
+- `avversion_seed.py`: 2 antivirus versions
+- `datversion_seed.py`: 2 DAT versions with AV foreign keys
+- `sysarchitecture_seed.py`: 46 system architectures
+- `cputype_seed.py`: 498 CPU types
+- `gputype_seed.py`: 187 GPU types
+
+#### Running Seeds
+```bash
+# Run all seeds in proper dependency order
+python local_llama/database/seeds/master_seed.py
+
+# Run individual seeds
+python local_llama/database/seeds/department_seed.py
+```
+
+#### Foreign Key Relationships
+
+**Required Foreign Keys (Non-Nullable):**
+- `Employee.department_id` → `Department.dept_id`
+- `AppUser.department_id` → `Department.dept_id`
+- `AppUser.priv_level_id` → `PrivilegeLevel.priv_id`
+- `Room.floor_id` → `Floor.floor_id`
+- `Room.building_id` → `Building.building_id`
+- `OSVersion.os_id` → `OperatingSystem.os_id`
+- `OSVersion.osedition_id` → `OSEdition.osedition_id`
+- `DatVersion.avversion_id` → `AVVersion.avversion_id`
+- All audit trail relationships (DatUpdate, LogCollection, ImageCollection)
+
+**Optional Foreign Keys (Nullable):**
+- `AppUser.employee_id` → `Employee.id` (not all users are employees)
+- `Asset.cpu_id` → `CPUType.cpu_id` (hardware may be unknown)
+- `Asset.gpu_id` → `GPUType.gpu_id` (hardware may be unknown)
+- `TEMTicket.response_emp` → `Employee.id` (may not have responder yet)
 
 ### Configuration
 - `rxconfig.py`: Reflex configuration with database URL and plugins
