@@ -72,8 +72,9 @@ Key models include:
 - `TEMTicket`: TEM ticket system (temticket_id, submission_date, global_ticket_id, asset_id, project_id, submission_emp, submission_description, response_date, response_emp, response_reference_link, response_result, response_comments, status, resolution_date, time_to_respond, time_to_resolve)
 
 ### Database Seed Data Directory
-- `seeds` is a directory intended to hold the seed data for information that will need to be inserted to the databsae. this information will contain known good data to prepopulate the database with some baseline data for the initial testing of certain relationships and to be able to display the appropriate data visuals within the application.
+- `seeds` is a directory intended to hold the seed data for information that will need to be inserted to the database. this information will contain known good data to prepopulate the database with some baseline data for the initial testing of certain relationships and to be able to display the appropriate data visuals within the application.
 - make sure that seeds will not cause relationship errors in the database, please ensure you are raising any concerns to the user as they request seed data additions...
+- **IMPORTANT**: Always maintain a `master_seed.py` file that contains all individual seed data files combined into a singular script without errors. This file must be updated after each seed data file addition to ensure all seed data can be executed in one script.
 
 ### Page Architecture
 Pages are organized by functionality:
