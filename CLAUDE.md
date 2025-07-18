@@ -47,13 +47,33 @@ local_llama/
 
 ### Database Models
 Key models include:
-- `Employee`: Staff information
+- `Employee`: Staff information (id, first_name, last_name, email, department)
 - `AppUser`: Application users with foreign keys to Department and PrivilegeLevel
-- `Project`: Project management
+- `Project`: Project management (project_id, project_name, created_at, updated_at, is_active)
 - `HardwareManufacturer` & `SWManufacturer`: Vendor information
 - `AVVersion` & `DatVersion`: Asset versioning
 - `PrivilegeLevel`: User privilege levels (priv_id, priv_name, priv_description)
 - `Department`: Department information (dept_id, dept_name, dept_description)
+- `Building`: Building information (building_id, building_name)
+- `Floor`: Floor information (floor_id, floor_name)
+- `Room`: Room information (room_id, floor_id, building_id)
+- `SysType`: System types (systype_id, systype_name)
+- `OperatingSystem`: Operating systems (os_id, os_name)
+- `OSEdition`: OS editions (osedition_id, osedition_name)
+- `OSVersion`: OS versions (osversion_id, os_id, osedition_id, osversion_name)
+- `CPUType`: CPU types (cpu_id, cpu_name)
+- `GPUType`: GPU types (gpu_id, gpu_name)
+- `Asset`: Main asset table with extensive foreign key relationships to all location, hardware, and OS tables
+- `DatUpdate`: DAT file update tracking (datupdate_id, date_of_update, employee_id, datversion_id, asset_id, project_id, datfile_name, update_result, update_comments)
+- `LogType`: Log types (logtype_id, logtype)
+- `LogCollection`: Log collection tracking (logcollection_id, logcollection_date, employee_id, asset_id, project_id, logtype_id, logcollection_result, logcollection_comments)
+- `ImagingMethod`: Imaging methods (imgmethod_id, img_method)
+- `ImageCollection`: Image collection tracking (imgcollection_id, imgcollection_date, employee_id, asset_id, project_id, img_size_mb, imgmethod_id, imaging_result, imaging_comments)
+- `TEMTicket`: TEM ticket system (temticket_id, submission_date, global_ticket_id, asset_id, project_id, submission_emp, submission_description, response_date, response_emp, response_reference_link, response_result, response_comments, status, resolution_date, time_to_respond, time_to_resolve)
+
+### Database Seed Data Directory
+- `seeds` is a directory intended to hold the seed data for information that will need to be inserted to the databsae. this information will contain known good data to prepopulate the database with some baseline data for the initial testing of certain relationships and to be able to display the appropriate data visuals within the application.
+- make sure that seeds will not cause relationship errors in the database, please ensure you are raising any concerns to the user as they request seed data additions...
 
 ### Page Architecture
 Pages are organized by functionality:
@@ -101,7 +121,7 @@ Based on the overview, the system will include:
 - Database migrations are managed via Alembic
 - The system is designed for cybersecurity and asset management workflows
 
-## User Preference For Workflows 
+## User Preference For Workflows
 - Always use reflex db makemigrations and reflex db migrate to manage database migrations
-- Always update your CLAUDE.md file with any changes to pages or database schema as well as project tree 
+- Always update your CLAUDE.md file with any changes to pages or database schema as well as project tree
 - Always ensure if there are repeated obstacles that are solved after a time, that you log the instructions to properly execute in your claude.md file
