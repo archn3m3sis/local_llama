@@ -1,0 +1,2101 @@
+"""Vertical speed dial navigation component with smooth animations."""
+
+import reflex as rx
+from typing import Dict, Any
+
+class SpeedDialState(rx.State):
+    """State for the speed dial component."""
+    is_open: bool = False
+    
+    def toggle_speed_dial(self):
+        """Toggle the speed dial open/closed state."""
+        self.is_open = not self.is_open
+
+class AnalyticsSpeedDialState(rx.State):
+    """State for the analytics speed dial component."""
+    is_open: bool = False
+    
+    def toggle_speed_dial(self):
+        """Toggle the analytics speed dial open/closed state."""
+        self.is_open = not self.is_open
+
+class AssetDataSpeedDialState(rx.State):
+    """State for the asset data speed dial component."""
+    is_open: bool = False
+    
+    def toggle_speed_dial(self):
+        """Toggle the asset data speed dial open/closed state."""
+        self.is_open = not self.is_open
+
+class PlaybookSpeedDialState(rx.State):
+    """State for the playbook speed dial component."""
+    is_open: bool = False
+    
+    def toggle_speed_dial(self):
+        """Toggle the playbook speed dial open/closed state."""
+        self.is_open = not self.is_open
+
+class VaultSpeedDialState(rx.State):
+    """State for the vault speed dial component."""
+    is_open: bool = False
+    
+    def toggle_speed_dial(self):
+        """Toggle the vault speed dial open/closed state."""
+        self.is_open = not self.is_open
+
+def radial_speed_dial() -> rx.Component:
+    """Vertical speed dial with labels and smooth animations."""
+    
+    # Navigation items with icons, labels, and routes - subtle modern colors
+    nav_items = [
+        {"icon": "file", "label": "Logs", "route": "/logs", "color": "#10b981", "color_alpha": "0.15"},
+        {"icon": "image", "label": "Images", "route": "/images", "color": "#f59e0b", "color_alpha": "0.15"},
+        {"icon": "download", "label": "DAT Updates", "route": "/dats", "color": "#3b82f6", "color_alpha": "0.15"},
+        {"icon": "ticket", "label": "TEM Ticketing", "route": "/tickets", "color": "#ec4899", "color_alpha": "0.15"},
+        {"icon": "wrench", "label": "Device Patching", "route": "/software", "color": "#7c3aed", "color_alpha": "0.15"},
+    ]
+    
+    def create_nav_item(item, index):
+        """Create a navigation item with icon and label."""
+        # Staggered animation delay
+        delay = f"{index * 100}ms"
+        
+        return rx.link(
+            rx.hstack(
+                # Icon button
+                rx.box(
+                    rx.icon(
+                        tag=item["icon"],
+                        size=20,
+                        color="white",
+                    ),
+                    width="3rem",
+                    height="3rem",
+                    border_radius="50%",
+                    background=f"linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%), linear-gradient(135deg, {item['color']}20 0%, {item['color']}10 100%)",
+                    border=f"1px solid rgba(255, 255, 255, 0.2)",
+                    display="flex",
+                    align_items="center",
+                    justify_content="center",
+                    cursor="pointer",
+                    box_shadow="0 4px 12px rgba(0, 0, 0, 0.15)",
+                    backdrop_filter="blur(20px)",
+                    _hover={
+                        "transform": "scale(1.1)",
+                        "background": f"linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%), linear-gradient(135deg, {item['color']}30 0%, {item['color']}20 100%)",
+                        "box_shadow": f"0 8px 25px {item['color']}20",
+                        "border": f"1px solid {item['color']}40",
+                    },
+                ),
+                # Label text (no box)
+                rx.text(
+                    item["label"],
+                    font_size="1rem",
+                    font_weight="600",
+                    color="white",
+                    white_space="nowrap",
+                    text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                    _hover={
+                        "text_shadow": "0 0 8px rgba(255, 255, 255, 0.5)",
+                        "transform": "scale(1.05)",
+                    }
+                ),
+                spacing="1",
+                align="center",
+                justify="start",  # Align items to the left within each row
+            ),
+            href=item["route"],
+            style={"text-decoration": "none"},
+            # Animation properties
+            opacity=rx.cond(SpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                SpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(20px) scale(0.8)"
+            ),
+            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            pointer_events=rx.cond(SpeedDialState.is_open, "auto", "none"),
+        )
+    
+    # Create all navigation items
+    nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
+    
+    return rx.box(
+        # Backdrop overlay when open
+        rx.box(
+            position="fixed",
+            top="0",
+            left="0",
+            width="100vw",
+            height="100vh",
+            background="rgba(0, 0, 0, 0.3)",
+            backdrop_filter="blur(2px)",
+            z_index="1001",
+            opacity=rx.cond(SpeedDialState.is_open, "1", "0"),
+            visibility=rx.cond(SpeedDialState.is_open, "visible", "hidden"),
+            transition="all 0.3s ease",
+            pointer_events=rx.cond(SpeedDialState.is_open, "auto", "none"),
+            on_click=SpeedDialState.toggle_speed_dial,
+        ),
+        
+        # Navigation items container (always in DOM)
+        rx.vstack(
+            *reversed(nav_buttons),  # Reverse order so first item appears closest to trigger
+            spacing="1",
+            position="absolute",
+            bottom="5rem",
+            left="5rem",  # Position to the right of the trigger button
+            z_index="1002",
+            opacity=rx.cond(SpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                SpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(30px) scale(0.9)"
+            ),
+            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            pointer_events=rx.cond(SpeedDialState.is_open, "auto", "none"),
+        ),
+        
+        # Trigger button with label
+        rx.hstack(
+            # Main trigger button
+            rx.box(
+                rx.icon(
+                    tag=rx.cond(SpeedDialState.is_open, "x", "menu"),
+                    size=24,
+                    color="white",
+                ),
+                width="4rem",
+                height="4rem",
+                border_radius="50%",
+                background=rx.cond(
+                    SpeedDialState.is_open,
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%), linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.1) 100%)",
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)"
+                ),
+                border="2px solid rgba(255, 255, 255, 0.2)",
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                cursor="pointer",
+                position="relative",
+                z_index="1003",
+                backdrop_filter="blur(20px)",
+                box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                transition="all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                _hover={
+                    "transform": "scale(1.05)",
+                    "background": rx.cond(
+                        SpeedDialState.is_open,
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%), linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 100%)",
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)"
+                    ),
+                    "box_shadow": "0 12px 40px rgba(0, 0, 0, 0.4)",
+                },
+                on_click=SpeedDialState.toggle_speed_dial,
+            ),
+            # Core Actions label
+            rx.text(
+                "Core Actions",
+                font_size="0.875rem",
+                font_weight="500",
+                color="rgba(255, 255, 255, 0.8)",
+                white_space="nowrap",
+                text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                opacity=rx.cond(SpeedDialState.is_open, "0.5", "1"),
+                transition="all 0.3s ease",
+                _hover={
+                    "color": "white",
+                    "text_shadow": "0 0 8px rgba(255, 255, 255, 0.3)",
+                }
+            ),
+            spacing="3",
+            align="center",
+        ),
+        
+        # Container positioning
+        position="fixed",
+        bottom="2rem",
+        left="2rem",  # Moved to bottom left
+        z_index="1002",
+    )
+
+def analytics_speed_dial() -> rx.Component:
+    """Analytics speed dial with report and analytics options."""
+    
+    # Analytics navigation items
+    nav_items = [
+        {"icon": "file-text", "label": "Report Exports", "route": "/analytics", "color": "#8b5cf6", "color_alpha": "0.15"},
+        {"icon": "bar-chart-3", "label": "Analytics", "route": "/analytics", "color": "#06b6d4", "color_alpha": "0.15"},
+        {"icon": "shield-alert", "label": "Vulnerability Matrix", "route": "/vulnerabilities", "color": "#ef4444", "color_alpha": "0.15"},
+        {"icon": "git-branch", "label": "Cradle To Grave", "route": "/analytics", "color": "#059669", "color_alpha": "0.15"},
+    ]
+    
+    def create_nav_item(item, index):
+        """Create a navigation item with icon and label."""
+        # Staggered animation delay
+        delay = f"{index * 100}ms"
+        
+        return rx.link(
+            rx.hstack(
+                # Icon button
+                rx.box(
+                    rx.icon(
+                        tag=item["icon"],
+                        size=20,
+                        color="white",
+                    ),
+                    width="3rem",
+                    height="3rem",
+                    border_radius="50%",
+                    background=f"linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%), linear-gradient(135deg, {item['color']}20 0%, {item['color']}10 100%)",
+                    border=f"1px solid rgba(255, 255, 255, 0.2)",
+                    display="flex",
+                    align_items="center",
+                    justify_content="center",
+                    cursor="pointer",
+                    box_shadow="0 4px 12px rgba(0, 0, 0, 0.15)",
+                    backdrop_filter="blur(20px)",
+                    _hover={
+                        "transform": "scale(1.1)",
+                        "background": f"linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%), linear-gradient(135deg, {item['color']}30 0%, {item['color']}20 100%)",
+                        "box_shadow": f"0 8px 25px {item['color']}20",
+                        "border": f"1px solid {item['color']}40",
+                    },
+                ),
+                # Label text (no box)
+                rx.text(
+                    item["label"],
+                    font_size="1rem",
+                    font_weight="600",
+                    color="white",
+                    white_space="nowrap",
+                    text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                    _hover={
+                        "text_shadow": "0 0 8px rgba(255, 255, 255, 0.5)",
+                        "transform": "scale(1.05)",
+                    }
+                ),
+                spacing="1",
+                align="center",
+                justify="start",
+            ),
+            href=item["route"],
+            style={"text-decoration": "none"},
+            # Animation properties
+            opacity=rx.cond(AnalyticsSpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                AnalyticsSpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(20px) scale(0.8)"
+            ),
+            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            pointer_events=rx.cond(AnalyticsSpeedDialState.is_open, "auto", "none"),
+        )
+    
+    # Create all navigation items
+    nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
+    
+    return rx.box(
+        # Backdrop overlay when open
+        rx.box(
+            position="fixed",
+            top="0",
+            left="0",
+            width="100vw",
+            height="100vh",
+            background="rgba(0, 0, 0, 0.3)",
+            backdrop_filter="blur(2px)",
+            z_index="1001",
+            opacity=rx.cond(AnalyticsSpeedDialState.is_open, "1", "0"),
+            visibility=rx.cond(AnalyticsSpeedDialState.is_open, "visible", "hidden"),
+            transition="all 0.3s ease",
+            pointer_events=rx.cond(AnalyticsSpeedDialState.is_open, "auto", "none"),
+            on_click=AnalyticsSpeedDialState.toggle_speed_dial,
+        ),
+        
+        # Navigation items container (always in DOM)
+        rx.vstack(
+            *reversed(nav_buttons),  # Reverse order so first item appears closest to trigger
+            spacing="1",
+            position="absolute",
+            bottom="5rem",
+            left="5rem",  # Position to the right of the trigger button
+            z_index="1002",
+            opacity=rx.cond(AnalyticsSpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                AnalyticsSpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(30px) scale(0.9)"
+            ),
+            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            pointer_events=rx.cond(AnalyticsSpeedDialState.is_open, "auto", "none"),
+        ),
+        
+        # Trigger button with label
+        rx.hstack(
+            # Main trigger button
+            rx.box(
+                rx.icon(
+                    tag=rx.cond(AnalyticsSpeedDialState.is_open, "x", "bar-chart"),
+                    size=24,
+                    color="white",
+                ),
+                width="4rem",
+                height="4rem",
+                border_radius="50%",
+                background=rx.cond(
+                    AnalyticsSpeedDialState.is_open,
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%), linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.1) 100%)",
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)"
+                ),
+                border="2px solid rgba(255, 255, 255, 0.2)",
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                cursor="pointer",
+                position="relative",
+                z_index="1003",
+                backdrop_filter="blur(20px)",
+                box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                transition="all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                _hover={
+                    "transform": "scale(1.05)",
+                    "background": rx.cond(
+                        AnalyticsSpeedDialState.is_open,
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%), linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.2) 100%)",
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)"
+                    ),
+                    "box_shadow": "0 12px 40px rgba(0, 0, 0, 0.4)",
+                },
+                on_click=AnalyticsSpeedDialState.toggle_speed_dial,
+            ),
+            # Analytics label
+            rx.text(
+                "Analytics",
+                font_size="0.875rem",
+                font_weight="500",
+                color="rgba(255, 255, 255, 0.8)",
+                white_space="nowrap",
+                text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                opacity=rx.cond(AnalyticsSpeedDialState.is_open, "0.5", "1"),
+                transition="all 0.3s ease",
+                _hover={
+                    "color": "white",
+                    "text_shadow": "0 0 8px rgba(255, 255, 255, 0.3)",
+                }
+            ),
+            spacing="3",
+            align="center",
+        ),
+        
+        # Container positioning
+        position="fixed",
+        bottom="2rem",
+        left="15rem",  # Position to the right of the core actions speed dial
+        z_index="1002",
+    )
+
+def asset_data_speed_dial() -> rx.Component:
+    """Asset Data speed dial with fleet, software, and actions options."""
+    
+    # Asset Data navigation items
+    nav_items = [
+        {"icon": "layers", "label": "Fleet Overview", "route": "/assets", "color": "#059669", "color_alpha": "0.15"},
+        {"icon": "settings", "label": "Software Configuration", "route": "/software", "color": "#dc2626", "color_alpha": "0.15"},
+        {"icon": "clock", "label": "Recent Actions", "route": "/analytics", "color": "#7c3aed", "color_alpha": "0.15"},
+    ]
+    
+    def create_nav_item(item, index):
+        """Create a navigation item with icon and label."""
+        # Staggered animation delay
+        delay = f"{index * 100}ms"
+        
+        return rx.link(
+            rx.hstack(
+                # Icon button
+                rx.box(
+                    rx.icon(
+                        tag=item["icon"],
+                        size=20,
+                        color="white",
+                    ),
+                    width="3rem",
+                    height="3rem",
+                    border_radius="50%",
+                    background=f"linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%), linear-gradient(135deg, {item['color']}20 0%, {item['color']}10 100%)",
+                    border=f"1px solid rgba(255, 255, 255, 0.2)",
+                    display="flex",
+                    align_items="center",
+                    justify_content="center",
+                    cursor="pointer",
+                    box_shadow="0 4px 12px rgba(0, 0, 0, 0.15)",
+                    backdrop_filter="blur(20px)",
+                    _hover={
+                        "transform": "scale(1.1)",
+                        "background": f"linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%), linear-gradient(135deg, {item['color']}30 0%, {item['color']}20 100%)",
+                        "box_shadow": f"0 8px 25px {item['color']}20",
+                        "border": f"1px solid {item['color']}40",
+                    },
+                ),
+                # Label text (no box)
+                rx.text(
+                    item["label"],
+                    font_size="1rem",
+                    font_weight="600",
+                    color="white",
+                    white_space="nowrap",
+                    text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                    _hover={
+                        "text_shadow": "0 0 8px rgba(255, 255, 255, 0.5)",
+                        "transform": "scale(1.05)",
+                    }
+                ),
+                spacing="1",
+                align="center",
+                justify="start",
+            ),
+            href=item["route"],
+            style={"text-decoration": "none"},
+            # Animation properties
+            opacity=rx.cond(AssetDataSpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                AssetDataSpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(20px) scale(0.8)"
+            ),
+            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            pointer_events=rx.cond(AssetDataSpeedDialState.is_open, "auto", "none"),
+        )
+    
+    # Create all navigation items
+    nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
+    
+    return rx.box(
+        # Backdrop overlay when open
+        rx.box(
+            position="fixed",
+            top="0",
+            left="0",
+            width="100vw",
+            height="100vh",
+            background="rgba(0, 0, 0, 0.3)",
+            backdrop_filter="blur(2px)",
+            z_index="1001",
+            opacity=rx.cond(AssetDataSpeedDialState.is_open, "1", "0"),
+            visibility=rx.cond(AssetDataSpeedDialState.is_open, "visible", "hidden"),
+            transition="all 0.3s ease",
+            pointer_events=rx.cond(AssetDataSpeedDialState.is_open, "auto", "none"),
+            on_click=AssetDataSpeedDialState.toggle_speed_dial,
+        ),
+        
+        # Navigation items container (always in DOM)
+        rx.vstack(
+            *reversed(nav_buttons),  # Reverse order so first item appears closest to trigger
+            spacing="1",
+            position="absolute",
+            bottom="5rem",
+            left="5rem",  # Position to the right of the trigger button
+            z_index="1002",
+            opacity=rx.cond(AssetDataSpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                AssetDataSpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(30px) scale(0.9)"
+            ),
+            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            pointer_events=rx.cond(AssetDataSpeedDialState.is_open, "auto", "none"),
+        ),
+        
+        # Trigger button with label
+        rx.hstack(
+            # Main trigger button
+            rx.box(
+                rx.icon(
+                    tag=rx.cond(AssetDataSpeedDialState.is_open, "x", "database"),
+                    size=24,
+                    color="white",
+                ),
+                width="4rem",
+                height="4rem",
+                border_radius="50%",
+                background=rx.cond(
+                    AssetDataSpeedDialState.is_open,
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%), linear-gradient(135deg, rgba(5, 150, 105, 0.2) 0%, rgba(4, 120, 87, 0.1) 100%)",
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)"
+                ),
+                border="2px solid rgba(255, 255, 255, 0.2)",
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                cursor="pointer",
+                position="relative",
+                z_index="1003",
+                backdrop_filter="blur(20px)",
+                box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                transition="all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                _hover={
+                    "transform": "scale(1.05)",
+                    "background": rx.cond(
+                        AssetDataSpeedDialState.is_open,
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%), linear-gradient(135deg, rgba(5, 150, 105, 0.3) 0%, rgba(4, 120, 87, 0.2) 100%)",
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)"
+                    ),
+                    "box_shadow": "0 12px 40px rgba(0, 0, 0, 0.4)",
+                },
+                on_click=AssetDataSpeedDialState.toggle_speed_dial,
+            ),
+            # Asset Data label
+            rx.text(
+                "Asset Data",
+                font_size="0.875rem",
+                font_weight="500",
+                color="rgba(255, 255, 255, 0.8)",
+                white_space="nowrap",
+                text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                opacity=rx.cond(AssetDataSpeedDialState.is_open, "0.5", "1"),
+                transition="all 0.3s ease",
+                _hover={
+                    "color": "white",
+                    "text_shadow": "0 0 8px rgba(255, 255, 255, 0.3)",
+                }
+            ),
+            spacing="3",
+            align="center",
+        ),
+        
+        # Container positioning
+        position="fixed",
+        bottom="2rem",
+        left="26rem",  # Position to the right of the analytics speed dial
+        z_index="1002",
+    )
+
+def playbook_speed_dial() -> rx.Component:
+    """Playbook speed dial with documentation and content creation options."""
+    
+    # Playbook navigation items
+    nav_items = [
+        {"icon": "book-open", "label": "SOP Documentation", "route": "/playbook", "color": "#f59e0b", "color_alpha": "0.15"},
+        {"icon": "cog", "label": "Internal Processes", "route": "/playbook", "color": "#3b82f6", "color_alpha": "0.15"},
+        {"icon": "file-text", "label": "Technical Documentation", "route": "/playbook", "color": "#10b981", "color_alpha": "0.15"},
+        {"icon": "code", "label": "Code Snippets", "route": "/playbook", "color": "#06b6d4", "color_alpha": "0.15"},
+        {"icon": "user", "label": "Personal Logs", "route": "/playbook", "color": "#ec4899", "color_alpha": "0.15"},
+        {"icon": "plus", "label": "Create Content", "route": "/playbook", "color": "#7c3aed", "color_alpha": "0.15"},
+    ]
+    
+    def create_nav_item(item, index):
+        """Create a navigation item with icon and label."""
+        # Staggered animation delay
+        delay = f"{index * 100}ms"
+        
+        return rx.link(
+            rx.hstack(
+                # Icon button
+                rx.box(
+                    rx.icon(
+                        tag=item["icon"],
+                        size=20,
+                        color="white",
+                    ),
+                    width="3rem",
+                    height="3rem",
+                    border_radius="50%",
+                    background=f"linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%), linear-gradient(135deg, {item['color']}20 0%, {item['color']}10 100%)",
+                    border=f"1px solid rgba(255, 255, 255, 0.2)",
+                    display="flex",
+                    align_items="center",
+                    justify_content="center",
+                    cursor="pointer",
+                    box_shadow="0 4px 12px rgba(0, 0, 0, 0.15)",
+                    backdrop_filter="blur(20px)",
+                    _hover={
+                        "transform": "scale(1.1)",
+                        "background": f"linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%), linear-gradient(135deg, {item['color']}30 0%, {item['color']}20 100%)",
+                        "box_shadow": f"0 8px 25px {item['color']}20",
+                        "border": f"1px solid {item['color']}40",
+                    },
+                ),
+                # Label text (no box)
+                rx.text(
+                    item["label"],
+                    font_size="1rem",
+                    font_weight="600",
+                    color="white",
+                    white_space="nowrap",
+                    text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                    _hover={
+                        "text_shadow": "0 0 8px rgba(255, 255, 255, 0.5)",
+                        "transform": "scale(1.05)",
+                    }
+                ),
+                spacing="1",
+                align="center",
+                justify="start",
+            ),
+            href=item["route"],
+            style={"text-decoration": "none"},
+            # Animation properties
+            opacity=rx.cond(PlaybookSpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                PlaybookSpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(20px) scale(0.8)"
+            ),
+            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            pointer_events=rx.cond(PlaybookSpeedDialState.is_open, "auto", "none"),
+        )
+    
+    # Create all navigation items
+    nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
+    
+    return rx.box(
+        # Backdrop overlay when open
+        rx.box(
+            position="fixed",
+            top="0",
+            left="0",
+            width="100vw",
+            height="100vh",
+            background="rgba(0, 0, 0, 0.3)",
+            backdrop_filter="blur(2px)",
+            z_index="1001",
+            opacity=rx.cond(PlaybookSpeedDialState.is_open, "1", "0"),
+            visibility=rx.cond(PlaybookSpeedDialState.is_open, "visible", "hidden"),
+            transition="all 0.3s ease",
+            pointer_events=rx.cond(PlaybookSpeedDialState.is_open, "auto", "none"),
+            on_click=PlaybookSpeedDialState.toggle_speed_dial,
+        ),
+        
+        # Navigation items container (always in DOM)
+        rx.vstack(
+            *reversed(nav_buttons),  # Reverse order so first item appears closest to trigger
+            spacing="1",
+            position="absolute",
+            bottom="5rem",
+            left="5rem",  # Position to the right of the trigger button
+            z_index="1002",
+            opacity=rx.cond(PlaybookSpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                PlaybookSpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(30px) scale(0.9)"
+            ),
+            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            pointer_events=rx.cond(PlaybookSpeedDialState.is_open, "auto", "none"),
+        ),
+        
+        # Trigger button with label
+        rx.hstack(
+            # Main trigger button
+            rx.box(
+                rx.icon(
+                    tag=rx.cond(PlaybookSpeedDialState.is_open, "x", "book"),
+                    size=24,
+                    color="white",
+                ),
+                width="4rem",
+                height="4rem",
+                border_radius="50%",
+                background=rx.cond(
+                    PlaybookSpeedDialState.is_open,
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%), linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.1) 100%)",
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)"
+                ),
+                border="2px solid rgba(255, 255, 255, 0.2)",
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                cursor="pointer",
+                position="relative",
+                z_index="1003",
+                backdrop_filter="blur(20px)",
+                box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                transition="all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                _hover={
+                    "transform": "scale(1.05)",
+                    "background": rx.cond(
+                        PlaybookSpeedDialState.is_open,
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%), linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.2) 100%)",
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)"
+                    ),
+                    "box_shadow": "0 12px 40px rgba(0, 0, 0, 0.4)",
+                },
+                on_click=PlaybookSpeedDialState.toggle_speed_dial,
+            ),
+            # Playbook label
+            rx.text(
+                "Playbook",
+                font_size="0.875rem",
+                font_weight="500",
+                color="rgba(255, 255, 255, 0.8)",
+                white_space="nowrap",
+                text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                opacity=rx.cond(PlaybookSpeedDialState.is_open, "0.5", "1"),
+                transition="all 0.3s ease",
+                _hover={
+                    "color": "white",
+                    "text_shadow": "0 0 8px rgba(255, 255, 255, 0.3)",
+                }
+            ),
+            spacing="3",
+            align="center",
+        ),
+        
+        # Container positioning
+        position="fixed",
+        bottom="2rem",
+        left="38rem",  # Position to the right of the asset data speed dial
+        z_index="1002",
+    )
+
+def vault_speed_dial() -> rx.Component:
+    """Vault speed dial with credential and key management options."""
+    
+    # Vault navigation items
+    nav_items = [
+        {"icon": "shield", "label": "Bitlocker Keys", "route": "/vault", "color": "#3b82f6", "color_alpha": "0.15"},
+        {"icon": "cpu", "label": "BIOS Credentials", "route": "/vault", "color": "#10b981", "color_alpha": "0.15"},
+        {"icon": "key", "label": "Other Credentials", "route": "/vault", "color": "#ef4444", "color_alpha": "0.15"},
+    ]
+    
+    def create_nav_item(item, index):
+        """Create a navigation item with icon and label."""
+        # Staggered animation delay
+        delay = f"{index * 100}ms"
+        
+        return rx.link(
+            rx.hstack(
+                # Icon button
+                rx.box(
+                    rx.icon(
+                        tag=item["icon"],
+                        size=20,
+                        color="white",
+                    ),
+                    width="3rem",
+                    height="3rem",
+                    border_radius="50%",
+                    background=f"linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%), linear-gradient(135deg, {item['color']}20 0%, {item['color']}10 100%)",
+                    border=f"1px solid rgba(255, 255, 255, 0.2)",
+                    display="flex",
+                    align_items="center",
+                    justify_content="center",
+                    cursor="pointer",
+                    box_shadow="0 4px 12px rgba(0, 0, 0, 0.15)",
+                    backdrop_filter="blur(20px)",
+                    _hover={
+                        "transform": "scale(1.1)",
+                        "background": f"linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%), linear-gradient(135deg, {item['color']}30 0%, {item['color']}20 100%)",
+                        "box_shadow": f"0 8px 25px {item['color']}20",
+                        "border": f"1px solid {item['color']}40",
+                    },
+                ),
+                # Label text (no box)
+                rx.text(
+                    item["label"],
+                    font_size="1rem",
+                    font_weight="600",
+                    color="white",
+                    white_space="nowrap",
+                    text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                    _hover={
+                        "text_shadow": "0 0 8px rgba(255, 255, 255, 0.5)",
+                        "transform": "scale(1.05)",
+                    }
+                ),
+                spacing="1",
+                align="center",
+                justify="start",
+            ),
+            href=item["route"],
+            style={"text-decoration": "none"},
+            # Animation properties
+            opacity=rx.cond(VaultSpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                VaultSpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(20px) scale(0.8)"
+            ),
+            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            pointer_events=rx.cond(VaultSpeedDialState.is_open, "auto", "none"),
+        )
+    
+    # Create all navigation items
+    nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
+    
+    return rx.box(
+        # Backdrop overlay when open
+        rx.box(
+            position="fixed",
+            top="0",
+            left="0",
+            width="100vw",
+            height="100vh",
+            background="rgba(0, 0, 0, 0.3)",
+            backdrop_filter="blur(2px)",
+            z_index="1001",
+            opacity=rx.cond(VaultSpeedDialState.is_open, "1", "0"),
+            visibility=rx.cond(VaultSpeedDialState.is_open, "visible", "hidden"),
+            transition="all 0.3s ease",
+            pointer_events=rx.cond(VaultSpeedDialState.is_open, "auto", "none"),
+            on_click=VaultSpeedDialState.toggle_speed_dial,
+        ),
+        
+        # Navigation items container (always in DOM)
+        rx.vstack(
+            *reversed(nav_buttons),  # Reverse order so first item appears closest to trigger
+            spacing="1",
+            position="absolute",
+            bottom="5rem",
+            left="5rem",  # Position to the right of the trigger button
+            z_index="1002",
+            opacity=rx.cond(VaultSpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                VaultSpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(30px) scale(0.9)"
+            ),
+            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            pointer_events=rx.cond(VaultSpeedDialState.is_open, "auto", "none"),
+        ),
+        
+        # Trigger button with label
+        rx.hstack(
+            # Main trigger button
+            rx.box(
+                rx.icon(
+                    tag=rx.cond(VaultSpeedDialState.is_open, "x", "lock"),
+                    size=24,
+                    color="white",
+                ),
+                width="4rem",
+                height="4rem",
+                border_radius="50%",
+                background=rx.cond(
+                    VaultSpeedDialState.is_open,
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%), linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.1) 100%)",
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)"
+                ),
+                border="2px solid rgba(255, 255, 255, 0.2)",
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                cursor="pointer",
+                position="relative",
+                z_index="1003",
+                backdrop_filter="blur(20px)",
+                box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                transition="all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                _hover={
+                    "transform": "scale(1.05)",
+                    "background": rx.cond(
+                        VaultSpeedDialState.is_open,
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%), linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 100%)",
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)"
+                    ),
+                    "box_shadow": "0 12px 40px rgba(0, 0, 0, 0.4)",
+                },
+                on_click=VaultSpeedDialState.toggle_speed_dial,
+            ),
+            # Vault label
+            rx.text(
+                "Vault",
+                font_size="0.875rem",
+                font_weight="500",
+                color="rgba(255, 255, 255, 0.8)",
+                white_space="nowrap",
+                text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                opacity=rx.cond(VaultSpeedDialState.is_open, "0.5", "1"),
+                transition="all 0.3s ease",
+                _hover={
+                    "color": "white",
+                    "text_shadow": "0 0 8px rgba(255, 255, 255, 0.3)",
+                }
+            ),
+            spacing="3",
+            align="center",
+        ),
+        
+        # Container positioning
+        position="fixed",
+        bottom="2rem",
+        left="49rem",  # Position to the right of the playbook speed dial
+        z_index="1002",
+    )
+
+class SearchModalState(rx.State):
+    """State for the search modal."""
+    is_open: bool = False
+    search_query: str = ""
+    search_results: list[Dict[str, Any]] = []
+    selected_projects: list[str] = []
+    selected_tags: list[str] = []
+    selected_personnel: list[str] = []
+    selected_action_types: list[str] = []
+    active_tab: str = "assets"  # assets, documents, actions
+    available_projects: list[Dict[str, str]] = [
+        {"name": "IFMC", "color": "#10b981"},
+        {"name": "STARE", "color": "#ef4444"},
+        {"name": "STORM", "color": "#8b5cf6"}, 
+        {"name": "SHIELD", "color": "#f59e0b"},
+        {"name": "TAGM", "color": "#06b6d4"},
+        {"name": "MULTI", "color": "#ec4899"}
+    ]
+    available_tags: list[Dict[str, str]] = [
+        {"name": "#ifmc", "color": "#10b981"},
+        {"name": "#tagm", "color": "#06b6d4"},
+        {"name": "#multi", "color": "#ec4899"},
+        {"name": "#storm", "color": "#8b5cf6"},
+        {"name": "#shield", "color": "#f59e0b"},
+        {"name": "#stare", "color": "#ef4444"},
+        {"name": "#process", "color": "#3b82f6"},
+        {"name": "#sop", "color": "#8b5cf6"},
+        {"name": "#poam", "color": "#f59e0b"},
+        {"name": "#guide", "color": "#10b981"},
+        {"name": "#bitlocker", "color": "#6366f1"},
+        {"name": "#windows", "color": "#0ea5e9"},
+        {"name": "#linux", "color": "#22c55e"},
+        {"name": "#article", "color": "#64748b"}
+    ]
+    available_personnel: list[Dict[str, str]] = [
+        {"name": "Kyle Hurston", "color": "#10b981"},
+        {"name": "Craig Alleman", "color": "#3b82f6"},
+        {"name": "Bob Shipp", "color": "#8b5cf6"},
+        {"name": "David Felmlee", "color": "#f59e0b"}
+    ]
+    available_action_types: list[Dict[str, str]] = [
+        {"name": "Image Collection", "color": "#10b981"},
+        {"name": "DAT Update", "color": "#ef4444"},
+        {"name": "Log Collection", "color": "#3b82f6"},
+        {"name": "Asset Patching", "color": "#8b5cf6"},
+        {"name": "Content Creation", "color": "#f59e0b"}
+    ]
+    
+    def toggle_search_modal(self):
+        """Toggle the search modal open/closed state."""
+        self.is_open = not self.is_open
+        if not self.is_open:
+            self.search_query = ""
+            self.search_results = []
+            self.selected_projects = []
+            self.selected_tags = []
+            self.selected_personnel = []
+            self.selected_action_types = []
+            self.active_tab = "assets"
+    
+    def set_active_tab(self, tab: str):
+        """Set the active search tab and refresh results."""
+        self.active_tab = tab
+        self.search_query = ""
+        self.search_results = []
+        self.selected_projects = []
+        self.selected_tags = []
+        self.selected_personnel = []
+        self.selected_action_types = []
+    
+    def toggle_project_filter(self, project: str):
+        """Toggle a project filter on/off."""
+        if project in self.selected_projects:
+            # Remove project from selected list
+            self.selected_projects = [p for p in self.selected_projects if p != project]
+        else:
+            # Add project to selected list
+            self.selected_projects = self.selected_projects + [project]
+        # Refresh search results with new filters
+        self.update_search_query(self.search_query)
+    
+    def toggle_tag_filter(self, tag: str):
+        """Toggle a tag filter on/off."""
+        if tag in self.selected_tags:
+            # Remove tag from selected list
+            self.selected_tags = [t for t in self.selected_tags if t != tag]
+        else:
+            # Add tag to selected list
+            self.selected_tags = self.selected_tags + [tag]
+        # Refresh search results with new filters
+        self.update_search_query(self.search_query)
+    
+    def toggle_personnel_filter(self, person: str):
+        """Toggle a personnel filter on/off."""
+        if person in self.selected_personnel:
+            # Remove person from selected list
+            self.selected_personnel = [p for p in self.selected_personnel if p != person]
+        else:
+            # Add person to selected list
+            self.selected_personnel = self.selected_personnel + [person]
+        # Refresh search results with new filters
+        self.update_search_query(self.search_query)
+    
+    def toggle_action_type_filter(self, action_type: str):
+        """Toggle an action type filter on/off."""
+        if action_type in self.selected_action_types:
+            # Remove action type from selected list
+            self.selected_action_types = [a for a in self.selected_action_types if a != action_type]
+        else:
+            # Add action type to selected list
+            self.selected_action_types = self.selected_action_types + [action_type]
+        # Refresh search results with new filters
+        self.update_search_query(self.search_query)
+    
+    def update_search_query(self, query: str):
+        """Update the search query and perform search based on active tab."""
+        self.search_query = query
+        # TODO: Implement actual database search with tab and project/tag filtering
+        
+        if query.strip() or self.selected_projects or self.selected_tags:
+            if self.active_tab == "assets":
+                # Asset search results
+                base_results = [
+                    {"name": f"IFMC-Server-{i:02d}", "type": "Server", "location": "Building A", "project": "IFMC", "category": "asset"} 
+                    for i in range(1, 3) if query.lower() in f"ifmc-server-{i:02d}".lower() or not query.strip()
+                ] + [
+                    {"name": f"STARE-Workstation-{i:02d}", "type": "Workstation", "location": "Building B", "project": "STARE", "category": "asset"} 
+                    for i in range(1, 3) if query.lower() in f"stare-workstation-{i:02d}".lower() or not query.strip()
+                ] + [
+                    {"name": f"STORM-Router-{i:02d}", "type": "Network Device", "location": "Data Center", "project": "STORM", "category": "asset"} 
+                    for i in range(1, 3) if query.lower() in f"storm-router-{i:02d}".lower() or not query.strip()
+                ]
+            
+            elif self.active_tab == "documents":
+                # Document search results with tag-based filtering
+                base_results = [
+                    {"name": "IFMC Security Policy.pdf", "type": "Policy Document", "location": "Document Library", "tags": ["#ifmc", "#process", "#sop"], "category": "document"} 
+                    if query.lower() in "security policy" or not query.strip() else None,
+                    {"name": "TAGM Network Diagram.pdf", "type": "Technical Document", "location": "Document Library", "tags": ["#tagm", "#guide", "#windows"], "category": "document"} 
+                    if query.lower() in "network diagram" or not query.strip() else None,
+                    {"name": "STORM Playbook.md", "type": "Playbook", "location": "Document Library", "tags": ["#storm", "#sop", "#guide"], "category": "document"} 
+                    if query.lower() in "playbook" or not query.strip() else None,
+                    {"name": "BitLocker Implementation Guide.docx", "type": "Technical Guide", "location": "Document Library", "tags": ["#bitlocker", "#windows", "#guide"], "category": "document"} 
+                    if query.lower() in "bitlocker" or not query.strip() else None,
+                    {"name": "Linux Server POAM.xlsx", "type": "POAM Document", "location": "Document Library", "tags": ["#linux", "#poam", "#multi"], "category": "document"} 
+                    if query.lower() in "linux" or not query.strip() else None,
+                    {"name": "SHIELD Process Article.pdf", "type": "Process Article", "location": "Document Library", "tags": ["#shield", "#process", "#article"], "category": "document"} 
+                    if query.lower() in "shield" or not query.strip() else None,
+                    {"name": "STARE SOP Manual.pdf", "type": "SOP Document", "location": "Document Library", "tags": ["#stare", "#sop", "#process"], "category": "document"} 
+                    if query.lower() in "stare" or not query.strip() else None
+                ]
+                # Filter out None results
+                base_results = [r for r in base_results if r is not None]
+            
+            elif self.active_tab == "actions":
+                # Recent actions search results
+                base_results = [
+                    {"name": f"DAT Update - IFMC-Server-01", "type": "DAT Update", "location": "2024-01-15 14:30", "project": "IFMC", "category": "action"} 
+                    for i in [1] if query.lower() in "dat update" or not query.strip()
+                ] + [
+                    {"name": f"Log Collection - STARE-Workstation-01", "type": "Log Collection", "location": "2024-01-15 13:45", "project": "STARE", "category": "action"} 
+                    for i in [1] if query.lower() in "log collection" or not query.strip()
+                ] + [
+                    {"name": f"Image Capture - STORM-Router-01", "type": "Image Collection", "location": "2024-01-15 12:20", "project": "STORM", "category": "action"} 
+                    for i in [1] if query.lower() in "image capture" or not query.strip()
+                ]
+            
+            else:
+                base_results = []
+            
+            # Apply filters based on active tab
+            if self.active_tab == "assets" or self.active_tab == "actions":
+                # Filter by selected projects for assets and actions
+                if self.selected_projects:
+                    self.search_results = [
+                        result for result in base_results 
+                        if result["project"] in self.selected_projects
+                    ]
+                else:
+                    self.search_results = base_results
+            elif self.active_tab == "documents":
+                # Filter by selected tags for documents
+                if self.selected_tags:
+                    self.search_results = [
+                        result for result in base_results 
+                        if any(tag in result["tags"] for tag in self.selected_tags)
+                    ]
+                else:
+                    self.search_results = base_results
+            else:
+                self.search_results = base_results
+        else:
+            self.search_results = []
+
+
+def right_side_buttons() -> rx.Component:
+    """Right side circular buttons for home and search functionality."""
+    return rx.fragment(
+        # Home button
+        rx.link(
+            rx.box(
+                rx.icon(
+                    tag="home",
+                    size=24,
+                    color="white",
+                ),
+                width="4rem",
+                height="4rem",
+                border_radius="50%",
+                background="linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)",
+                border="2px solid rgba(255, 255, 255, 0.2)",
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                cursor="pointer",
+                position="fixed",
+                bottom="2rem",
+                right="2rem",
+                z_index="1003",
+                backdrop_filter="blur(20px)",
+                box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                transition="all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                _hover={
+                    "transform": "scale(1.05)",
+                    "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)",
+                    "box_shadow": "0 12px 40px rgba(0, 0, 0, 0.4)",
+                },
+            ),
+            href="/dashboard",
+        ),
+        
+        # Search button
+        rx.box(
+            rx.icon(
+                tag="search",
+                size=24,
+                color="white",
+            ),
+            width="4rem",
+            height="4rem",
+            border_radius="50%",
+            background="linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)",
+            border="2px solid rgba(255, 255, 255, 0.2)",
+            display="flex",
+            align_items="center",
+            justify_content="center",
+            cursor="pointer",
+            position="fixed",
+            bottom="2rem",
+            right="7rem",  # Position to the left of home button
+            z_index="1003",
+            backdrop_filter="blur(20px)",
+            box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+            transition="all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            _hover={
+                "transform": "scale(1.05)",
+                "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)",
+                "box_shadow": "0 12px 40px rgba(0, 0, 0, 0.4)",
+            },
+            on_click=SearchModalState.toggle_search_modal,
+        ),
+        
+        # Modern Search Modal
+        rx.cond(
+            SearchModalState.is_open,
+            rx.box(
+                # Advanced backdrop with particle-friendly transparency
+                rx.box(
+                    position="fixed",
+                    top="0",
+                    left="0",
+                    width="100vw",
+                    height="100vh",
+                    background="linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(20, 20, 30, 0.5) 50%, rgba(0, 0, 0, 0.4) 100%)",
+                    backdrop_filter="blur(8px) saturate(120%)",
+                    z_index="1500",
+                    on_click=SearchModalState.toggle_search_modal,
+                    opacity="0",
+                    animation="fadeIn 0.3s ease-out forwards",
+                    style={
+                        "@keyframes fadeIn": {
+                            "from": {"opacity": "0"},
+                            "to": {"opacity": "1"}
+                        }
+                    }
+                ),
+                
+                # Floating modal container with advanced glassmorphism
+                rx.box(
+                    # Glowing header section with tabs
+                    rx.box(
+                        rx.vstack(
+                            # Top header with title and close button
+                            rx.hstack(
+                                # Search icon with glow effect
+                                rx.box(
+                                    rx.icon(
+                                        tag="search",
+                                        size=24,
+                                        color="white",
+                                    ),
+                                    width="3rem",
+                                    height="3rem",
+                                    border_radius="50%",
+                                    background="linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.2) 100%)",
+                                    border="1px solid rgba(59, 130, 246, 0.4)",
+                                    display="flex",
+                                    align_items="center",
+                                    justify_content="center",
+                                    backdrop_filter="blur(10px)",
+                                    box_shadow="0 0 30px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                                ),
+                                rx.vstack(
+                                    rx.text(
+                                        "Universal Search",
+                                        font_size="1.5rem",
+                                        font_weight="700",
+                                        color="white",
+                                        text_shadow="0 0 20px rgba(255, 255, 255, 0.5)",
+                                        line_height="1.2",
+                                    ),
+                                    rx.text(
+                                        "Search assets, documents, and recent actions",
+                                        font_size="0.875rem",
+                                        color="rgba(255, 255, 255, 0.7)",
+                                        font_weight="400",
+                                    ),
+                                    spacing="0",
+                                    align="start",
+                                ),
+                                rx.spacer(),
+                                # Modern close button
+                                rx.box(
+                                    rx.icon(tag="x", size=18, color="rgba(255, 255, 255, 0.8)"),
+                                    width="2.5rem",
+                                    height="2.5rem",
+                                    border_radius="50%",
+                                    background="rgba(255, 255, 255, 0.1)",
+                                    border="1px solid rgba(255, 255, 255, 0.2)",
+                                    display="flex",
+                                    align_items="center",
+                                    justify_content="center",
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s ease",
+                                    _hover={
+                                        "background": "rgba(239, 68, 68, 0.2)",
+                                        "border_color": "rgba(239, 68, 68, 0.4)",
+                                        "transform": "scale(1.05)",
+                                        "box_shadow": "0 0 20px rgba(239, 68, 68, 0.3)",
+                                    },
+                                    on_click=SearchModalState.toggle_search_modal,
+                                ),
+                                width="100%",
+                                align="center",
+                                margin_bottom="1.5rem",
+                            ),
+                            
+                            # Tab navigation
+                            rx.hstack(
+                                # Assets tab
+                                rx.box(
+                                    rx.hstack(
+                                        rx.icon(tag="server", size=16, color=rx.cond(
+                                            SearchModalState.active_tab == "assets",
+                                            "white",
+                                            "rgba(255, 255, 255, 0.6)"
+                                        )),
+                                        rx.text(
+                                            "Assets",
+                                            font_size="0.875rem",
+                                            font_weight="500",
+                                            color=rx.cond(
+                                                SearchModalState.active_tab == "assets",
+                                                "white",
+                                                "rgba(255, 255, 255, 0.6)"
+                                            ),
+                                        ),
+                                        spacing="2",
+                                        align="center",
+                                    ),
+                                    padding="0.75rem 1.5rem",
+                                    border_radius="0.75rem",
+                                    background=rx.cond(
+                                        SearchModalState.active_tab == "assets",
+                                        "linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.2) 100%)",
+                                        "rgba(255, 255, 255, 0.05)"
+                                    ),
+                                    border=rx.cond(
+                                        SearchModalState.active_tab == "assets",
+                                        "1px solid rgba(16, 185, 129, 0.5)",
+                                        "1px solid rgba(255, 255, 255, 0.1)"
+                                    ),
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s ease",
+                                    box_shadow=rx.cond(
+                                        SearchModalState.active_tab == "assets",
+                                        "0 0 20px rgba(16, 185, 129, 0.2)",
+                                        "none"
+                                    ),
+                                    _hover={
+                                        "background": rx.cond(
+                                            SearchModalState.active_tab == "assets",
+                                            "linear-gradient(135deg, rgba(16, 185, 129, 0.4) 0%, rgba(5, 150, 105, 0.3) 100%)",
+                                            "rgba(255, 255, 255, 0.1)"
+                                        ),
+                                        "transform": "translateY(-2px)",
+                                    },
+                                    on_click=SearchModalState.set_active_tab("assets"),
+                                ),
+                                
+                                # Documents tab
+                                rx.box(
+                                    rx.hstack(
+                                        rx.icon(tag="file-text", size=16, color=rx.cond(
+                                            SearchModalState.active_tab == "documents",
+                                            "white",
+                                            "rgba(255, 255, 255, 0.6)"
+                                        )),
+                                        rx.text(
+                                            "Documents",
+                                            font_size="0.875rem",
+                                            font_weight="500",
+                                            color=rx.cond(
+                                                SearchModalState.active_tab == "documents",
+                                                "white",
+                                                "rgba(255, 255, 255, 0.6)"
+                                            ),
+                                        ),
+                                        spacing="2",
+                                        align="center",
+                                    ),
+                                    padding="0.75rem 1.5rem",
+                                    border_radius="0.75rem",
+                                    background=rx.cond(
+                                        SearchModalState.active_tab == "documents",
+                                        "linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.2) 100%)",
+                                        "rgba(255, 255, 255, 0.05)"
+                                    ),
+                                    border=rx.cond(
+                                        SearchModalState.active_tab == "documents",
+                                        "1px solid rgba(59, 130, 246, 0.5)",
+                                        "1px solid rgba(255, 255, 255, 0.1)"
+                                    ),
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s ease",
+                                    box_shadow=rx.cond(
+                                        SearchModalState.active_tab == "documents",
+                                        "0 0 20px rgba(59, 130, 246, 0.2)",
+                                        "none"
+                                    ),
+                                    _hover={
+                                        "background": rx.cond(
+                                            SearchModalState.active_tab == "documents",
+                                            "linear-gradient(135deg, rgba(59, 130, 246, 0.4) 0%, rgba(37, 99, 235, 0.3) 100%)",
+                                            "rgba(255, 255, 255, 0.1)"
+                                        ),
+                                        "transform": "translateY(-2px)",
+                                    },
+                                    on_click=SearchModalState.set_active_tab("documents"),
+                                ),
+                                
+                                # Recent Actions tab
+                                rx.box(
+                                    rx.hstack(
+                                        rx.icon(tag="activity", size=16, color=rx.cond(
+                                            SearchModalState.active_tab == "actions",
+                                            "white",
+                                            "rgba(255, 255, 255, 0.6)"
+                                        )),
+                                        rx.text(
+                                            "Recent Actions",
+                                            font_size="0.875rem",
+                                            font_weight="500",
+                                            color=rx.cond(
+                                                SearchModalState.active_tab == "actions",
+                                                "white",
+                                                "rgba(255, 255, 255, 0.6)"
+                                            ),
+                                        ),
+                                        spacing="2",
+                                        align="center",
+                                    ),
+                                    padding="0.75rem 1.5rem",
+                                    border_radius="0.75rem",
+                                    background=rx.cond(
+                                        SearchModalState.active_tab == "actions",
+                                        "linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.2) 100%)",
+                                        "rgba(255, 255, 255, 0.05)"
+                                    ),
+                                    border=rx.cond(
+                                        SearchModalState.active_tab == "actions",
+                                        "1px solid rgba(139, 92, 246, 0.5)",
+                                        "1px solid rgba(255, 255, 255, 0.1)"
+                                    ),
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s ease",
+                                    box_shadow=rx.cond(
+                                        SearchModalState.active_tab == "actions",
+                                        "0 0 20px rgba(139, 92, 246, 0.2)",
+                                        "none"
+                                    ),
+                                    _hover={
+                                        "background": rx.cond(
+                                            SearchModalState.active_tab == "actions",
+                                            "linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(124, 58, 237, 0.3) 100%)",
+                                            "rgba(255, 255, 255, 0.1)"
+                                        ),
+                                        "transform": "translateY(-2px)",
+                                    },
+                                    on_click=SearchModalState.set_active_tab("actions"),
+                                ),
+                                
+                                spacing="3",
+                                width="100%",
+                                justify="start",
+                            ),
+                            
+                            spacing="0",
+                            width="100%",
+                        ),
+                        background="linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)",
+                        border="1px solid rgba(255, 255, 255, 0.2)",
+                        border_radius="1rem 1rem 0 0",
+                        padding="1.5rem",
+                        backdrop_filter="blur(20px)",
+                    ),
+                    
+                    # Search input with floating label effect
+                    rx.box(
+                        rx.box(
+                            rx.input(
+                                placeholder=rx.cond(
+                                    SearchModalState.active_tab == "assets",
+                                    "Search assets, systems, locations, or serial numbers...",
+                                    rx.cond(
+                                        SearchModalState.active_tab == "documents",
+                                        "Search policies, playbooks, diagrams, or documentation...",
+                                        "Search DAT updates, log collections, or image captures..."
+                                    )
+                                ),
+                                value=SearchModalState.search_query,
+                                on_change=SearchModalState.update_search_query,
+                                width="100%",
+                                height="3.5rem",
+                                background="rgba(255, 255, 255, 0.08)",
+                                border="2px solid rgba(255, 255, 255, 0.2)",
+                                border_radius="1rem",
+                                color="white",
+                                font_size="1rem",
+                                line_height="1.5",
+                                padding="1rem 1.5rem",
+                                _placeholder={"color": "rgba(255, 255, 255, 0.5)"},
+                                _focus={
+                                    "border_color": "rgba(59, 130, 246, 0.6)",
+                                    "box_shadow": "0 0 0 4px rgba(59, 130, 246, 0.15), 0 0 30px rgba(59, 130, 246, 0.2)",
+                                    "background": "rgba(255, 255, 255, 0.12)",
+                                    "transform": "translateY(-2px)",
+                                },
+                                transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                auto_focus=True,
+                                style={
+                                    "outline": "none",
+                                    "box-sizing": "border-box",
+                                    "text-overflow": "ellipsis",
+                                    "overflow": "visible",
+                                },
+                            ),
+                            position="relative",
+                        ),
+                        padding="0 1.5rem 1.5rem 1.5rem",
+                        background="linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)",
+                        border_left="1px solid rgba(255, 255, 255, 0.1)",
+                        border_right="1px solid rgba(255, 255, 255, 0.1)",
+                    ),
+                    
+                    # Project Filter Chips Section
+                    rx.box(
+                        rx.vstack(
+                            # Filter section header - conditional based on active tab
+                            rx.hstack(
+                                rx.icon(tag="filter", size=16, color="rgba(255, 255, 255, 0.8)"),
+                                rx.text(
+                                    rx.cond(
+                                        SearchModalState.active_tab == "documents",
+                                        "Search by Tag",
+                                        "Filter by Project"
+                                    ),
+                                    font_size="0.875rem",
+                                    font_weight="600",
+                                    color="rgba(255, 255, 255, 0.8)",
+                                ),
+                                rx.cond(
+                                    SearchModalState.active_tab == "documents",
+                                    # Tag count badge
+                                    rx.cond(
+                                        SearchModalState.selected_tags.length() > 0,
+                                        rx.box(
+                                            rx.text(
+                                                SearchModalState.selected_tags.length(),
+                                                font_size="0.7rem",
+                                                font_weight="500",
+                                                color="rgba(59, 130, 246, 0.9)",
+                                            ),
+                                            background="rgba(59, 130, 246, 0.2)",
+                                            border="1px solid rgba(59, 130, 246, 0.3)",
+                                            border_radius="full",
+                                            padding="0.2rem 0.5rem",
+                                            backdrop_filter="blur(5px)",
+                                        ),
+                                    ),
+                                    # Project count badge
+                                    rx.cond(
+                                        SearchModalState.selected_projects.length() > 0,
+                                        rx.box(
+                                            rx.text(
+                                                SearchModalState.selected_projects.length(),
+                                                font_size="0.7rem",
+                                                font_weight="500",
+                                                color="rgba(59, 130, 246, 0.9)",
+                                            ),
+                                            background="rgba(59, 130, 246, 0.2)",
+                                            border="1px solid rgba(59, 130, 246, 0.3)",
+                                            border_radius="full",
+                                            padding="0.2rem 0.5rem",
+                                            backdrop_filter="blur(5px)",
+                                        ),
+                                    )
+                                ),
+                                spacing="2",
+                                align="center",
+                                margin_bottom="0.75rem",
+                            ),
+                            
+                            # Conditional chips container based on active tab
+                            rx.cond(
+                                SearchModalState.active_tab == "documents",
+                                # Tag chips for Documents tab
+                                rx.hstack(
+                                # IFMC chip
+                                rx.box(
+                                    rx.text(
+                                        "IFMC",
+                                        font_size="0.8rem",
+                                        font_weight="500",
+                                        color=rx.cond(
+                                            SearchModalState.selected_projects.contains("IFMC"),
+                                            "white",
+                                            "rgba(255, 255, 255, 0.8)"
+                                        ),
+                                        white_space="nowrap",
+                                    ),
+                                    display="inline-block",
+                                    padding="0.5rem 1rem",
+                                    margin="0.25rem",
+                                    border_radius="full",
+                                    background=rx.cond(
+                                        SearchModalState.selected_projects.contains("IFMC"),
+                                        "#10b98140",
+                                        "rgba(255, 255, 255, 0.08)"
+                                    ),
+                                    border=rx.cond(
+                                        SearchModalState.selected_projects.contains("IFMC"),
+                                        "2px solid #10b981",
+                                        "1px solid rgba(255, 255, 255, 0.2)"
+                                    ),
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                    box_shadow=rx.cond(
+                                        SearchModalState.selected_projects.contains("IFMC"),
+                                        "0 0 20px #10b98160, inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                                        "0 2px 8px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
+                                    ),
+                                    on_click=SearchModalState.toggle_project_filter("IFMC"),
+                                ),
+                                
+                                # STARE chip
+                                rx.box(
+                                    rx.text(
+                                        "STARE",
+                                        font_size="0.8rem",
+                                        font_weight="500",
+                                        color=rx.cond(
+                                            SearchModalState.selected_projects.contains("STARE"),
+                                            "white",
+                                            "rgba(255, 255, 255, 0.8)"
+                                        ),
+                                        white_space="nowrap",
+                                    ),
+                                    display="inline-block",
+                                    padding="0.5rem 1rem",
+                                    margin="0.25rem",
+                                    border_radius="full",
+                                    background=rx.cond(
+                                        SearchModalState.selected_projects.contains("STARE"),
+                                        "#ef444440",
+                                        "rgba(255, 255, 255, 0.08)"
+                                    ),
+                                    border=rx.cond(
+                                        SearchModalState.selected_projects.contains("STARE"),
+                                        "2px solid #ef4444",
+                                        "1px solid rgba(255, 255, 255, 0.2)"
+                                    ),
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                    box_shadow=rx.cond(
+                                        SearchModalState.selected_projects.contains("STARE"),
+                                        "0 0 20px #ef444460, inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                                        "0 2px 8px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
+                                    ),
+                                    on_click=SearchModalState.toggle_project_filter("STARE"),
+                                ),
+                                
+                                # STORM chip
+                                rx.box(
+                                    rx.text(
+                                        "STORM",
+                                        font_size="0.8rem",
+                                        font_weight="500",
+                                        color=rx.cond(
+                                            SearchModalState.selected_projects.contains("STORM"),
+                                            "white",
+                                            "rgba(255, 255, 255, 0.8)"
+                                        ),
+                                        white_space="nowrap",
+                                    ),
+                                    display="inline-block",
+                                    padding="0.5rem 1rem",
+                                    margin="0.25rem",
+                                    border_radius="full",
+                                    background=rx.cond(
+                                        SearchModalState.selected_projects.contains("STORM"),
+                                        "#8b5cf640",
+                                        "rgba(255, 255, 255, 0.08)"
+                                    ),
+                                    border=rx.cond(
+                                        SearchModalState.selected_projects.contains("STORM"),
+                                        "2px solid #8b5cf6",
+                                        "1px solid rgba(255, 255, 255, 0.2)"
+                                    ),
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                    box_shadow=rx.cond(
+                                        SearchModalState.selected_projects.contains("STORM"),
+                                        "0 0 20px #8b5cf660, inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                                        "0 2px 8px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
+                                    ),
+                                    on_click=SearchModalState.toggle_project_filter("STORM"),
+                                ),
+                                
+                                # SHIELD chip
+                                rx.box(
+                                    rx.text(
+                                        "SHIELD",
+                                        font_size="0.8rem",
+                                        font_weight="500",
+                                        color=rx.cond(
+                                            SearchModalState.selected_projects.contains("SHIELD"),
+                                            "white",
+                                            "rgba(255, 255, 255, 0.8)"
+                                        ),
+                                        white_space="nowrap",
+                                    ),
+                                    display="inline-block",
+                                    padding="0.5rem 1rem",
+                                    margin="0.25rem",
+                                    border_radius="full",
+                                    background=rx.cond(
+                                        SearchModalState.selected_projects.contains("SHIELD"),
+                                        "#f59e0b40",
+                                        "rgba(255, 255, 255, 0.08)"
+                                    ),
+                                    border=rx.cond(
+                                        SearchModalState.selected_projects.contains("SHIELD"),
+                                        "2px solid #f59e0b",
+                                        "1px solid rgba(255, 255, 255, 0.2)"
+                                    ),
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                    box_shadow=rx.cond(
+                                        SearchModalState.selected_projects.contains("SHIELD"),
+                                        "0 0 20px #f59e0b60, inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                                        "0 2px 8px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
+                                    ),
+                                    on_click=SearchModalState.toggle_project_filter("SHIELD"),
+                                ),
+                                
+                                # TAGM chip
+                                rx.box(
+                                    rx.text(
+                                        "TAGM",
+                                        font_size="0.8rem",
+                                        font_weight="500",
+                                        color=rx.cond(
+                                            SearchModalState.selected_projects.contains("TAGM"),
+                                            "white",
+                                            "rgba(255, 255, 255, 0.8)"
+                                        ),
+                                        white_space="nowrap",
+                                    ),
+                                    display="inline-block",
+                                    padding="0.5rem 1rem",
+                                    margin="0.25rem",
+                                    border_radius="full",
+                                    background=rx.cond(
+                                        SearchModalState.selected_projects.contains("TAGM"),
+                                        "#06b6d440",
+                                        "rgba(255, 255, 255, 0.08)"
+                                    ),
+                                    border=rx.cond(
+                                        SearchModalState.selected_projects.contains("TAGM"),
+                                        "2px solid #06b6d4",
+                                        "1px solid rgba(255, 255, 255, 0.2)"
+                                    ),
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                    box_shadow=rx.cond(
+                                        SearchModalState.selected_projects.contains("TAGM"),
+                                        "0 0 20px #06b6d460, inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                                        "0 2px 8px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
+                                    ),
+                                    on_click=SearchModalState.toggle_project_filter("TAGM"),
+                                ),
+                                
+                                # MULTI chip
+                                rx.box(
+                                    rx.text(
+                                        "MULTI",
+                                        font_size="0.8rem",
+                                        font_weight="500",
+                                        color=rx.cond(
+                                            SearchModalState.selected_projects.contains("MULTI"),
+                                            "white",
+                                            "rgba(255, 255, 255, 0.8)"
+                                        ),
+                                        white_space="nowrap",
+                                    ),
+                                    display="inline-block",
+                                    padding="0.5rem 1rem",
+                                    margin="0.25rem",
+                                    border_radius="full",
+                                    background=rx.cond(
+                                        SearchModalState.selected_projects.contains("MULTI"),
+                                        "#ec489940",
+                                        "rgba(255, 255, 255, 0.08)"
+                                    ),
+                                    border=rx.cond(
+                                        SearchModalState.selected_projects.contains("MULTI"),
+                                        "2px solid #ec4899",
+                                        "1px solid rgba(255, 255, 255, 0.2)"
+                                    ),
+                                    cursor="pointer",
+                                    backdrop_filter="blur(10px)",
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                    box_shadow=rx.cond(
+                                        SearchModalState.selected_projects.contains("MULTI"),
+                                        "0 0 20px #ec489960, inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                                        "0 2px 8px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
+                                    ),
+                                    on_click=SearchModalState.toggle_project_filter("MULTI"),
+                                ),
+                                
+                                flex_wrap="wrap",
+                                spacing="1",
+                                width="100%",
+                            ),
+                            
+                            # Clear filters option
+                            rx.cond(
+                                SearchModalState.selected_projects.length() > 0,
+                                rx.hstack(
+                                    rx.button(
+                                        rx.hstack(
+                                            rx.icon(tag="x", size=14),
+                                            rx.text("Clear Filters", font_size="0.8rem"),
+                                            spacing="1",
+                                            align="center",
+                                        ),
+                                        variant="ghost",
+                                        size="1",
+                                        color_scheme="gray",
+                                        on_click=lambda: SearchModalState.set_selected_projects([]),
+                                        _hover={
+                                            "background": "rgba(239, 68, 68, 0.1)",
+                                            "color": "rgba(239, 68, 68, 0.8)",
+                                        },
+                                    ),
+                                    justify="end",
+                                    width="100%",
+                                    margin_top="0.5rem",
+                                ),
+                            ),
+                            
+                            spacing="0",
+                            width="100%",
+                        ),
+                        padding="1rem 1.5rem 1.5rem 1.5rem",
+                        background="linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%)",
+                        border_left="1px solid rgba(255, 255, 255, 0.1)",
+                        border_right="1px solid rgba(255, 255, 255, 0.1)",
+                        border_bottom="1px solid rgba(255, 255, 255, 0.05)",
+                    ),
+                    
+                    # Results section with advanced cards
+                    rx.box(
+                        rx.cond(
+                            SearchModalState.search_results.length() > 0,
+                            rx.vstack(
+                                # Results header with count
+                                rx.hstack(
+                                    rx.text(
+                                        "Search Results",
+                                        font_size="1rem",
+                                        font_weight="600",
+                                        color="white",
+                                    ),
+                                    rx.box(
+                                        rx.text(
+                                            SearchModalState.search_results.length(),
+                                            font_size="0.75rem",
+                                            font_weight="500",
+                                            color="rgba(59, 130, 246, 0.9)",
+                                        ),
+                                        background="rgba(59, 130, 246, 0.2)",
+                                        border="1px solid rgba(59, 130, 246, 0.3)",
+                                        border_radius="full",
+                                        padding="0.25rem 0.75rem",
+                                        backdrop_filter="blur(10px)",
+                                    ),
+                                    rx.spacer(),
+                                    width="100%",
+                                    align="center",
+                                    margin_bottom="1rem",
+                                ),
+                                
+                                # Modern result cards
+                                rx.foreach(
+                                    SearchModalState.search_results.to(list[Dict[str, Any]]),
+                                    lambda result: rx.box(
+                                        # Card content with floating effect
+                                        rx.hstack(
+                                            # Icon container with glow
+                                            rx.box(
+                                                rx.icon(
+                                                    tag="server", 
+                                                    size=20, 
+                                                    color="white"
+                                                ),
+                                                width="3.5rem",
+                                                height="3.5rem",
+                                                border_radius="50%",
+                                                background="linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.2) 100%)",
+                                                border="1px solid rgba(16, 185, 129, 0.4)",
+                                                display="flex",
+                                                align_items="center",
+                                                justify_content="center",
+                                                backdrop_filter="blur(10px)",
+                                                box_shadow="0 0 20px rgba(16, 185, 129, 0.2)",
+                                            ),
+                                            
+                                            # Asset information
+                                            rx.vstack(
+                                                rx.text(
+                                                    result["name"].to(str),
+                                                    font_weight="600",
+                                                    color="white",
+                                                    font_size="1rem",
+                                                    line_height="1.2",
+                                                ),
+                                                rx.hstack(
+                                                    rx.box(
+                                                        rx.text(
+                                                            result["type"].to(str),
+                                                            font_size="0.75rem",
+                                                            font_weight="500",
+                                                            color="rgba(147, 197, 253, 0.9)",
+                                                        ),
+                                                        background="rgba(59, 130, 246, 0.15)",
+                                                        border="1px solid rgba(59, 130, 246, 0.3)",
+                                                        border_radius="full",
+                                                        padding="0.25rem 0.75rem",
+                                                        backdrop_filter="blur(5px)",
+                                                    ),
+                                                    rx.text("•", color="rgba(255, 255, 255, 0.4)", font_size="0.75rem"),
+                                                    rx.text(
+                                                        result["location"].to(str),
+                                                        font_size="0.8rem",
+                                                        color="rgba(255, 255, 255, 0.7)",
+                                                        font_weight="400",
+                                                    ),
+                                                    spacing="2",
+                                                    align="center",
+                                                ),
+                                                spacing="1",
+                                                align="start",
+                                                flex="1",
+                                            ),
+                                            
+                                            # Action indicator
+                                            rx.box(
+                                                rx.icon(tag="arrow-right", size=16, color="rgba(255, 255, 255, 0.6)"),
+                                                width="2rem",
+                                                height="2rem",
+                                                border_radius="50%",
+                                                background="rgba(255, 255, 255, 0.1)",
+                                                border="1px solid rgba(255, 255, 255, 0.2)",
+                                                display="flex",
+                                                align_items="center",
+                                                justify_content="center",
+                                                opacity="0",
+                                                transition="all 0.3s ease",
+                                            ),
+                                            
+                                            spacing="4",
+                                            align="center",
+                                            width="100%",
+                                        ),
+                                        
+                                        # Card styling with advanced glassmorphism
+                                        padding="1.25rem",
+                                        background="linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.02) 100%)",
+                                        border="1px solid rgba(255, 255, 255, 0.2)",
+                                        border_radius="1rem",
+                                        cursor="pointer",
+                                        backdrop_filter="blur(20px)",
+                                        box_shadow="0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                                        transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                                        position="relative",
+                                        overflow="hidden",
+                                        
+                                        _hover={
+                                            "transform": "translateY(-4px) scale(1.02)",
+                                            "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.05) 100%)",
+                                            "border_color": "rgba(59, 130, 246, 0.4)",
+                                            "box_shadow": "0 20px 40px rgba(0, 0, 0, 0.2), 0 0 30px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                                            "& .action-indicator": {"opacity": "1", "transform": "scale(1.1)"},
+                                        },
+                                        
+                                        _before={
+                                            "content": '""',
+                                            "position": "absolute",
+                                            "top": "0",
+                                            "left": "-100%",
+                                            "width": "100%",
+                                            "height": "100%",
+                                            "background": "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent)",
+                                            "transition": "left 0.5s ease",
+                                        },
+                                        
+                                        margin_bottom="1rem",
+                                    )
+                                ),
+                                width="100%",
+                                spacing="0",
+                            ),
+                            
+                            # Empty states with modern styling
+                            rx.box(
+                                rx.cond(
+                                    SearchModalState.search_query != "",
+                                    rx.vstack(
+                                        rx.box(
+                                            rx.icon(tag="search-x", size=48, color="rgba(255, 255, 255, 0.3)"),
+                                            width="4rem",
+                                            height="4rem",
+                                            border_radius="50%",
+                                            background="rgba(255, 255, 255, 0.05)",
+                                            border="1px solid rgba(255, 255, 255, 0.1)",
+                                            display="flex",
+                                            align_items="center",
+                                            justify_content="center",
+                                            backdrop_filter="blur(10px)",
+                                        ),
+                                        rx.text(
+                                            "No assets found",
+                                            font_size="1.1rem",
+                                            font_weight="600",
+                                            color="white",
+                                            margin_top="1rem",
+                                        ),
+                                        rx.text(
+                                            "Try adjusting your search terms or check spelling",
+                                            color="rgba(255, 255, 255, 0.6)",
+                                            font_size="0.9rem",
+                                            text_align="center",
+                                        ),
+                                        spacing="2",
+                                        align="center",
+                                        padding="3rem 2rem",
+                                    ),
+                                    rx.vstack(
+                                        rx.box(
+                                            rx.icon(tag="search", size=48, color="rgba(59, 130, 246, 0.6)"),
+                                            width="4rem",
+                                            height="4rem",
+                                            border_radius="50%",
+                                            background="linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%)",
+                                            border="1px solid rgba(59, 130, 246, 0.3)",
+                                            display="flex",
+                                            align_items="center",
+                                            justify_content="center",
+                                            backdrop_filter="blur(10px)",
+                                            box_shadow="0 0 30px rgba(59, 130, 246, 0.2)",
+                                        ),
+                                        rx.text(
+                                            "Start your search",
+                                            font_size="1.1rem",
+                                            font_weight="600",
+                                            color="white",
+                                            margin_top="1rem",
+                                        ),
+                                        rx.text(
+                                            "Enter asset names, types, locations, or serial numbers",
+                                            color="rgba(255, 255, 255, 0.6)",
+                                            font_size="0.9rem",
+                                            text_align="center",
+                                        ),
+                                        spacing="2",
+                                        align="center",
+                                        padding="3rem 2rem",
+                                    ),
+                                ),
+                            ),
+                        ),
+                        
+                        # Results container styling
+                        padding="0 1.5rem 1.5rem 1.5rem",
+                        background="linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%)",
+                        border="1px solid rgba(255, 255, 255, 0.1)",
+                        border_radius="0 0 1.5rem 1.5rem",
+                        min_height="200px",
+                        max_height="400px",
+                        overflow_y="auto",
+                        
+                        # Custom scrollbar
+                        style={
+                            "&::-webkit-scrollbar": {"width": "6px"},
+                            "&::-webkit-scrollbar-track": {"background": "rgba(255, 255, 255, 0.1)", "border-radius": "3px"},
+                            "&::-webkit-scrollbar-thumb": {"background": "rgba(59, 130, 246, 0.5)", "border-radius": "3px"},
+                            "&::-webkit-scrollbar-thumb:hover": {"background": "rgba(59, 130, 246, 0.7)"},
+                        }
+                    ),
+                    
+                    # Modal container styling
+                    position="fixed",
+                    top="50%",
+                    left="50%",
+                    transform="translate(-50%, -50%) scale(0.95)",
+                    width="90%",
+                    max_width="700px",
+                    background="rgba(15, 15, 20, 0.85)",
+                    border="1px solid rgba(255, 255, 255, 0.2)",
+                    border_radius="1.5rem",
+                    backdrop_filter="blur(40px) saturate(180%)",
+                    box_shadow="0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                    z_index="1600",
+                    animation="modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+                    style={
+                        "@keyframes modalSlideIn": {
+                            "0%": {"transform": "translate(-50%, -50%) scale(0.8)", "opacity": "0"},
+                            "100%": {"transform": "translate(-50%, -50%) scale(1)", "opacity": "1"}
+                        }
+                    }
+                ),
+            )
+        ),
+    )

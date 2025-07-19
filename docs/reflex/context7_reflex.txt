@@ -1,0 +1,1316 @@
+TITLE: Apply Multiple API Transformers to Reflex App
+DESCRIPTION: This example shows how to apply multiple transformations to the Reflex ASGI app by providing a sequence (list) of transformers to `rx.App`. It combines an integrated FastAPI app with a custom logging middleware, demonstrating chained extensions and modifications.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/api-routes/overview.md#_snippet_3
+
+LANGUAGE: Python
+CODE:
+```
+import reflex as rx
+from fastapi import FastAPI
+from starlette.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
+
+# Create a FastAPI app
+fastapi_app = FastAPI(title="My API")
+
+# Add routes to the FastAPI app
+@fastapi_app.get("/api/items")
+async def get_items():
+    return dict(items=["Item1", "Item2", "Item3"])
+
+# Create a transformer function
+def add_logging_middleware(app):
+    # This is a simple example middleware that logs requests
+    async def middleware(scope, receive, send):
+        # Log the request path
+        path = scope["path"]
+        print("Request:", path)
+        await app(scope, receive, send)
+    return middleware
+
+# Create a Reflex app with multiple transformers
+app = rx.App(api_transformer=[fastapi_app, add_logging_middleware])
+```
+
+----------------------------------------
+
+TITLE: Reflex Dialog Component API Reference
+DESCRIPTION: Defines the available Reflex dialog components and their basic structure, including `DialogRoot` and `DialogContent` examples, along with descriptions of each component's purpose.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/overlay/dialog.md#_snippet_0
+
+LANGUAGE: APIDOC
+CODE:
+```
+components:
+  - rx.dialog.root
+  - rx.dialog.trigger
+  - rx.dialog.title
+  - rx.dialog.content
+  - rx.dialog.description
+  - rx.dialog.close
+
+only_low_level:
+  - True
+
+Reflex Dialog Components:
+
+- `rx.dialog.root`: Contains all the parts of a dialog.
+  - Example `DialogRoot` usage:
+    ```python
+    lambda **props: rx.dialog.root(
+        rx.dialog.trigger(rx.button("Open Dialog")),
+        rx.dialog.content(
+            rx.dialog.title("Welcome to Reflex!"),
+            rx.dialog.description(
+                "This is a dialog component. You can render anything you want in here.",
+            ),
+            rx.dialog.close(
+                rx.button("Close Dialog"),
+            ),
+        ),
+        **props,
+    )
+    ```
+
+- `rx.dialog.trigger`: Wraps the control that will open the dialog.
+
+- `rx.dialog.content`: Contains the content of the dialog.
+  - Example `DialogContent` usage (props applied to content):
+    ```python
+    lambda **props: rx.dialog.root(
+        rx.dialog.trigger(rx.button("Open Dialog")),
+        rx.dialog.content(
+            rx.dialog.title("Welcome to Reflex!"),
+            rx.dialog.description(
+                "This is a dialog component. You can render anything you want in here.",
+            ),
+            rx.dialog.close(
+                rx.button("Close Dialog"),
+            ),
+            **props,
+        ),
+    )
+    ```
+
+- `rx.dialog.title`: Is a title that is announced when the dialog is opened.
+
+- `rx.dialog.description`: Is a description that is announced when the dialog is opened.
+
+- `rx.dialog.close`: Wraps the control that will close the dialog.
+```
+
+----------------------------------------
+
+TITLE: Reflex ReactFlow Wrapper Components API Reference
+DESCRIPTION: Comprehensive API documentation for the Reflex components wrapping the `reactflow` library. This includes the base `ReactFlowLib` class, the main `ReactFlow` component with its props and event handlers, and the auxiliary `Background` and `Controls` components with their respective properties. It also outlines the component creation methods.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/wrapping-react/example.md#_snippet_3
+
+LANGUAGE: APIDOC
+CODE:
+```
+ReactFlowLib(rx.Component):
+  - Base class for ReactFlow components.
+  - library: "reactflow" (string) - Specifies the JavaScript library being wrapped.
+  - _get_custom_code() -> str:
+    - Method to inject custom JavaScript or CSS.
+    - Returns: "import 'reactflow/dist/style.css';" to import ReactFlow's default styling.
+
+ReactFlow(ReactFlowLib):
+  - tag: "ReactFlow" (string) - The HTML tag or component name for ReactFlow.
+  - nodes: rx.Var[List[Dict[str, Any]]] - Data representing the nodes in the flow.
+  - edges: rx.Var[List[Dict[str, Any]]] - Data representing the edges connecting nodes.
+  - fit_view: rx.Var[bool] - If true, fits the view to the nodes on initial load.
+  - nodes_draggable: rx.Var[bool] - If true, nodes can be dragged.
+  - nodes_connectable: rx.Var[bool] - If true, new connections can be made between nodes.
+  - nodes_focusable: rx.Var[bool] - If true, nodes can be focused.
+  - on_nodes_change: rx.EventHandler[lambda e0: [e0]] - Event handler triggered when nodes change (e.g., position, selection).
+  - on_connect: rx.EventHandler[lambda e0: [e0]] - Event handler triggered when a new connection is established.
+  - react_flow = ReactFlow.create: Callable method to create an instance of the ReactFlow component.
+
+Background(ReactFlowLib):
+  - tag: "Background" (string) - The HTML tag or component name for the Background.
+  - color: rx.Var[str] - The color of the background.
+  - gap: rx.Var[int] - The gap between background elements.
+  - size: rx.Var[int] - The size of the background elements.
+  - variant: rx.Var[str] - The style variant of the background (e.g., 'dots', 'lines').
+  - background = Background.create: Callable method to create an instance of the Background component.
+
+Controls(ReactFlowLib):
+  - tag: "Controls" (string) - The HTML tag or component name for the Controls.
+  - controls = Controls.create: Callable method to create an instance of the Controls component.
+```
+
+----------------------------------------
+
+TITLE: Import API Reference Module
+DESCRIPTION: Imports the `api_reference` module from `pcweb.pages.docs`, typically used for linking to API documentation within the Reflex application.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/wrapping-react/library-and-tags.md#_snippet_0
+
+LANGUAGE: python
+CODE:
+```
+from pcweb.pages.docs import api_reference
+```
+
+----------------------------------------
+
+TITLE: Initialize OpenAI Client with API Key in Reflex State
+DESCRIPTION: This Python snippet demonstrates how to initialize the `AsyncOpenAI` client within a Reflex `state.py` file. It sets up the client with a hardcoded API key, enabling the application to make asynchronous calls to the OpenAI API for AI-powered features.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/getting_started/chatapp_tutorial.md#_snippet_22
+
+LANGUAGE: python
+CODE:
+```
+import os
+from openai import AsyncOpenAI
+
+import reflex as rx
+
+# Initialize the OpenAI client
+client = AsyncOpenAI(api_key="YOUR_OPENAI_API_KEY")
+```
+
+----------------------------------------
+
+TITLE: Reflex `rx.download` Event API Reference
+DESCRIPTION: Comprehensive API documentation for the `rx.download` event in Reflex, detailing its purpose, parameters, and supported data types for direct downloads. It explains how it prompts browser downloads and integrates with backend events, allowing for flexible file and data export.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/assets/upload_and_download_files.md#_snippet_6
+
+LANGUAGE: APIDOC
+CODE:
+```
+rx.download(url: str = None, filename: str = None, data: Union[str, bytes, PIL.Image.Image, Var] = None)
+  - Triggers a file download in the user's browser.
+  - This event forces a download prompt, even for files that could otherwise be displayed directly in the browser.
+  - It can be triggered from backend event handlers.
+  - Parameters:
+    - url (str, optional): The URL of the file to download. If provided, `data` should not be used.
+    - filename (str, optional): The name to use for the downloaded file. If not provided, the original filename from the URL or a default name for `data` will be used.
+    - data (Union[str, bytes, PIL.Image.Image, Var], optional): The data to download directly. Can be `str`, `bytes`, `PIL.Image.Image`, or a Reflex `Var`. If a `Var` is provided and not a string, it will be converted to a string using `JSON.stringify`. If provided, `url` should not be used.
+  - Usage Examples:
+    - `rx.download(url="/path/to/file.pdf")`
+    - `rx.download(url="/path/to/image.png", filename="my_image.png")`
+    - `rx.download(data="Hello, World!", filename="greeting.txt")`
+    - `rx.download(data=my_state_var, filename="state_data.json")`
+```
+
+----------------------------------------
+
+TITLE: Reflex Project Initialization Template Options
+DESCRIPTION: Example output from the `reflex init` command, showing the available project templates and prompting the user to select one. Each option includes a template name and a URL for reference.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/getting_started/installation.md#_snippet_6
+
+LANGUAGE: bash
+CODE:
+```
+Initializing the web directory.
+
+Get started with a template:
+(0) blank (https://blank-template.reflex.run) - A minimal template
+(1) dashboard (https://dashboard-new.reflex.run/) - A dashboard with tables and graphs
+(2) sales (https://sales-new.reflex.run/) - An app to manage sales and customers
+(3) ai_image_gen (https://ai-image-gen.reflex.run/) - An app to generate images using AI
+(4) ci_template (https://cijob.reflex.run/) - A template for continuous integration
+(5) api_admin_panel (https://api-admin-panel.reflex.run/) - An admin panel for an api.
+(6) nba (https://nba-new.reflex.run/) - A data visualization app for NBA data.
+(7) customer_data_app (https://customer-data-app.reflex.run/) - An app to manage customer data.
+Which template would you like to use? (0):
+```
+
+----------------------------------------
+
+TITLE: Initialize Reflex project with API Admin Panel template
+DESCRIPTION: This command initializes a new Reflex project using the `api_admin_panel` template. It sets up the basic project structure and files required to run the application locally, providing a starting point for development.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/templates/api-admin-panel.md#_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+reflex init --template api_admin_panel
+```
+
+----------------------------------------
+
+TITLE: Integrate Secure FastAPI App with Reflex
+DESCRIPTION: This example illustrates integrating a FastAPI application that includes authentication (using `OAuth2PasswordBearer`) and a protected route into a Reflex app. It also shows how to define a token endpoint within the integrated FastAPI app.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/api-routes/overview.md#_snippet_1
+
+LANGUAGE: Python
+CODE:
+```
+import reflex as rx
+from fastapi import FastAPI, Depends
+from fastapi.security import OAuth2PasswordBearer
+
+# Create a FastAPI app with authentication
+fastapi_app = FastAPI(title="Secure API")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# Add a protected route
+@fastapi_app.get("/api/protected")
+async def protected_route(token: str = Depends(oauth2_scheme)):
+    return dict(message="This is a protected endpoint")
+
+# Create a token endpoint
+@fastapi_app.post("/token")
+async def login(username: str, password: str):
+    # In a real app, you would validate credentials
+    if username == "user" and password == "password":
+        return dict(access_token="example_token", token_type="bearer")
+    return dict(error="Invalid credentials")
+
+# Create a Reflex app with the FastAPI app as the API transformer
+app = rx.App(api_transformer=fastapi_app)
+```
+
+----------------------------------------
+
+TITLE: Import Reflex Components and API Reference
+DESCRIPTION: Imports the `reflex` library as `rx` and `api_reference` from `pcweb.pages.docs` for use in the application, typically for accessing documentation paths.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/typography/link.md#_snippet_0
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+from pcweb.pages.docs import api_reference
+```
+
+----------------------------------------
+
+TITLE: Reflex Enterprise Map API: Common Methods
+DESCRIPTION: Comprehensive documentation for frequently used methods of the `reflex-enterprise` map API, categorized by functionality: View Control, Location Services, Information Retrieval, and Layer Management. Each method includes its signature and a brief description of its purpose and parameters.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/enterprise/map/index.md#_snippet_10
+
+LANGUAGE: APIDOC
+CODE:
+```
+View Control:
+  fly_to(latlng, zoom, options)
+    - Description: Smooth animated movement to a specified geographic location.
+    - Parameters:
+      - latlng: [latitude, longitude] array or LatLng object.
+      - zoom: Target zoom level (number).
+      - options: Optional configuration object (e.g., duration, easeLinearity).
+  set_view(latlng, zoom, options)
+    - Description: Instantaneous movement to a specified geographic location.
+    - Parameters:
+      - latlng: [latitude, longitude] array or LatLng object.
+      - zoom: Target zoom level (number).
+      - options: Optional configuration object.
+  set_zoom(zoom)
+    - Description: Changes the map's current zoom level.
+    - Parameters:
+      - zoom: New zoom level (number).
+  zoom_in()
+    - Description: Increases the map's zoom level by one.
+  zoom_out()
+    - Description: Decreases the map's zoom level by one.
+  fit_bounds(bounds, options)
+    - Description: Sets the map view to fit a given geographical bounding box.
+    - Parameters:
+      - bounds: LatLngBounds object or array of LatLngs.
+      - options: Optional configuration object (e.g., padding, maxZoom).
+
+Location Services:
+  locate(options)
+    - Description: Tries to locate the user's current position using the browser's geolocation API.
+    - Parameters:
+      - options: Optional configuration object (e.g., watch, setView, maxZoom).
+  stop_locate()
+    - Description: Stops watching the user's location if `locate(watch: true)` was called.
+
+Information Retrieval:
+  get_center(callback)
+    - Description: Retrieves the current geographical center of the map.
+    - Parameters:
+      - callback: A function to be called with the LatLng object of the center.
+    - Returns: LatLng object (via callback).
+  get_zoom(callback)
+    - Description: Retrieves the current zoom level of the map.
+    - Parameters:
+      - callback: A function to be called with the current zoom level (number).
+    - Returns: Number (via callback).
+  get_bounds(callback)
+    - Description: Retrieves the current geographical bounds of the map view.
+    - Parameters:
+      - callback: A function to be called with the LatLngBounds object.
+    - Returns: LatLngBounds object (via callback).
+  get_size(callback)
+    - Description: Retrieves the current size (width and height) of the map container in pixels.
+    - Parameters:
+      - callback: A function to be called with the Point object representing size.
+    - Returns: Point object (via callback).
+
+Layer Management:
+  add_layer(layer)
+    - Description: Adds a given layer to the map.
+    - Parameters:
+      - layer: The layer object to add.
+  remove_layer(layer)
+    - Description: Removes a given layer from the map.
+    - Parameters:
+      - layer: The layer object to remove.
+  has_layer(layer)
+    - Description: Checks if the given layer is currently added to the map.
+    - Parameters:
+      - layer: The layer object to check.
+    - Returns: Boolean.
+```
+
+----------------------------------------
+
+TITLE: Reflex Song Search UI Example
+DESCRIPTION: A practical example demonstrating a song search user interface built with Reflex components. It combines an input field for searching with dynamically generated song cards, showcasing component composition and layout using `rx.flex` and `rx.card`.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/forms/input-ll.md#_snippet_4
+
+LANGUAGE: python
+CODE:
+```
+def song(title, initials: str, genre: str):
+    return rx.card(rx.flex(
+        rx.flex(
+            rx.avatar(fallback=initials),
+            rx.flex(
+                rx.text(title, size="2", weight="bold"),
+                rx.text(genre, size="1", color_scheme="gray"),
+                direction="column",
+                spacing="1",
+            ),
+            direction="row",
+            align_items="left",
+            spacing="1",
+        ),
+        rx.flex(
+            rx.icon(tag="chevron_right"),
+            align_items="center",
+        ),
+        justify="between",
+    ))
+
+def search():
+    return rx.card(
+    rx.flex(
+        rx.input(
+            rx.input.slot(
+                rx.icon(tag="search"),
+            ),
+            placeholder="Search songs...",
+        ),
+        rx.flex(
+            song("The Less I Know", "T", "Rock"),
+            song("Breathe Deeper", "ZB", "Rock"),
+            song("Let It Happen", "TF", "Rock"),
+            song("Borderline", "ZB", "Pop"),
+            song("Lost In Yesterday", "TO", "Rock"),
+            song("Is It True", "TO", "Rock"),
+            direction="column",
+            spacing="1",
+        ),
+        direction="column",
+        spacing="3",
+    ),
+    style={"maxWidth": 500},
+)
+```
+
+----------------------------------------
+
+TITLE: Reflex File Upload Handling and Storage API
+DESCRIPTION: This section details the API for handling file uploads in Reflex applications, including the required event handler signature, utilities for binding handlers, and functions for managing file storage and public access URLs.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/forms/upload.md#_snippet_9
+
+LANGUAGE: APIDOC
+CODE:
+```
+Reflex File Upload Handling:
+
+Event Handler Signature:
+  async def handle_upload(self, files: list[rx.UploadFile])
+    - Purpose: Asynchronous function to process uploaded files.
+    - Parameters:
+      - files: A list of `rx.UploadFile` instances, which are wrappers around FastAPI's `UploadFile`.
+
+Binding Event Handlers:
+  - `rx.upload_files(upload_id: str)`
+    - Purpose: Utility function to pass uploaded files to an event handler.
+    - Usage: Bind to triggers like `on_drop` (for `rx.upload`) or `on_click` (for buttons).
+    - Example: `on_drop=State.handle_upload(rx.upload_files(upload_id="my_upload_id"))`
+
+File System Utilities:
+  - `rx.get_upload_dir() -> Path`
+    - Purpose: Returns the directory path where uploaded files should be saved.
+    - Default: `./uploaded_files`
+    - Customization: Can be overridden by the `REFLEX_UPLOADED_FILES_DIR` environment variable.
+
+  - `rx.get_upload_url(filename: str) -> str`
+    - Purpose: Generates the public URL for a file saved in the upload directory.
+    - Backend Mount Point: Files in `rx.get_upload_dir()` are publicly accessible via `/_upload/`.
+    - Example: `rx.image(src=rx.get_upload_url(img_filename))`
+```
+
+----------------------------------------
+
+TITLE: Basic Reflex HoverCard Implementation Example
+DESCRIPTION: A fundamental example demonstrating the construction of a Reflex HoverCard. It shows the essential combination of `rx.hover_card.root`, `rx.hover_card.trigger` wrapping a link, and `rx.hover_card.content` holding simple text.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/overlay/hover_card.md#_snippet_2
+
+LANGUAGE: python
+CODE:
+```
+rx.text(
+    "Hover over the text to see the tooltip. ",
+    rx.hover_card.root(
+        rx.hover_card.trigger(
+            rx.link("Hover over me", color_scheme="blue", underline="always"),
+        ),
+        rx.hover_card.content(
+            rx.text("This is the hovercard content."),
+        ),
+    ),
+)
+```
+
+----------------------------------------
+
+TITLE: Reflex HoverCard Component API and Definitions
+DESCRIPTION: Documents the core components of the Reflex HoverCard (`root`, `content`, `trigger`) and provides their programmatic definitions as Python lambda functions, illustrating how they are structured and accept properties.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/overlay/hover_card.md#_snippet_0
+
+LANGUAGE: APIDOC
+CODE:
+```
+components:
+  - rx.hover_card.root
+  - rx.hover_card.content
+  - rx.hover_card.trigger
+
+only_low_level:
+  - True
+
+HoverCardRoot: |
+  lambda **props: rx.hover_card.root(
+      rx.hover_card.trigger(
+          rx.link("Hover over me"),
+      ),
+      rx.hover_card.content(
+          rx.text("This is the tooltip content."),
+      ),
+      **props
+  )
+
+HoverCardContent: |
+  lambda **props: rx.hover_card.root(
+      rx.hover_card.trigger(
+          rx.link("Hover over me"),
+      ),
+      rx.hover_card.content(
+          rx.text("This is the tooltip content."),
+          **props
+      ),
+  )
+```
+
+----------------------------------------
+
+TITLE: Define Reflex Backend State and Event Handlers in Python
+DESCRIPTION: Reflex manages application state and logic on the backend using a Python `State` class. This example defines `url` and `profile_image` as state variables and `set_profile` as an event handler, demonstrating how to update state based on user input and interact with external APIs using libraries like `requests`.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/advanced_onboarding/how-reflex-works.md#_snippet_7
+
+LANGUAGE: python
+CODE:
+```
+class GithubState(rx.State):
+    url: str = "https://github.com/reflex-dev"
+    profile_image: str = "https://avatars.githubusercontent.com/u/104714959"
+
+    def set_profile(self, username: str):
+        if username == "":
+            return
+        github_data = requests.get(f"https://api.github.com/users/\{username}").json()
+        self.url = github_data["url"]
+        self.profile_image = github_data["avatar_url"]
+```
+
+----------------------------------------
+
+TITLE: Interactive Map API Demo with Reflex
+DESCRIPTION: Demonstrates how to integrate and use the `reflex-enterprise` map API within a Reflex application. It showcases interactive map controls like flying to specific locations, changing zoom levels, retrieving map information, and managing map state through Reflex's state management system.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/enterprise/map/index.md#_snippet_9
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+import reflex_enterprise as rxe
+
+map_api = rxe.map.api("api-demo-map")
+
+class MapAPIState(rx.State):
+    current_location: str = "London"
+
+    def fly_to_london(self):
+        yield map_api.fly_to([51.505, -0.09], 13)
+        self.current_location = "London"
+
+    def fly_to_paris(self):
+        yield map_api.fly_to([48.8566, 2.3522], 13)
+        self.current_location = "Paris"
+
+def map_api_example():
+    return rx.vstack(
+        rx.text(f"Current location: {MapAPIState.current_location}"),
+        rx.hstack(
+            rx.button("Fly to London", on_click=MapAPIState.fly_to_london),
+            rx.button("Fly to Paris", on_click=MapAPIState.fly_to_paris),
+            rx.button("Zoom Out", on_click=map_api.set_zoom(8)),
+            rx.button("Log Center", on_click=map_api.get_center(callback=rx.console_log)),
+            spacing="2"
+        ),
+        rxe.map(
+            rxe.map.tile_layer(
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                attribution='&copy; OpenStreetMap contributors'
+            ),
+            id="api-demo-map",
+            center=rxe.map.latlng(lat=51.505, lng=-0.09),
+            zoom=13.0,
+            height="350px",
+            width="100%",
+        ),
+        spacing="3"
+    )
+```
+
+----------------------------------------
+
+TITLE: Reflex Chat Input Bar for OpenAI API Integration
+DESCRIPTION: This Python code defines the `action_bar` Reflex component, configured for OpenAI API integration. It includes an input field that updates `State.question` on `on_change` and an 'Ask' button that triggers `State.answer` on `on_click`, initiating the call to the OpenAI API.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/getting_started/chatapp_tutorial.md#_snippet_23
+
+LANGUAGE: python
+CODE:
+```
+def action_bar() -> rx.Component:
+    return rx.hstack(
+        rx.input(
+            value=State.question,
+            placeholder="Ask a question",
+            # on_change event updates the input as the user types a prompt.
+            on_change=State.set_question,
+            style=style.input_style),
+
+        # on_click event triggers the API to send the prompt to OpenAI.
+        rx.button("Ask", on_click=State.answer, style=style.button_style),
+    )
+```
+
+----------------------------------------
+
+TITLE: Reflex AG Grid API: Select/Deselect All Rows Example
+DESCRIPTION: Demonstrates how to integrate AG Grid with Reflex, populate it with data from a Pandas DataFrame, and use `rxe.ag_grid.api()` to call `select_all()` and `deselect_all()` methods. It highlights the need to match the `id` of the API instance with the grid component and the snake_case conversion for method calls.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/enterprise/ag_grid/index.md#_snippet_16
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+import reflex_enterprise as rxe
+import pandas as pd
+
+df = pd.read_csv(
+    "https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv"
+)
+
+column_defs = [
+    {"field": "country", "checkboxSelection": True},
+    {"field": "pop"},
+    {"field": "continent"},
+]
+
+def ag_grid_api_simple():
+    my_api = rxe.ag_grid.api(id="ag_grid_basic_row_selection")
+    return rx.vstack(
+            rxe.ag_grid(
+            id="ag_grid_basic_row_selection",
+            row_data=df.to_dict("records"),
+            column_defs=column_defs,
+            row_selection="single",
+            width="100%",
+            height="40vh",
+        ),
+        rx.button("Select All", on_click=my_api.select_all()),
+        rx.button("Deselect All", on_click=my_api.deselect_all()),
+        spacing="4",
+        width="100%",
+    )
+```
+
+----------------------------------------
+
+TITLE: Handle Reflex Map API Callbacks for Information Retrieval
+DESCRIPTION: Illustrates how to use callback functions to process results from asynchronous map API calls, such as retrieving the map's center coordinates or current bounds. This pattern is essential for handling data returned by map interactions and updating the application state accordingly.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/enterprise/map/index.md#_snippet_13
+
+LANGUAGE: python
+CODE:
+```
+class CallbackMapState(rx.State):
+    map_info: str = ""
+
+    def handle_center_result(self, result):
+        lat = result.get("lat", 0)
+        lng = result.get("lng", 0)
+        self.map_info = f"Center: {lat:.4f}, {lng:.4f}"
+
+    def handle_bounds_result(self, result):
+        # result will contain bounds information
+        self.map_info = f"Bounds: {result}"
+
+    def get_map_info(self):
+        map_api = rxe.map.api("info-map")
+        yield map_api.get_center(self.handle_center_result)
+        # or
+        yield map_api.get_bounds(self.handle_bounds_result)
+```
+
+----------------------------------------
+
+TITLE: Python API Call to LlamaIndex Agentic Workflow
+DESCRIPTION: This asynchronous Python code snippet demonstrates how the Reflex frontend interacts with a deployed LlamaIndex agentic workflow. It constructs a JSON payload containing chat history and user input, then sends a POST request to the workflow's API endpoint. The response is processed to simulate a streaming text effect in the UI.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/templates/llamaindex-app.md#_snippet_1
+
+LANGUAGE: python
+CODE:
+```
+client = httpx.AsyncClient()
+
+# call the agentic workflow
+input_payload = {
+    "chat_history_dicts": chat_history_dicts,
+    "user_input": question,
+}
+deployment_name = os.environ.get("DEPLOYMENT_NAME", "MyDeployment")
+apiserver_url = os.environ.get("APISERVER_URL", "http://localhost:4501")
+response = await client.post(
+    f"{apiserver_url}/deployments/{deployment_name}/tasks/create",
+    json={"input": json.dumps(input_payload)},
+    timeout=60,
+)
+answer = response.text
+
+for i in range(len(answer)):
+    # Pause to show the streaming effect.
+    await asyncio.sleep(0.01)
+    # Add one letter at a time to the output.
+    self.chat_history[-1] = (
+        self.chat_history[-1][0],
+        answer[: i + 1],
+    )
+    yield
+```
+
+----------------------------------------
+
+TITLE: Reflex GitHub Profile Viewer App Example
+DESCRIPTION: A complete Reflex application demonstrating state management and UI rendering. It fetches GitHub user data using `requests`, updates state variables (`url`, `profile_image`), and displays them using Reflex components like `rx.hstack`, `rx.link`, `rx.avatar`, and `rx.input` with an `on_blur` event handler.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/blog/2024-03-21-reflex-architecture.md#_snippet_1
+
+LANGUAGE: python
+CODE:
+```
+import requests
+import reflex as rx
+
+class GithubState(rx.State):
+    url: str = "https://github.com/reflex-dev"
+    profile_image: str = "https://avatars.githubusercontent.com/u/104714959"
+
+    def set_profile(self, username: str):
+        if username == "":
+            return
+        github_data = requests.get(f"https://api.github.com/users/{username}").json()
+        self.url = github_data["url"]
+        self.profile_image = github_data["avatar_url"]
+
+def index():
+    return rx.hstack(
+        rx.link(
+            rx.avatar(src=GithubState.profile_image),
+            href=GithubState.url,
+        ),
+        rx.input(
+            placeholder="Your Github username",
+            on_blur=GithubState.set_profile,
+        ),
+    )
+```
+
+----------------------------------------
+
+TITLE: Reflex UI for Live Area Chart with Stream Controls
+DESCRIPTION: These Reflex UI examples demonstrate how to construct a live-updating area chart using `rx.recharts` components, integrated with state-driven stream controls. They bind chart data to `StreamingState.data` and provide 'Start Stream' and 'Stop Stream' buttons that trigger background streaming methods, with their disabled states dynamically linked to the `StreamingState.stream` flag. The examples show variations in styling and attribute usage.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/blog/2023-10-11-graphing-update.md#_snippet_4
+
+LANGUAGE: python
+CODE:
+```
+rx.vstack(
+    rx.recharts.area_chart(
+        rx.recharts.area(
+            data_key="pv",
+            fill="#48BB78",
+            stroke="#48BB78",
+            type_="natural",
+        ),
+        rx.recharts.x_axis(
+            data_key="name",
+        ),
+        rx.recharts.y_axis(),
+        data=StreamingState.data,
+        width="90%",
+        height=400,
+    ),
+    rx.hstack(
+        rx.button(
+            "Start Stream",
+            on_click=StreamingState.start_stream,
+            is_disabled=StreamingState.stream,
+            width="50%",
+            color_scheme="green",
+        ),
+        rx.button(
+            "Stop Stream",
+            on_click=StreamingState.stop_stream,
+            is_disabled=StreamingState.stream == False,
+            width="50%",
+            color_scheme="red",
+        ),
+        width="100%",
+    )
+)
+```
+
+LANGUAGE: python
+CODE:
+```
+def index():
+    return rx.vstack(
+    rx.recharts.area_chart(
+        rx.recharts.area(
+            data_key="pv",
+            stroke="#82ca9d",
+            fill="#82ca9d",
+            type_="natural",
+        ),
+        rx.recharts.x_axis(
+            data_key="name",
+        ),
+        rx.recharts.y_axis(),
+        rx.recharts.legend(),
+        data=StreamingState.data,
+        width="100%",
+        height=400,
+    ),
+    rx.hstack(
+        rx.button(
+            "Start Stream",
+            on_click=StreamingState.start_stream,
+            disabled=StreamingState.stream,
+            width="50%",
+        ),
+        rx.button(
+            "Stop Stream",
+            on_click=StreamingState.stop_stream,
+            width="50%",
+        ),
+        width="100%",
+    ),
+    width="100%",
+)
+```
+
+----------------------------------------
+
+TITLE: Reflex Backend Reserved API Routes
+DESCRIPTION: This section documents the essential backend routes that are reserved by the Reflex runtime for its internal operations. Users should avoid overriding these routes unless they fully understand the implications, as doing so can break core Reflex functionality.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/api-routes/overview.md#_snippet_4
+
+LANGUAGE: APIDOC
+CODE:
+```
+### Ping
+Path: /ping/
+Method: GET
+Description: Used to check the health and responsiveness of the Reflex backend.
+Expected Return: "pong"
+
+### Event
+Path: /_event
+Method: POST
+Description: This route is crucial for the frontend to communicate events (e.g., user interactions) to the backend. Overriding this route will break the event communication between the frontend and backend.
+
+### Upload
+Path: /_upload
+Method: POST
+Description: This route is specifically used for handling file uploads when utilizing the `rx.upload()` functionality within a Reflex application.
+```
+
+----------------------------------------
+
+TITLE: Reflex Recharts GraphingTooltip Component API
+DESCRIPTION: API documentation for the `rx.recharts.GraphingTooltip` component in Reflex, detailing its configurable properties for customizing tooltip appearance and behavior within charts.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/graphing/general/tooltip.md#_snippet_1
+
+LANGUAGE: APIDOC
+CODE:
+```
+rx.recharts.GraphingTooltip
+  - separator (str): Sets the separator between the data key and value.
+  - view_box (dict): Defines the dimensions of the chart's viewbox.
+  - allow_escape_view_box (dict): Determines whether the tooltip can extend beyond the viewBox horizontally (x) or vertically (y).
+  - wrapper_style (dict): Allows styling the outer container or wrapper of the tooltip.
+  - content_style (dict): Allows styling the inner content area of the tooltip.
+  - position (dict): Specifies the position of the tooltip.
+  - is_animation_active (bool): Determines if the tooltip animation is active or not.
+```
+
+----------------------------------------
+
+TITLE: Import Reflex and Custom Component Paths
+DESCRIPTION: Imports necessary Reflex modules and specific paths for custom components documentation and gallery within a Reflex application context, typically used for internal documentation or examples.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/custom-components/overview.md#_snippet_0
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+from pcweb.pages.docs import custom_components
+from pcweb.pages.docs.custom_components import custom_components as custom_components_gallery
+```
+
+----------------------------------------
+
+TITLE: Reflex Enterprise Map API: Leaflet Interoperability and Naming Conventions
+DESCRIPTION: Explains that the `reflex-enterprise` map API provides full access to the underlying Leaflet map API. It details the automatic conversion of Python's `snake_case` method names to JavaScript's `camelCase` for seamless integration with Leaflet's native methods, allowing direct use of the Leaflet Map documentation.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/enterprise/map/index.md#_snippet_11
+
+LANGUAGE: APIDOC
+CODE:
+```
+Leaflet API Interoperability:
+  Description: The Reflex Enterprise Map API provides direct access to the complete underlying Leaflet map instance. Any method available on a standard Leaflet map object can be invoked through the MapAPI instance.
+  Naming Convention: Function names are automatically converted from Python's snake_case to JavaScript's camelCase to match Leaflet's native API.
+  Examples:
+    - Python: map_api.pan_to(latlng)
+      JavaScript Equivalent: map.panTo(latlng)
+    - Python: map_api.set_max_bounds(bounds)
+      JavaScript Equivalent: map.setMaxBounds(bounds)
+    - Python: map_api.get_pixel_bounds()
+      JavaScript Equivalent: map.getPixelBounds()
+    - Python: map_api.container_point_to_lat_lng(point)
+      JavaScript Equivalent: map.containerPointToLatLng(point)
+```
+
+----------------------------------------
+
+TITLE: Reflex Component Example Imports
+DESCRIPTION: Imports necessary modules for Reflex component examples, including `random` for data generation and `reflex` for UI components.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/forms/select.md#_snippet_1
+
+LANGUAGE: python
+CODE:
+```
+import random
+import reflex as rx
+from pcweb.templates.docpage import style_grid
+```
+
+----------------------------------------
+
+TITLE: Reflex AG Grid API: Direct Call in `on_click`
+DESCRIPTION: Shows an alternative way to call AG Grid API methods in Reflex by directly instantiating `rxe.ag_grid.api()` within an `on_click` event handler. This approach eliminates the need for a separate API variable, requiring only the `id` of the target AG Grid component.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/enterprise/ag_grid/index.md#_snippet_18
+
+LANGUAGE: python
+CODE:
+```
+rx.button("Select all", on_click=rxe.ag_grid.api(id="ag_grid_basic_row_selection").select_all()),
+```
+
+----------------------------------------
+
+TITLE: Importing Reflex and Components for Cloud App
+DESCRIPTION: This Python snippet demonstrates the necessary imports for a Reflex application, including the core `reflex` library, `reflex_image_zoom` for image display, and `pcweb.pages.docs` for documentation-related components. These imports are foundational for building and running Reflex applications, especially when preparing for cloud deployment.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/hosting/deploy-quick-start.md#_snippet_0
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+from reflex_image_zoom import image_zoom
+from pcweb.pages import docs
+```
+
+----------------------------------------
+
+TITLE: Import Reflex and Utility Modules
+DESCRIPTION: Imports the core Reflex library along with specific modules for documentation pages, styling utilities, and color definitions. These imports are foundational for building and styling Reflex applications, especially for documentation or example purposes.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/assets/upload_and_download_files.md#_snippet_0
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+from pcweb.pages.docs import library
+from pcweb.pages.docs import api_reference
+from pcweb.styles.styles import get_code_style
+from pcweb.styles.colors import c_color
+```
+
+----------------------------------------
+
+TITLE: Reflex Custom Component Publishing Workflow Commands
+DESCRIPTION: This section outlines the sequence of `reflex component` commands and external tools required to initialize, develop, build, and publish a custom Reflex component as a Python package to a package index like PyPI. It also includes the command for sharing components with the community.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/custom-components/overview.md#_snippet_2
+
+LANGUAGE: APIDOC
+CODE:
+```
+reflex component init [--library-name <name>]
+  - Description: Initializes a new custom component project from templates. It sets up the project structure, including configuration files (pyproject.toml), source directories, and a demo Reflex application.
+  - Parameters:
+    - --library-name <name>: Optional. Specifies a custom name for the Python package. If not provided, the package name defaults to 'reflex-' prefixed to the project folder name.
+  - Output: Creates a new folder (e.g., 'color_picker/') containing the project files and directories.
+
+reflex component build
+  - Description: Builds the distribution files for the custom component package. This command compiles the component's source code into distributable formats (e.g., wheel, sdist) which are placed in a 'dist' folder.
+  - Output: Generates a 'dist' directory containing the package distribution files.
+
+twine upload <dist_files>
+  - Description: Uploads the built package distribution files to a Python package index, such as PyPI. This is a standard tool for publishing Python packages.
+  - Usage Example: twine upload dist/*
+  - Prerequisites: An account with the target package index and an API token.
+
+uv publish <dist_files>
+  - Description: An alternative command to 'twine upload' for publishing built package distribution files to a Python package index using the 'uv' tool.
+  - Usage Example: uv publish dist/*
+  - Prerequisites: An account with the target package index and an API token.
+
+reflex component share
+  - Description: Publishes your custom component to the Reflex website's community gallery, allowing other users to discover and use it.
+```
+
+----------------------------------------
+
+TITLE: Reflex Enterprise Drag and Drop Core Components API
+DESCRIPTION: API documentation for the `rxe.dnd.draggable` and `rxe.dnd.drop_target` components in Reflex Enterprise, detailing their key properties and callback functions for implementing interactive drag and drop functionality.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/enterprise/drag-and-drop.md#_snippet_4
+
+LANGUAGE: APIDOC
+CODE:
+```
+Draggable:
+  rxe.dnd.draggable(element, type: str, item: dict, on_end: callable)
+    - Makes any Reflex element draggable.
+    - Key Properties:
+      - type (str): A string identifier used for matching with `drop_target`'s `accept` property.
+      - item (dict): A dictionary of data associated with the draggable item, passed to `on_drop` handlers.
+      - on_end (callable): A callback function executed when the drag operation ends (e.g., item dropped or drag cancelled).
+
+Drop Target:
+  rxe.dnd.drop_target(element, accept: list[str], on_drop: callable, on_hover: callable)
+    - Creates an area that can accept draggable items.
+    - Key Properties:
+      - accept (list[str]): A list of `type` strings that this drop target will accept. Only draggable items with a matching type can be dropped here.
+      - on_drop (callable): A callback function executed when a draggable item is successfully dropped onto this target. It receives the `item` data from the draggable.
+      - on_hover (callable): A callback function executed when a draggable item hovers over this target.
+```
+
+----------------------------------------
+
+TITLE: Basic Reflex Drawer Component Example
+DESCRIPTION: Demonstrates a basic implementation of the Reflex `rx.drawer.root` component, including its trigger, overlay, portal, and content elements. This example sets up a drawer that opens from the left side of the screen.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/overlay/drawer.md#_snippet_2
+
+LANGUAGE: python
+CODE:
+```
+rx.drawer.root(
+        rx.drawer.trigger(
+            rx.button("Open Drawer")
+        ),
+        rx.drawer.overlay(
+            z_index="5"
+        ),
+        rx.drawer.portal(
+            rx.drawer.content(
+                rx.flex(
+                    rx.drawer.close(rx.box(rx.button("Close"))),
+                    align_items="start",
+                    direction="column",
+                ),
+                top="auto",
+                right="auto",
+                height="100%",
+                width="20em",
+                padding="2em",
+                background_color="#FFF"
+                #background_color=rx.color("green", 3)
+            )
+        ),
+        direction="left",
+)
+```
+
+----------------------------------------
+
+TITLE: Reflex Local Storage Removal APIs and Usage
+DESCRIPTION: This entry covers the APIs for removing items from browser local storage in Reflex: `rx.remove_local_storage` for specific keys and `rx.clear_local_storage` for clearing all items. It includes API signatures, parameter details, and Python examples for both functions.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/api-reference/browser_storage.md#_snippet_5
+
+LANGUAGE: APIDOC
+CODE:
+```
+rx.remove_local_storage
+  Remove a local storage item from the client's browser.
+  Parameters:
+    key: The key to remove from local storage.
+```
+
+LANGUAGE: python
+CODE:
+```
+rx.button(
+    'Remove Local Storage',
+    on_click=rx.remove_local_storage('key'),
+)
+```
+
+LANGUAGE: python
+CODE:
+```
+class LocalStorageState(rx.State):
+    ...
+    def logout(self):
+        return rx.remove_local_storage('local_storage_state.l1')
+```
+
+LANGUAGE: APIDOC
+CODE:
+```
+rx.clear_local_storage()
+  Clear all local storage items from the client's browser. This may affect other apps running in the same domain or libraries within your app that use local storage.
+```
+
+LANGUAGE: python
+CODE:
+```
+rx.button(
+    'Clear all Local Storage',
+    on_click=rx.clear_local_storage(),
+)
+```
+
+----------------------------------------
+
+TITLE: Reflex State Management Methods
+DESCRIPTION: Provides an overview of core methods available for interacting with and managing the state within a Reflex application, including resetting state variables, retrieving their raw values, and serializing the entire state.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/utility_methods/other_methods.md#_snippet_0
+
+LANGUAGE: APIDOC
+CODE:
+```
+reset()
+  - Resets all Vars to their default value for the given state (including substates).
+
+get_value()
+  - Returns the value of a Var without tracking changes to it.
+  - This is useful for serialization where the tracking wrapper is considered unserializable.
+
+dict()
+  - Returns all state Vars (and substates) as a dictionary.
+  - This is used internally when a page is first loaded and needs to be "hydrated" and sent to the client.
+```
+
+----------------------------------------
+
+TITLE: Integrate Basic FastAPI App with Reflex
+DESCRIPTION: This snippet demonstrates how to integrate a simple FastAPI application with a Reflex app by passing the FastAPI instance to the `api_transformer` parameter of `rx.App`. This allows the Reflex backend to serve routes defined in the external FastAPI app.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/api-routes/overview.md#_snippet_0
+
+LANGUAGE: Python
+CODE:
+```
+import reflex as rx
+from fastapi import FastAPI, Depends
+from fastapi.security import OAuth2PasswordBearer
+
+# Create a FastAPI app
+fastapi_app = FastAPI(title="My API")
+
+# Add routes to the FastAPI app
+@fastapi_app.get("/api/items")
+async def get_items():
+    return dict(items=["Item1", "Item2", "Item3"])
+
+# Create a Reflex app with the FastAPI app as the API transformer
+app = rx.App(api_transformer=fastapi_app)
+```
+
+----------------------------------------
+
+TITLE: Import Reflex Modules for Component State Examples
+DESCRIPTION: This snippet imports the core Reflex library (`reflex as rx`) and specific documentation paths (`events`, `ui`, `vars`) from `pcweb.pages.docs`. These imports are foundational for setting up the environment to demonstrate `ComponentState` functionality.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/state_structure/component_state.md#_snippet_0
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+from pcweb.pages.docs import events, ui, vars
+```
+
+----------------------------------------
+
+TITLE: Initial Reflex Application Setup
+DESCRIPTION: This Python snippet imports the core Reflex library and specific page modules, establishing the foundational structure for a Reflex web application. It's typically the starting point for any Reflex project.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/getting_started/dashboard_tutorial.md#_snippet_0
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+from pcweb.pages import docs
+```
+
+----------------------------------------
+
+TITLE: Reflex Cookie Removal API and Usage
+DESCRIPTION: This entry details the `rx.remove_cookie` API for deleting browser cookies in Reflex applications. It includes the API signature, parameter descriptions, and Python examples demonstrating its use both directly in UI event handlers and within state methods.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/api-reference/browser_storage.md#_snippet_2
+
+LANGUAGE: APIDOC
+CODE:
+```
+rx.remove_cookie
+  Remove a cookie from the client's browser.
+  Parameters:
+    key: The name of cookie to remove.
+```
+
+LANGUAGE: python
+CODE:
+```
+rx.button(
+    'Remove cookie', on_click=rx.remove_cookie('key')
+)
+```
+
+LANGUAGE: python
+CODE:
+```
+class CookieState(rx.State):
+    ...
+    def logout(self):
+        return rx.remove_cookie('auth_token')
+```
+
+----------------------------------------
+
+TITLE: Import Reflex and Documentation Modules
+DESCRIPTION: Imports the `reflex` library as `rx` and the `docs` module from `pcweb.pages`, which are essential for building and documenting Reflex applications.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/library/data-display/callout.md#_snippet_2
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+from pcweb.pages import docs
+```
+
+----------------------------------------
+
+TITLE: Reflex: Basic App and Page Setup
+DESCRIPTION: This fundamental example shows how to initialize a Reflex application by instantiating the `rx.App` class. It also demonstrates how to define a page function and link it to a specific URL route using `app.add_page()`, forming the basic structure of a Reflex web application.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/docs/getting_started/basics.md#_snippet_16
+
+LANGUAGE: python
+CODE:
+```
+def index():
+    return rx.text('Root Page')
+
+rx.app = rx.App()
+app.add_page(index, route="/")
+```
+
+----------------------------------------
+
+TITLE: Configure OpenAI API Key
+DESCRIPTION: Guidance on setting the OpenAI API key as an environment variable, which is essential for the application to authenticate and interact with the OpenAI API.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/templates/dalle.md#_snippet_1
+
+LANGUAGE: bash
+CODE:
+```
+export OPEN_AI_KEY=your-openai-api-key
+```
+
+----------------------------------------
+
+TITLE: Implement a Paginated Posts Page with Dynamic Settings in Reflex
+DESCRIPTION: This example showcases a `PostsState` that dynamically fetches settings from `SettingsState` using `self.get_state()` to control pagination and refresh behavior. It illustrates how different states can interact without complex inheritance, enabling flexible data loading and UI updates based on user preferences.
+SOURCE: https://github.com/reflex-dev/reflex-web/blob/main/blog/2024-03-27-structuring-a-large-app.md#_snippet_7
+
+LANGUAGE: python
+CODE:
+```
+import reflex as rx
+
+from ..models import Post
+from ..template import template
+from ..components.settings import SettingsState
+
+
+class PostsState(rx.State):
+    refresh_tick: int
+    page: int
+    posts: list[Post]
+
+    async def on_load(self):
+        settings = await self.get_state(SettingsState)
+        if settings.auto_update:
+            self.refresh_tick = settings.refresh_interval * 1000
+        else:
+            self.refresh_tick = 0
+
+    async def tick(self, _):
+        settings = await self.get_state(SettingsState)
+        with rx.session() as session:
+            q = Post.select().offset(self.page * settings.posts_per_page).limit(settings.posts_per_page)
+            self.posts = q.all()
+
+    def go_to_previous(self):
+        if self.page > 0:
+            self.page = self.page - 1
+
+    def go_to_next(self):
+        if self.posts:
+            self.page = self.page + 1
+
+
+@rx.page(route="/posts", on_load=PostsState.on_load)
+@template
+def posts():
+    return rx.vstack(
+        rx.foreach(PostsState.posts, post_view),
+        rx.hstack(
+            rx.button("< Prev", on_click=PostsState.go_to_previous),
+            rx.button("Next >", on_click=PostsState.go_to_next),
+            justify="between",
+        ),
+        rx.moment(interval=PostsState.refresh_tick, on_change=PostsState.tick, display="none"),
+        width="100%",
+    )
+```

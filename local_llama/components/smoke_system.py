@@ -12,7 +12,7 @@ def advanced_smoke_system() -> rx.Component:
                 "width": "100%",
                 "height": "100%",
                 "pointer_events": "none",
-                "z_index": "5",
+                "z_index": "100",
             }
         ),
         rx.script("""
@@ -43,7 +43,7 @@ def advanced_smoke_system() -> rx.Component:
                             value: 'transparent',
                         },
                     },
-                    fpsLimit: 60,
+                    fpsLimit: 45, // Balanced performance vs smoothness
                     interactivity: {
                         events: {
                             onClick: {
@@ -53,22 +53,27 @@ def advanced_smoke_system() -> rx.Component:
                             onHover: {
                                 enable: true,
                                 mode: 'attract',
+                                parallax: {
+                                    enable: false, // Disable parallax for performance
+                                    force: 2,
+                                    smooth: 10
+                                }
                             },
                             resize: true,
                         },
                         modes: {
                             attract: {
-                                distance: 150,
-                                duration: 0.4,
-                                factor: 5,
-                                maxSpeed: 50,
-                                speed: 1,
+                                distance: 100, // Reduced from 150
+                                duration: 0.3, // Reduced from 0.4
+                                factor: 3, // Reduced from 5
+                                maxSpeed: 25, // Reduced from 50
+                                speed: 0.8, // Reduced from 1
                             },
                             repulse: {
-                                distance: 200,
-                                duration: 0.4,
-                                factor: 100,
-                                speed: 1,
+                                distance: 120, // Reduced from 200
+                                duration: 0.3, // Reduced from 0.4
+                                factor: 50, // Reduced from 100
+                                speed: 0.8, // Reduced from 1
                             },
                         },
                     },
@@ -92,18 +97,18 @@ def advanced_smoke_system() -> rx.Component:
                         number: {
                             density: {
                                 enable: true,
-                                area: 300,
+                                area: 400, // Balanced density
                             },
-                            value: 600,
+                            value: 250, // Increased from 150 but less than original 600
                         },
                         opacity: {
                             value: {
                                 min: 0.1,
-                                max: 0.6,
+                                max: 0.4, // Slightly increased for better visibility
                             },
                             animation: {
                                 enable: true,
-                                speed: 1,
+                                speed: 0.8, // Balanced animation speed
                                 sync: false,
                             },
                         },
@@ -113,11 +118,11 @@ def advanced_smoke_system() -> rx.Component:
                         size: {
                             value: {
                                 min: 0.5,
-                                max: 2,
+                                max: 1.8, // Restored closer to original size
                             },
                             animation: {
                                 enable: true,
-                                speed: 3,
+                                speed: 1.5, // Balanced size animation
                                 sync: false,
                             },
                         },
@@ -154,20 +159,25 @@ def advanced_smoke_system() -> rx.Component:
                     }
                 };
                 
-                // Set up DOM observer to watch for particle container
+                // Optimized DOM observer with throttling
+                let observerTimeout;
                 const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        mutation.addedNodes.forEach((node) => {
-                            if (node.nodeType === 1 && (node.id === 'tsparticles-smoke' || node.querySelector('#tsparticles-smoke'))) {
-                                setTimeout(() => window.initializeParticles(), 100);
-                            }
+                    if (observerTimeout) return; // Throttle observer calls
+                    observerTimeout = setTimeout(() => {
+                        observerTimeout = null;
+                        mutations.forEach((mutation) => {
+                            mutation.addedNodes.forEach((node) => {
+                                if (node.nodeType === 1 && (node.id === 'tsparticles-smoke' || node.querySelector('#tsparticles-smoke'))) {
+                                    setTimeout(() => window.initializeParticles(), 100);
+                                }
+                            });
                         });
-                    });
+                    }, 50); // Throttle to 50ms
                 });
                 
                 observer.observe(document.body, {
                     childList: true,
-                    subtree: true
+                    subtree: false // Reduced subtree monitoring for performance
                 });
                 
                 // Initial load

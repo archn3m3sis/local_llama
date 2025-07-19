@@ -9,7 +9,7 @@ import reflex_type_animation as ta
 from rxconfig import config
 from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, Software, Vulnerabilities, Analytics
 from .models import Employee, AppUser, Project, HardwareManufacturer, SWManufacturer, LogType, ImagingMethod, SysArchitecture, CPUType, GPUType
-from .components import advanced_smoke_system, page_wrapper, universal_background
+from .components import advanced_smoke_system, page_wrapper, universal_background, radial_speed_dial
 
 load_dotenv()
 

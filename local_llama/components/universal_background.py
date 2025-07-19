@@ -3,6 +3,7 @@
 import reflex as rx
 import reflex_clerk_api as clerk
 from .smoke_system import advanced_smoke_system
+from .radial_speed_dial import radial_speed_dial, analytics_speed_dial, asset_data_speed_dial, playbook_speed_dial, vault_speed_dial, right_side_buttons
 
 
 def universal_background() -> rx.Component:
@@ -34,29 +35,38 @@ def universal_background() -> rx.Component:
         rx.box(
             id="mouse-glow",
             position="fixed",
-            top="50%",
-            left="50%",
+            top="0",
+            left="0",
             width="400px",
             height="400px",
             background="radial-gradient(ellipse 120% 80% at center, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 40%, rgba(255, 255, 255, 0.02) 70%, transparent 100%)",
             border_radius="50%",
             pointer_events="none",
             z_index="-1",
-            transform="translate(-50%, -50%)",
-            transition="all 0.1s ease-out",
+            transform="translate(-200px, -200px)",
             style={
                 "filter": "blur(3px)",
                 "box-shadow": "0 0 150px rgba(255, 255, 255, 0.02)",
+                "will-change": "transform",
             }
         ),
         
         # JavaScript for mouse tracking and Clerk popup styling
         rx.script("""
+            // Throttled mouse movement for better performance
+            let mouseTimeout;
+            let lastMouseMove = 0;
+            const MOUSE_THROTTLE = 16; // ~60fps
+            
             document.addEventListener('mousemove', function(e) {
+                const now = Date.now();
+                if (now - lastMouseMove < MOUSE_THROTTLE) return;
+                lastMouseMove = now;
+                
                 const glow = document.getElementById('mouse-glow');
                 if (glow) {
-                    glow.style.left = e.clientX + 'px';
-                    glow.style.top = e.clientY + 'px';
+                    // Use transform instead of left/top for better performance
+                    glow.style.transform = `translate(${e.clientX - 200}px, ${e.clientY - 200}px)`;
                 }
             });
             
@@ -149,6 +159,24 @@ def universal_background() -> rx.Component:
         
         # Interactive smoke/particle system
         advanced_smoke_system(),
+        
+        # Radial speed dial navigation
+        radial_speed_dial(),
+        
+        # Analytics speed dial
+        analytics_speed_dial(),
+        
+        # Asset Data speed dial
+        asset_data_speed_dial(),
+        
+        # Playbook speed dial
+        playbook_speed_dial(),
+        
+        # Vault speed dial
+        vault_speed_dial(),
+        
+        # Right side buttons (Home & Search)
+        right_side_buttons(),
         
         # Subtle user menu with dropdown in top-right corner
         rx.box(
