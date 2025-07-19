@@ -704,13 +704,347 @@ def dashboard_with_custom_wrapper():
         register_user_state=True,
     )
 
+# Custom wrapper functions for proper absolute positioning
+def assets_with_custom_wrapper():
+    """Assets with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    Assets()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4", align="center"
+                ),
+                width="100%", height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+def vulnerabilities_with_custom_wrapper():
+    """Vulnerabilities with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    Vulnerabilities()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4", align="center"
+                ),
+                width="100%", height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+def playbook_with_custom_wrapper():
+    """Playbook with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    Playbook()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4", align="center"
+                ),
+                width="100%", height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+def software_with_custom_wrapper():
+    """Software with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    Software()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4", align="center"
+                ),
+                width="100%", height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+def dats_with_custom_wrapper():
+    """Dats with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    Dats()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4", align="center"
+                ),
+                width="100%", height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+def images_with_custom_wrapper():
+    """Images with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    Images()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4", align="center"
+                ),
+                width="100%", height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+def logs_with_custom_wrapper():
+    """Logs with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    Logs()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4", align="center"
+                ),
+                width="100%", height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+def tickets_with_custom_wrapper():
+    """Tickets with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    Tickets()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4", align="center"
+                ),
+                width="100%", height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+def analytics_with_custom_wrapper():
+    """Analytics with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    Analytics()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4", align="center"
+                ),
+                width="100%", height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
 app.add_page(dashboard_with_custom_wrapper, route="/dashboard")
-app.add_page(protected_page(Dats), route="/dats")
-app.add_page(protected_page(Images), route="/images")
-app.add_page(protected_page(Logs), route="/logs")
-app.add_page(protected_page(Tickets), route="/tickets")
-app.add_page(protected_page(Assets), route="/assets")
-app.add_page(protected_page(Playbook), route="/playbook")
-app.add_page(protected_page(Software), route="/software")
-app.add_page(protected_page(Vulnerabilities), route="/vulnerabilities")
-app.add_page(protected_page(Analytics), route="/analytics")
+app.add_page(dats_with_custom_wrapper, route="/dats")
+app.add_page(images_with_custom_wrapper, route="/images")
+app.add_page(logs_with_custom_wrapper, route="/logs")
+app.add_page(tickets_with_custom_wrapper, route="/tickets")
+app.add_page(assets_with_custom_wrapper, route="/assets")
+app.add_page(playbook_with_custom_wrapper, route="/playbook")
+app.add_page(software_with_custom_wrapper, route="/software")
+app.add_page(vulnerabilities_with_custom_wrapper, route="/vulnerabilities")
+app.add_page(analytics_with_custom_wrapper, route="/analytics")

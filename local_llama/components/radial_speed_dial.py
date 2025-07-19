@@ -24,6 +24,19 @@ def radial_speed_dial() -> rx.Component:
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:
         delay = f"{(index + 1) * 0.1}s"
+        
+        # Color scheme for main navigation - cool blues and cyans
+        colors = [
+            {"bg": "linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(59, 130, 246, 0.4)", "glow": "59, 130, 246"},  # Blue
+            {"bg": "linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(16, 185, 129, 0.4)", "glow": "16, 185, 129"},  # Green
+            {"bg": "linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(139, 92, 246, 0.4)", "glow": "139, 92, 246"},  # Purple
+            {"bg": "linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(239, 68, 68, 0.4)", "glow": "239, 68, 68"},  # Red
+            {"bg": "linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(245, 158, 11, 0.4)", "glow": "245, 158, 11"},  # Amber
+            {"bg": "linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(8, 145, 178, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(6, 182, 212, 0.4)", "glow": "6, 182, 212"},  # Cyan
+        ]
+        
+        color_scheme = colors[index % len(colors)]
+        
         return rx.link(
             rx.hstack(
                 rx.box(
@@ -35,13 +48,19 @@ def radial_speed_dial() -> rx.Component:
                     width="3rem",
                     height="3rem",
                     border_radius="50%",
-                    background="linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)",
-                    border="2px solid rgba(255, 255, 255, 0.3)",
+                    background=color_scheme["bg"],
+                    border=f"2px solid {color_scheme['border']}",
                     display="flex",
                     align_items="center",
                     justify_content="center",
                     backdrop_filter="blur(20px)",
                     box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                    transition="all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    _hover={
+                        "box_shadow": f"0 0 25px rgba({color_scheme['glow']}, 0.6), 0 8px 32px rgba(0, 0, 0, 0.3)",
+                        "border": f"2px solid rgba({color_scheme['glow']}, 0.8)",
+                        "transform": "scale(1.1)",
+                    }
                 ),
                 rx.text(
                     item["label"],
@@ -68,7 +87,7 @@ def radial_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(20px) scale(0.8)"
             ),
-            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(SpeedDialState.is_open, "auto", "none"),
         )
     
@@ -104,7 +123,7 @@ def radial_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(30px) scale(0.9)"
             ),
-            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            transition="all 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
             pointer_events=rx.cond(SpeedDialState.is_open, "auto", "none"),
         ),
         
@@ -188,6 +207,18 @@ def analytics_speed_dial() -> rx.Component:
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:
         delay = f"{(index + 1) * 0.1}s"
+        
+        # Color scheme for analytics - warm oranges and reds
+        colors = [
+            {"bg": "linear-gradient(135deg, rgba(251, 146, 60, 0.3) 0%, rgba(249, 115, 22, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(251, 146, 60, 0.4)", "glow": "251, 146, 60"},  # Orange
+            {"bg": "linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(239, 68, 68, 0.4)", "glow": "239, 68, 68"},  # Red
+            {"bg": "linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(245, 158, 11, 0.4)", "glow": "245, 158, 11"},  # Amber
+            {"bg": "linear-gradient(135deg, rgba(255, 99, 71, 0.3) 0%, rgba(255, 69, 58, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(255, 99, 71, 0.4)", "glow": "255, 99, 71"},  # Coral
+            {"bg": "linear-gradient(135deg, rgba(234, 179, 8, 0.3) 0%, rgba(202, 138, 4, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(234, 179, 8, 0.4)", "glow": "234, 179, 8"},  # Yellow
+        ]
+        
+        color_scheme = colors[index % len(colors)]
+        
         return rx.link(
             rx.hstack(
                 rx.box(
@@ -199,13 +230,19 @@ def analytics_speed_dial() -> rx.Component:
                     width="3rem",
                     height="3rem",
                     border_radius="50%",
-                    background="linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)",
-                    border="2px solid rgba(255, 255, 255, 0.3)",
+                    background=color_scheme["bg"],
+                    border=f"2px solid {color_scheme['border']}",
                     display="flex",
                     align_items="center",
                     justify_content="center",
                     backdrop_filter="blur(20px)",
                     box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                    transition="all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    _hover={
+                        "box_shadow": f"0 0 25px rgba({color_scheme['glow']}, 0.6), 0 8px 32px rgba(0, 0, 0, 0.3)",
+                        "border": f"2px solid rgba({color_scheme['glow']}, 0.8)",
+                        "transform": "scale(1.1)",
+                    }
                 ),
                 rx.text(
                     item["label"],
@@ -232,7 +269,7 @@ def analytics_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(20px) scale(0.8)"
             ),
-            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(AnalyticsSpeedDialState.is_open, "auto", "none"),
         )
     
@@ -268,7 +305,7 @@ def analytics_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(30px) scale(0.9)"
             ),
-            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            transition="all 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
             pointer_events=rx.cond(AnalyticsSpeedDialState.is_open, "auto", "none"),
         ),
         
@@ -353,6 +390,19 @@ def asset_data_speed_dial() -> rx.Component:
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:
         delay = f"{(index + 1) * 0.1}s"
+        
+        # Cool tech color palette for asset data
+        colors = [
+            {"bg": "linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(14, 165, 233, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(6, 182, 212, 0.4)", "glow": "6, 182, 212"},  # Cyan
+            {"bg": "linear-gradient(135deg, rgba(20, 184, 166, 0.3) 0%, rgba(13, 148, 136, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(20, 184, 166, 0.4)", "glow": "20, 184, 166"},  # Teal
+            {"bg": "linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(79, 70, 229, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(99, 102, 241, 0.4)", "glow": "99, 102, 241"},  # Indigo
+            {"bg": "linear-gradient(135deg, rgba(34, 197, 94, 0.3) 0%, rgba(22, 163, 74, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(34, 197, 94, 0.4)", "glow": "34, 197, 94"},  # Green
+            {"bg": "linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(147, 51, 234, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(168, 85, 247, 0.4)", "glow": "168, 85, 247"},  # Purple
+            {"bg": "linear-gradient(135deg, rgba(14, 165, 233, 0.3) 0%, rgba(59, 130, 246, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(14, 165, 233, 0.4)", "glow": "14, 165, 233"},  # Blue
+        ]
+        
+        color = colors[index % len(colors)]
+        
         return rx.link(
             rx.hstack(
                 rx.box(
@@ -364,13 +414,20 @@ def asset_data_speed_dial() -> rx.Component:
                     width="3rem",
                     height="3rem",
                     border_radius="50%",
-                    background="linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)",
-                    border="2px solid rgba(255, 255, 255, 0.3)",
+                    background=color["bg"],
+                    border=f"2px solid {color['border']}",
                     display="flex",
                     align_items="center",
                     justify_content="center",
                     backdrop_filter="blur(20px)",
                     box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                    _hover={
+                        "box_shadow": f"0 0 30px rgba({color['glow']}, 0.6), 0 12px 40px rgba(0, 0, 0, 0.4)",
+                        "transform": "scale(1.05)",
+                        "border": f"2px solid rgba({color['glow']}, 0.6)",
+                        "background": color["bg"].replace("0.3)", "0.4)").replace("0.2)", "0.3)"),
+                    },
+                    transition="all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 ),
                 rx.text(
                     item["label"],
@@ -397,7 +454,7 @@ def asset_data_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(20px) scale(0.8)"
             ),
-            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(AssetDataSpeedDialState.is_open, "auto", "none"),
         )
     
@@ -433,7 +490,7 @@ def asset_data_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(30px) scale(0.9)"
             ),
-            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            transition="all 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
             pointer_events=rx.cond(AssetDataSpeedDialState.is_open, "auto", "none"),
         ),
         
@@ -518,6 +575,19 @@ def playbook_speed_dial() -> rx.Component:
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:
         delay = f"{(index + 1) * 0.1}s"
+        
+        # Documentation-themed color palette for playbook
+        colors = [
+            {"bg": "linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(147, 51, 234, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(168, 85, 247, 0.4)", "glow": "168, 85, 247"},  # Purple
+            {"bg": "linear-gradient(135deg, rgba(236, 72, 153, 0.3) 0%, rgba(219, 39, 119, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(236, 72, 153, 0.4)", "glow": "236, 72, 153"},  # Pink
+            {"bg": "linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(139, 92, 246, 0.4)", "glow": "139, 92, 246"},  # Violet
+            {"bg": "linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(79, 70, 229, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(99, 102, 241, 0.4)", "glow": "99, 102, 241"},  # Indigo
+            {"bg": "linear-gradient(135deg, rgba(244, 63, 94, 0.3) 0%, rgba(225, 29, 72, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(244, 63, 94, 0.4)", "glow": "244, 63, 94"},  # Rose
+            {"bg": "linear-gradient(135deg, rgba(192, 132, 252, 0.3) 0%, rgba(168, 85, 247, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(192, 132, 252, 0.4)", "glow": "192, 132, 252"},  # Light Purple
+        ]
+        
+        color = colors[index % len(colors)]
+        
         return rx.link(
             rx.hstack(
                 rx.box(
@@ -529,13 +599,20 @@ def playbook_speed_dial() -> rx.Component:
                     width="3rem",
                     height="3rem",
                     border_radius="50%",
-                    background="linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)",
-                    border="2px solid rgba(255, 255, 255, 0.3)",
+                    background=color["bg"],
+                    border=f"2px solid {color['border']}",
                     display="flex",
                     align_items="center",
                     justify_content="center",
                     backdrop_filter="blur(20px)",
                     box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                    _hover={
+                        "box_shadow": f"0 0 30px rgba({color['glow']}, 0.6), 0 12px 40px rgba(0, 0, 0, 0.4)",
+                        "transform": "scale(1.05)",
+                        "border": f"2px solid rgba({color['glow']}, 0.6)",
+                        "background": color["bg"].replace("0.3)", "0.4)").replace("0.2)", "0.3)"),
+                    },
+                    transition="all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 ),
                 rx.text(
                     item["label"],
@@ -562,7 +639,7 @@ def playbook_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(20px) scale(0.8)"
             ),
-            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(PlaybookSpeedDialState.is_open, "auto", "none"),
         )
     
@@ -598,7 +675,7 @@ def playbook_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(30px) scale(0.9)"
             ),
-            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            transition="all 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
             pointer_events=rx.cond(PlaybookSpeedDialState.is_open, "auto", "none"),
         ),
         
@@ -680,6 +757,16 @@ def vault_speed_dial() -> rx.Component:
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:
         delay = f"{(index + 1) * 0.1}s"
+        
+        # Security-themed color palette for vault
+        colors = [
+            {"bg": "linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(245, 158, 11, 0.4)", "glow": "245, 158, 11"},  # Amber
+            {"bg": "linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(16, 185, 129, 0.4)", "glow": "16, 185, 129"},  # Emerald
+            {"bg": "linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(245, 158, 11, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(251, 191, 36, 0.4)", "glow": "251, 191, 36"},  # Yellow
+        ]
+        
+        color = colors[index % len(colors)]
+        
         return rx.link(
             rx.hstack(
                 rx.box(
@@ -691,13 +778,20 @@ def vault_speed_dial() -> rx.Component:
                     width="3rem",
                     height="3rem",
                     border_radius="50%",
-                    background="linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)",
-                    border="2px solid rgba(255, 255, 255, 0.3)",
+                    background=color["bg"],
+                    border=f"2px solid {color['border']}",
                     display="flex",
                     align_items="center",
                     justify_content="center",
                     backdrop_filter="blur(20px)",
                     box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                    _hover={
+                        "box_shadow": f"0 0 30px rgba({color['glow']}, 0.6), 0 12px 40px rgba(0, 0, 0, 0.4)",
+                        "transform": "scale(1.05)",
+                        "border": f"2px solid rgba({color['glow']}, 0.6)",
+                        "background": color["bg"].replace("0.3)", "0.4)").replace("0.2)", "0.3)"),
+                    },
+                    transition="all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 ),
                 rx.text(
                     item["label"],
@@ -724,7 +818,7 @@ def vault_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(20px) scale(0.8)"
             ),
-            transition=f"all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(VaultSpeedDialState.is_open, "auto", "none"),
         )
     
@@ -760,7 +854,7 @@ def vault_speed_dial() -> rx.Component:
                 "translateY(0) scale(1)", 
                 "translateY(30px) scale(0.9)"
             ),
-            transition="all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+            transition="all 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
             pointer_events=rx.cond(VaultSpeedDialState.is_open, "auto", "none"),
         ),
         
@@ -1254,39 +1348,27 @@ def right_side_buttons() -> rx.Component:
                                 align="center",
                                 margin_bottom="0.75rem",
                             ),
-                            # First row of tag chips
-                            rx.hstack(
-                                rx.box(rx.text("#ifmc", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#ifmc"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#ifmc"), "#10b98140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#ifmc"), "2px solid #10b981", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#ifmc")),
-                                rx.box(rx.text("#tagm", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#tagm"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#tagm"), "#06b6d440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#tagm"), "2px solid #06b6d4", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#tagm")),
-                                rx.box(rx.text("#multi", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#multi"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#multi"), "#ec489940", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#multi"), "2px solid #ec4899", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#multi")),
-                                rx.box(rx.text("#storm", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#storm"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#storm"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#storm"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#storm")),
-                                spacing="2",
+                            # All tag chips in a single flex container with wrap
+                            rx.box(
+                                rx.box(rx.text("#ifmc", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#ifmc"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#ifmc"), "#10b98140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#ifmc"), "2px solid #10b981", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#ifmc"), margin="0.25rem"),
+                                rx.box(rx.text("#tagm", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#tagm"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#tagm"), "#06b6d440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#tagm"), "2px solid #06b6d4", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#tagm"), margin="0.25rem"),
+                                rx.box(rx.text("#multi", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#multi"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#multi"), "#ec489940", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#multi"), "2px solid #ec4899", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#multi"), margin="0.25rem"),
+                                rx.box(rx.text("#storm", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#storm"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#storm"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#storm"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#storm"), margin="0.25rem"),
+                                rx.box(rx.text("#shield", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#shield"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#shield"), "#f59e0b40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#shield"), "2px solid #f59e0b", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#shield"), margin="0.25rem"),
+                                rx.box(rx.text("#stare", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#stare"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#stare"), "#ef444440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#stare"), "2px solid #ef4444", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#stare"), margin="0.25rem"),
+                                rx.box(rx.text("#process", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#process"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#process"), "#3b82f640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#process"), "2px solid #3b82f6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#process"), margin="0.25rem"),
+                                rx.box(rx.text("#sop", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#sop"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#sop"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#sop"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#sop"), margin="0.25rem"),
+                                rx.box(rx.text("#poam", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#poam"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#poam"), "#dc262640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#poam"), "2px solid #dc2626", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#poam"), margin="0.25rem"),
+                                rx.box(rx.text("#guide", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#guide"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#guide"), "#059f4040", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#guide"), "2px solid #059f40", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#guide"), margin="0.25rem"),
+                                rx.box(rx.text("#bitlocker", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#bitlocker"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#bitlocker"), "#7c2d1240", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#bitlocker"), "2px solid #7c2d12", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#bitlocker"), margin="0.25rem"),
+                                rx.box(rx.text("#windows", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#windows"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#windows"), "#0ea5e940", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#windows"), "2px solid #0ea5e9", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#windows"), margin="0.25rem"),
+                                rx.box(rx.text("#linux", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#linux"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#linux"), "#f97f0f40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#linux"), "2px solid #f97f0f", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#linux"), margin="0.25rem"),
+                                rx.box(rx.text("#article", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#article"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#article"), "#6366f140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#article"), "2px solid #6366f1", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#article"), margin="0.25rem"),
+                                display="flex",
                                 flex_wrap="wrap",
-                            ),
-                            # Second row of tag chips
-                            rx.hstack(
-                                rx.box(rx.text("#shield", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#shield"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#shield"), "#f59e0b40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#shield"), "2px solid #f59e0b", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#shield")),
-                                rx.box(rx.text("#stare", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#stare"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#stare"), "#ef444440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#stare"), "2px solid #ef4444", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#stare")),
-                                rx.box(rx.text("#process", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#process"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#process"), "#3b82f640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#process"), "2px solid #3b82f6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#process")),
-                                rx.box(rx.text("#sop", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#sop"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#sop"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#sop"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#sop")),
-                                spacing="2",
-                                flex_wrap="wrap",
-                            ),
-                            # Third row of tag chips - remaining tags
-                            rx.hstack(
-                                rx.box(rx.text("#poam", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#poam"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#poam"), "#dc262640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#poam"), "2px solid #dc2626", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#poam")),
-                                rx.box(rx.text("#guide", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#guide"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#guide"), "#059f4040", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#guide"), "2px solid #059f40", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#guide")),
-                                rx.box(rx.text("#bitlocker", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#bitlocker"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#bitlocker"), "#7c2d1240", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#bitlocker"), "2px solid #7c2d12", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#bitlocker")),
-                                spacing="2",
-                                flex_wrap="wrap",
-                            ),
-                            # Fourth row of tag chips - OS tags
-                            rx.hstack(
-                                rx.box(rx.text("#windows", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#windows"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#windows"), "#0ea5e940", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#windows"), "2px solid #0ea5e9", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#windows")),
-                                rx.box(rx.text("#linux", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#linux"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#linux"), "#f97f0f40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#linux"), "2px solid #f97f0f", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#linux")),
-                                rx.box(rx.text("#article", font_size="0.8rem", color=rx.cond(SearchModalState.selected_tags.contains("#article"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_tags.contains("#article"), "#6366f140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_tags.contains("#article"), "2px solid #6366f1", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_tag_filter("#article")),
-                                spacing="2",
-                                flex_wrap="wrap",
+                                width="100%",
+                                justify_content="flex_start",
+                                align_items="center",
                             ),
                             spacing="2",
                             width="100%",
@@ -1308,51 +1390,47 @@ def right_side_buttons() -> rx.Component:
                             # Project chips for Assets tab or Personnel chips for Actions tab
                             rx.cond(
                                 SearchModalState.active_tab == "assets",
-                                rx.vstack(
-                                    # First row of project chips
-                                    rx.hstack(
-                                        rx.box(rx.text("IFMC", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("IFMC"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("IFMC"), "#10b98140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("IFMC"), "2px solid #10b981", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("IFMC")),
-                                        rx.box(rx.text("STARE", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("STARE"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("STARE"), "#ef444440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("STARE"), "2px solid #ef4444", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("STARE")),
-                                        rx.box(rx.text("STORM", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("STORM"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("STORM"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("STORM"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("STORM")),
-                                        spacing="2",
-                                        flex_wrap="wrap",
-                                    ),
-                                    # Second row of project chips
-                                    rx.hstack(
-                                        rx.box(rx.text("SHIELD", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("SHIELD"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("SHIELD"), "#f59e0b40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("SHIELD"), "2px solid #f59e0b", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("SHIELD")),
-                                        rx.box(rx.text("TAGM", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("TAGM"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("TAGM"), "#06b6d440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("TAGM"), "2px solid #06b6d4", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("TAGM")),
-                                        rx.box(rx.text("MULTI", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("MULTI"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("MULTI"), "#ec489940", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("MULTI"), "2px solid #ec4899", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("MULTI")),
-                                        spacing="2",
-                                        flex_wrap="wrap",
-                                    ),
-                                    spacing="2",
+                                # All project chips in a single flex container
+                                rx.box(
+                                    rx.box(rx.text("IFMC", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("IFMC"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("IFMC"), "#10b98140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("IFMC"), "2px solid #10b981", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("IFMC"), margin="0.25rem", flex="1", min_width="80px"),
+                                    rx.box(rx.text("STARE", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("STARE"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("STARE"), "#ef444440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("STARE"), "2px solid #ef4444", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("STARE"), margin="0.25rem", flex="1", min_width="80px"),
+                                    rx.box(rx.text("STORM", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("STORM"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("STORM"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("STORM"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("STORM"), margin="0.25rem", flex="1", min_width="80px"),
+                                    rx.box(rx.text("SHIELD", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("SHIELD"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("SHIELD"), "#f59e0b40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("SHIELD"), "2px solid #f59e0b", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("SHIELD"), margin="0.25rem", flex="1", min_width="80px"),
+                                    rx.box(rx.text("TAGM", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("TAGM"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("TAGM"), "#06b6d440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("TAGM"), "2px solid #06b6d4", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("TAGM"), margin="0.25rem", flex="1", min_width="80px"),
+                                    rx.box(rx.text("MULTI", font_size="0.8rem", color=rx.cond(SearchModalState.selected_projects.contains("MULTI"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_projects.contains("MULTI"), "#ec489940", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_projects.contains("MULTI"), "2px solid #ec4899", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_project_filter("MULTI"), margin="0.25rem", flex="1", min_width="80px"),
+                                    display="flex",
+                                    flex_wrap="wrap",
+                                    width="100%",
+                                    justify_content="space-between",
+                                    align_items="center",
                                 ),
                                 # Personnel and Action Type chips for Actions tab
                                 rx.vstack(
                                     rx.text("Personnel:", font_size="0.8rem", color="rgba(255, 255, 255, 0.7)", margin_bottom="0.5rem"),
-                                    rx.hstack(
-                                        rx.box(rx.text("Kyle Hurston", font_size="0.8rem", color=rx.cond(SearchModalState.selected_personnel.contains("Kyle Hurston"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_personnel.contains("Kyle Hurston"), "#10b98140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_personnel.contains("Kyle Hurston"), "2px solid #10b981", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_personnel_filter("Kyle Hurston")),
-                                        rx.box(rx.text("Craig Alleman", font_size="0.8rem", color=rx.cond(SearchModalState.selected_personnel.contains("Craig Alleman"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_personnel.contains("Craig Alleman"), "#3b82f640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_personnel.contains("Craig Alleman"), "2px solid #3b82f6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_personnel_filter("Craig Alleman")),
-                                        rx.box(rx.text("Bob Shipp", font_size="0.8rem", color=rx.cond(SearchModalState.selected_personnel.contains("Bob Shipp"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_personnel.contains("Bob Shipp"), "#f59e0b40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_personnel.contains("Bob Shipp"), "2px solid #f59e0b", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_personnel_filter("Bob Shipp")),
-                                        rx.box(rx.text("David Felmlee", font_size="0.8rem", color=rx.cond(SearchModalState.selected_personnel.contains("David Felmlee"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_personnel.contains("David Felmlee"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_personnel.contains("David Felmlee"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_personnel_filter("David Felmlee")),
-                                        spacing="2",
+                                    rx.box(
+                                        rx.box(rx.text("Kyle Hurston", font_size="0.8rem", color=rx.cond(SearchModalState.selected_personnel.contains("Kyle Hurston"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_personnel.contains("Kyle Hurston"), "#10b98140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_personnel.contains("Kyle Hurston"), "2px solid #10b981", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_personnel_filter("Kyle Hurston"), margin="0.25rem", flex="1", min_width="110px"),
+                                        rx.box(rx.text("Craig Alleman", font_size="0.8rem", color=rx.cond(SearchModalState.selected_personnel.contains("Craig Alleman"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_personnel.contains("Craig Alleman"), "#3b82f640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_personnel.contains("Craig Alleman"), "2px solid #3b82f6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_personnel_filter("Craig Alleman"), margin="0.25rem", flex="1", min_width="110px"),
+                                        rx.box(rx.text("Bob Shipp", font_size="0.8rem", color=rx.cond(SearchModalState.selected_personnel.contains("Bob Shipp"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_personnel.contains("Bob Shipp"), "#f59e0b40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_personnel.contains("Bob Shipp"), "2px solid #f59e0b", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_personnel_filter("Bob Shipp"), margin="0.25rem", flex="1", min_width="110px"),
+                                        rx.box(rx.text("David Felmlee", font_size="0.8rem", color=rx.cond(SearchModalState.selected_personnel.contains("David Felmlee"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_personnel.contains("David Felmlee"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_personnel.contains("David Felmlee"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_personnel_filter("David Felmlee"), margin="0.25rem", flex="1", min_width="110px"),
+                                        display="flex",
                                         flex_wrap="wrap",
+                                        width="100%",
+                                        justify_content="space-between",
+                                        align_items="center",
                                     ),
                                     rx.text("Action Type:", font_size="0.8rem", color="rgba(255, 255, 255, 0.7)", margin="1rem 0 0.5rem 0"),
-                                    # First row of action type chips
-                                    rx.hstack(
-                                        rx.box(rx.text("DAT Update", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("DAT Update"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("DAT Update"), "#ef444440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("DAT Update"), "2px solid #ef4444", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("DAT Update")),
-                                        rx.box(rx.text("Log Collection", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("Log Collection"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("Log Collection"), "#3b82f640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("Log Collection"), "2px solid #3b82f6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("Log Collection")),
-                                        rx.box(rx.text("Image Collection", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("Image Collection"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("Image Collection"), "#10b98140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("Image Collection"), "2px solid #10b981", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("Image Collection")),
-                                        spacing="2",
+                                    # All action type chips in a single flex container
+                                    rx.box(
+                                        rx.box(rx.text("DAT Update", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("DAT Update"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 0.8rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("DAT Update"), "#ef444440", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("DAT Update"), "2px solid #ef4444", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("DAT Update"), margin="0.15rem"),
+                                        rx.box(rx.text("Log Collection", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("Log Collection"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 0.8rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("Log Collection"), "#3b82f640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("Log Collection"), "2px solid #3b82f6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("Log Collection"), margin="0.15rem"),
+                                        rx.box(rx.text("Image Collection", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("Image Collection"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 0.8rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("Image Collection"), "#10b98140", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("Image Collection"), "2px solid #10b981", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("Image Collection"), margin="0.15rem"),
+                                        rx.box(rx.text("Asset Patching", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("Asset Patching"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 0.8rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("Asset Patching"), "#f59e0b40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("Asset Patching"), "2px solid #f59e0b", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("Asset Patching"), margin="0.15rem"),
+                                        rx.box(rx.text("Content Creation", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("Content Creation"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 0.8rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("Content Creation"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("Content Creation"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("Content Creation"), margin="0.15rem"),
+                                        display="flex",
                                         flex_wrap="wrap",
-                                    ),
-                                    # Second row of action type chips
-                                    rx.hstack(
-                                        rx.box(rx.text("Asset Patching", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("Asset Patching"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("Asset Patching"), "#f59e0b40", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("Asset Patching"), "2px solid #f59e0b", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("Asset Patching")),
-                                        rx.box(rx.text("Content Creation", font_size="0.8rem", color=rx.cond(SearchModalState.selected_action_types.contains("Content Creation"), "white", "rgba(255, 255, 255, 0.8)")), padding="0.5rem 1rem", border_radius="full", background=rx.cond(SearchModalState.selected_action_types.contains("Content Creation"), "#8b5cf640", "rgba(255, 255, 255, 0.08)"), border=rx.cond(SearchModalState.selected_action_types.contains("Content Creation"), "2px solid #8b5cf6", "1px solid rgba(255, 255, 255, 0.2)"), cursor="pointer", on_click=SearchModalState.toggle_action_type_filter("Content Creation")),
-                                        spacing="2",
-                                        flex_wrap="wrap",
+                                        width="100%",
+                                        justify_content="flex-start",
+                                        align_items="center",
                                     ),
                                     spacing="0",
                                     width="100%",
