@@ -59,11 +59,11 @@ local_llama/
 #### Project & Location Models
 - `Project`: Project management
 - `Building`: Building information (building_id, building_name)
-- `Floor`: Floor information with building_id foreign key
+- `Floor`: Generic floor levels (floor_id, floor_name) - no building association
 - `Room`: Room information with floor_id and building_id foreign keys
 
 #### Asset Management Models
-- `Asset`: Core asset tracking with multiple foreign keys (project, location, system specs)
+- `Asset`: Core asset tracking with asset_name field and multiple foreign keys. Required fields: project_id, building_id, floor_id, systype_id. Optional fields: room_id, hwmanu_id, os_id, osedition_id, osversion_id, serial_no, letterkenny_barcode, cpu_id, gpu_id
 - `SysType`: System type lookup (systype_id, sys_type)
 - `SysArchitecture`: System architecture lookup (46 architectures: x86_64, ARM, etc.)
 - `CPUType`: CPU type lookup (498 CPU types)
@@ -160,14 +160,36 @@ python local_llama/database/seeds/department_seed.py
 
 **Optional Foreign Keys (Nullable):**
 - `AppUser.employee_id` → `Employee.id` (not all users are employees)
+- `Asset.room_id` → `Room.room_id` (room location may be unknown)
+- `Asset.hwmanu_id` → `HardwareManufacturer.hwmanu_id` (hardware manufacturer may be unknown)
+- `Asset.os_id` → `OperatingSystem.os_id` (operating system may be unknown)
+- `Asset.osedition_id` → `OSEdition.osedition_id` (OS edition may be unknown)
+- `Asset.osversion_id` → `OSVersion.osversion_id` (OS version may be unknown)
 - `Asset.cpu_id` → `CPUType.cpu_id` (hardware may be unknown)
 - `Asset.gpu_id` → `GPUType.gpu_id` (hardware may be unknown)
+- `Asset.serial_no` (optional string field)
+- `Asset.letterkenny_barcode` (optional string field)
 - `TEMTicket.response_emp` → `Employee.id` (may not have responder yet)
 
 ### Configuration
 - `rxconfig.py`: Reflex configuration with database URL and plugins
 - `pyproject.toml`: Python dependencies including AI libraries (langchain, ollama, openai)
 - `alembic.ini`: Database migration configuration for MSSQL
+
+### Reflex Documentation Reference
+**Local Documentation Cache**: `/docs/reflex/` contains locally saved Reflex 0.8.2 documentation for quick reference:
+- `README.md` - Documentation index and quick reference
+- Layout components (Box, Stack, Container, etc.)
+- Styling methods (inline, component, global)
+- Responsive design and breakpoints
+
+**Key Layout Properties for Development**:
+- `spacing`: Controls element spacing between components
+- `padding`/`margin`: Internal/external component spacing
+- `align`/`justify`: Component alignment and justification
+- `position`: Positioning control (relative, absolute, fixed)
+
+**Styling Precedence**: Inline > Component > Global styles
 
 ## Key Features in Development
 Based on the overview, the system will include:
@@ -189,6 +211,7 @@ Based on the overview, the system will include:
 - Always use reflex db makemigrations and reflex db migrate to manage database migrations
 - Always update your CLAUDE.md file with any changes to pages or database schema as well as project tree
 - Always ensure if there are repeated obstacles that are solved after a time, that you log the instructions to properly execute in your claude.md file
+- **CRITICAL**: NEVER assume a problem is fixed without explicit user confirmation. Always ask user to verify fixes before marking tasks complete
 
 ## Common Issues and Solutions
 
@@ -211,15 +234,28 @@ Based on the overview, the system will include:
 - **Master Seed Script**: Use `master_seed.py` to run all seeds in proper dependency order
 - **Foreign Key Validation**: Seed scripts should validate foreign key relationships before insertion
 
-### Complete Seed File List (21 files)
+### Frontend Development Notes
+- **Dashboard Layout Fix (SUCCESSFUL)**: Issue was that container wrappers were pushing content to bottom. Solution: Use `rx.fragment()` with `universal_background()` and dashboard with `position="absolute"`, `top="0"`, `left="0"`, `z_index="10"`
+- **Key Insight**: Z-index only works with positioned elements (absolute, relative, fixed) - critical for layering above universal background
+- **Custom Dashboard Wrapper**: `dashboard_with_custom_wrapper()` function bypasses standard `protected_page()` using minimal approach
+- **Metallic Text Styling**: Implemented sophisticated metallic text component with gradients, shadows, and effects for dashboard titles
+- **Universal Background**: All protected pages use consistent background with particle effects and mouse-following glow
+
+### Layout Issue Solutions
+- **Content Pushed to Bottom**: Container wrappers cause this issue. Use absolute positioning (`position="absolute"`, `top="0"`) to bypass container flex properties
+- **Z-Index Requirements**: Elements must have `position="relative"`, `absolute`, or `fixed` for z-index to work in Reflex
+- **Minimal Container Approach**: Use `rx.fragment()` instead of nested `rx.box()` containers to avoid layout conflicts
+
+### Complete Seed File List (23 files)
 - `appuser_seed.py` - 9 app users with FK relationships
+- `asset_seed.py` - 60 baseline assets across 6 projects with location/system assignments
 - `avversion_seed.py` - 2 antivirus versions
 - `building_seed.py` - Building data
 - `cputype_seed.py` - 498 CPU types
 - `datversion_seed.py` - 2 DAT versions with AV FK
 - `department_seed.py` - 7 departments
 - `employee_seed.py` - 9 employees with department FK
-- `floor_seed.py` - Floor data with building FK
+- `floor_seed.py` - 3 generic floor levels (Floor Ground, Floor 01, Floor 02)
 - `gputype_seed.py` - 187 GPU types
 - `hardware_manufacturer_seed.py` - Hardware manufacturers
 - `imagingmethod_seed.py` - Imaging methods
@@ -230,6 +266,7 @@ Based on the overview, the system will include:
 - `osversion_seed.py` - OS versions with FK
 - `privilegelevel_seed.py` - 3 privilege levels
 - `project_seed.py` - Project data
+- `room_seed.py` - 24 rooms with building and floor FK relationships
 - `swmanufacturer_seed.py` - Software manufacturers
 - `sysarchitecture_seed.py` - 46 system architectures
 - `systype_seed.py` - System types

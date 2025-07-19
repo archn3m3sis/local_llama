@@ -36,17 +36,17 @@ def universal_background() -> rx.Component:
             position="fixed",
             top="50%",
             left="50%",
-            width="600px",
-            height="600px",
-            background="radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 30%, rgba(255, 255, 255, 0.05) 60%, transparent 100%)",
+            width="400px",
+            height="400px",
+            background="radial-gradient(ellipse 120% 80% at center, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 40%, rgba(255, 255, 255, 0.02) 70%, transparent 100%)",
             border_radius="50%",
             pointer_events="none",
             z_index="-1",
             transform="translate(-50%, -50%)",
             transition="all 0.1s ease-out",
             style={
-                "filter": "blur(1px)",
-                "box-shadow": "0 0 100px rgba(255, 255, 255, 0.05)",
+                "filter": "blur(3px)",
+                "box-shadow": "0 0 150px rgba(255, 255, 255, 0.02)",
             }
         ),
         
@@ -372,6 +372,13 @@ def page_wrapper(*children) -> rx.Component:
             z_index="10",
             width="100%",
             min_height="100vh",
+            # Remove default padding that pushes content down
+            padding="0",
+            margin="0",
+            style={
+                "padding": "0",
+                "margin": "0"
+            }
         ),
         position="relative",
         width="100%",

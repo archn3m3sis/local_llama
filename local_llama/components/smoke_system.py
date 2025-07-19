@@ -15,23 +15,6 @@ def advanced_smoke_system() -> rx.Component:
                 "z_index": "5",
             }
         ),
-        rx.el.div(
-            "✨ Interactive Particles - Hover and Click",
-            style={
-                "position": "absolute",
-                "top": "1.25rem",
-                "left": "1.25rem",
-                "z_index": "10",
-                "background": "rgba(0, 0, 0, 0.6)",
-                "color": "white",
-                "font_size": "0.875rem",
-                "font_family": "monospace",
-                "padding": "0.5rem 0.75rem",
-                "border_radius": "0.25rem",
-                "border": "1px solid rgba(255, 255, 255, 0.3)",
-                "backdrop_filter": "blur(10px)",
-            }
-        ),
         rx.script("""
             // Robust particle system with DOM observer
             (async () => {

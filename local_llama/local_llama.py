@@ -9,7 +9,7 @@ import reflex_type_animation as ta
 from rxconfig import config
 from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, Software, Vulnerabilities, Analytics
 from .models import Employee, AppUser, Project, HardwareManufacturer, SWManufacturer, LogType, ImagingMethod, SysArchitecture, CPUType, GPUType
-from .components import advanced_smoke_system, page_wrapper
+from .components import advanced_smoke_system, page_wrapper, universal_background
 
 load_dotenv()
 
@@ -658,7 +658,53 @@ app = rx.App()
 app.add_page(index, route="/")
 
 # Add protected pages
-app.add_page(protected_page(Dashboard), route="/dashboard")
+def dashboard_with_custom_wrapper():
+    """Dashboard with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                # MINIMAL APPROACH: Just background + absolute positioned content
+                rx.fragment(
+                    universal_background(),
+                    Dashboard()  # Dashboard now has position="absolute" from your changes
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(
+                            rx.button("Go to Home", color_scheme="blue"),
+                            href="/",
+                        ),
+                        spacing="4",
+                        align="center",
+                        justify="center",
+                        min_height="85vh",
+                    )
+                )
+            ),
+        ),
+        clerk.clerk_loading(
+            rx.center(
+                rx.vstack(
+                    rx.spinner(size="3", color="white"),
+                    rx.text("Loading...", color="white"),
+                    spacing="4",
+                    align="center",
+                ),
+                width="100%",
+                height="100vh",
+                background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)",
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+app.add_page(dashboard_with_custom_wrapper, route="/dashboard")
 app.add_page(protected_page(Dats), route="/dats")
 app.add_page(protected_page(Images), route="/images")
 app.add_page(protected_page(Logs), route="/logs")
