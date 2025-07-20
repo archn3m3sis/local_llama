@@ -1,5 +1,3 @@
-"""Welcome to Reflex! This file outlines the steps to create a basic app."""
-
 import os
 import reflex as rx
 import reflex_clerk_api as clerk
@@ -22,7 +20,6 @@ clerk.ClerkState.set_claims_options({
 
 
 class State(rx.State):
-    """The app state."""
     mouse_x: int = 0
     mouse_y: int = 0
 
@@ -49,7 +46,7 @@ def xai_navbar() -> rx.Component:
                 align-items: flex-start;
                 line-height: 1;
             }
-            
+
             .nx-main {
                 font-size: 1.5em;
                 font-weight: 700;
@@ -57,7 +54,7 @@ def xai_navbar() -> rx.Component:
                 letter-spacing: -0.02em;
                 margin-bottom: -0.1em;
             }
-            
+
             .iams-sub {
                 font-size: 0.85em;
                 font-weight: 600;
@@ -65,18 +62,18 @@ def xai_navbar() -> rx.Component:
                 letter-spacing: 0.08em;
                 text-transform: uppercase;
                 margin-left: 0.1em;
-                background: linear-gradient(90deg, 
-                    rgba(255, 255, 255, 0.8) 0%, 
+                background: linear-gradient(90deg,
+                    rgba(255, 255, 255, 0.8) 0%,
                     rgba(255, 255, 255, 0.5) 100%);
                 -webkit-background-clip: text;
                 background-clip: text;
                 -webkit-text-fill-color: transparent;
                 transition: all 0.3s ease;
             }
-            
+
             .navbar-logo:hover .iams-sub {
-                background: linear-gradient(90deg, 
-                    rgba(255, 255, 255, 1) 0%, 
+                background: linear-gradient(90deg,
+                    rgba(255, 255, 255, 1) 0%,
                     rgba(255, 255, 255, 0.8) 100%);
                 -webkit-background-clip: text;
                 background-clip: text;
@@ -88,7 +85,7 @@ def xai_navbar() -> rx.Component:
             spacing="2",
         ),
         rx.spacer(),
-        
+
         # Navigation links
         rx.hstack(
             rx.link("IAMS", href="/dashboard", color="gray.300", _hover={"color": "white"}, font_size="sm", font_weight="500"),
@@ -97,9 +94,9 @@ def xai_navbar() -> rx.Component:
             spacing="6",
             display=["none", "none", "flex"],
         ),
-        
+
         rx.spacer(),
-        
+
         # Sign In/Dashboard Button
         clerk.signed_in(
             rx.link(
@@ -134,7 +131,7 @@ def xai_navbar() -> rx.Component:
                 )
             ),
         ),
-        
+
         # Mobile menu button
         rx.button(
             rx.icon(tag="hamburger", size=20),
@@ -143,7 +140,7 @@ def xai_navbar() -> rx.Component:
             display=["flex", "flex", "none"],
             _hover={"bg": "rgba(255, 255, 255, 0.1)"},
         ),
-        
+
         width="100%",
         padding="1.5em 2em",
         position="fixed",
@@ -177,7 +174,7 @@ def hero_section() -> rx.Component:
                 justify-content: center;
                 margin-bottom: 1rem;
             }
-            
+
             .nx-backdrop {
                 position: absolute;
                 font-size: clamp(8rem, 20vw, 20rem);
@@ -189,16 +186,16 @@ def hero_section() -> rx.Component:
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 z-index: 1;
                 transform: translateX(-15%) translateY(-20%);
-                background: linear-gradient(135deg, 
-                    rgba(255, 255, 255, 0.1) 0%, 
-                    rgba(255, 255, 255, 0.05) 50%, 
+                background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    rgba(255, 255, 255, 0.05) 50%,
                     rgba(255, 255, 255, 0.02) 100%);
                 -webkit-background-clip: text;
                 background-clip: text;
                 -webkit-text-fill-color: transparent;
                 text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
             }
-            
+
             .hero-text {
                 font-size: clamp(6rem, 15vw, 16rem);
                 font-weight: 800;
@@ -206,11 +203,11 @@ def hero_section() -> rx.Component:
                 text-align: center;
                 line-height: 0.9;
                 letter-spacing: -0.02em;
-                background: linear-gradient(180deg, 
-                    #ffffff 0%, 
-                    #f8fafc 25%, 
-                    #e2e8f0 50%, 
-                    #cbd5e1 75%, 
+                background: linear-gradient(180deg,
+                    #ffffff 0%,
+                    #f8fafc 25%,
+                    #e2e8f0 50%,
+                    #cbd5e1 75%,
                     #94a3b8 100%);
                 -webkit-background-clip: text;
                 background-clip: text;
@@ -220,7 +217,7 @@ def hero_section() -> rx.Component:
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
             }
-            
+
             @media (max-width: 768px) {
                 .nx-backdrop {
                     font-size: clamp(5rem, 18vw, 12rem);
@@ -233,7 +230,7 @@ def hero_section() -> rx.Component:
             """),
             z_index="10",
         ),
-        
+
         # Subtitle with type animation
         rx.box(
             ta.type_animation(
@@ -264,7 +261,7 @@ def hero_section() -> rx.Component:
             text_align="center",
             margin_bottom="3em",
         ),
-        
+
         # Conditional content based on auth status
         clerk.signed_in(
             rx.vstack(
@@ -364,7 +361,7 @@ def hero_section() -> rx.Component:
                 align="center",
             )
         ),
-        
+
         spacing="4",
         align="center",
         justify="center",
@@ -448,37 +445,37 @@ def landing_page_content() -> rx.Component:
                 border-radius: 0.5rem !important;
                 color: #ffffff !important;
             }
-            
+
             .cl-userButtonPopoverActionButton {
                 color: #ffffff !important;
                 background-color: transparent !important;
             }
-            
+
             .cl-userButtonPopoverActionButton:hover {
                 background-color: rgba(255, 255, 255, 0.1) !important;
             }
-            
+
             .cl-userButtonPopoverActionButtonText {
                 color: #ffffff !important;
             }
-            
+
             .cl-userButtonPopoverActionButtonIcon {
                 color: #ffffff !important;
             }
-            
+
             .cl-userPreviewTextContainer {
                 color: #ffffff !important;
             }
-            
+
             .cl-userPreviewSecondaryIdentifier {
                 color: #cccccc !important;
             }
-            
+
             .cl-userButtonPopoverFooter {
                 background: #0a0a0a !important;
                 border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
             }
-            
+
             /* Additional selectors for different Clerk versions */
             [data-clerk-element="userButtonPopoverCard"] {
                 background: #1a1a1a !important;
@@ -486,32 +483,32 @@ def landing_page_content() -> rx.Component:
                 border-radius: 0.5rem !important;
                 color: #ffffff !important;
             }
-            
+
             [data-clerk-element="userButtonPopoverActionButton"] {
                 color: #ffffff !important;
                 background-color: transparent !important;
             }
-            
+
             [data-clerk-element="userButtonPopoverActionButton"]:hover {
                 background-color: rgba(255, 255, 255, 0.1) !important;
             }
-            
+
             [data-clerk-element="userButtonPopoverActionButtonText"] {
                 color: #ffffff !important;
             }
-            
+
             [data-clerk-element="userButtonPopoverActionButtonIcon"] {
                 color: #ffffff !important;
             }
-            
+
             [data-clerk-element="userPreviewTextContainer"] {
                 color: #ffffff !important;
             }
-            
+
             [data-clerk-element="userPreviewSecondaryIdentifier"] {
                 color: #cccccc !important;
             }
-            
+
             [data-clerk-element="userButtonPopoverFooter"] {
                 background: #0a0a0a !important;
                 border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -528,7 +525,7 @@ def landing_page_content() -> rx.Component:
                 background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)",
                 z_index="-3",
             ),
-            
+
             # Subtle gradient overlay
             rx.box(
                 position="absolute",
@@ -539,7 +536,7 @@ def landing_page_content() -> rx.Component:
                 background="radial-gradient(ellipse 100% 40% at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 50%)",
                 z_index="-2",
             ),
-            
+
             # Mouse-following glow effect
             rx.box(
                 id="mouse-glow",
@@ -559,7 +556,7 @@ def landing_page_content() -> rx.Component:
                     "box-shadow": "0 0 100px rgba(255, 255, 255, 0.05)",
                 }
             ),
-            
+
             # JavaScript for mouse tracking
             rx.script("""
                 document.addEventListener('mousemove', function(e) {
@@ -570,13 +567,13 @@ def landing_page_content() -> rx.Component:
                     }
                 });
             """),
-            
+
             # Interactive smoke system
             interactive_smoke_system(),
-            
+
             # Navigation
             xai_navbar(),
-            
+
             # Loading state
             clerk.clerk_loading(
                 rx.center(
@@ -590,7 +587,7 @@ def landing_page_content() -> rx.Component:
                     height="100vh",
                 )
             ),
-            
+
             # Main content
             clerk.clerk_loaded(
                 rx.center(
@@ -600,7 +597,7 @@ def landing_page_content() -> rx.Component:
                     padding="0 2em",
                 )
             ),
-            
+
             width="100%",
             height="100vh",
             overflow="hidden",

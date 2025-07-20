@@ -8,7 +8,7 @@ def metallic_text(text: str, size: str = "8") -> rx.Component:
     return rx.text(
         text,
         font_weight="800",
-        line_height="0.9",
+        line_height="1.1",
         letter_spacing="-0.02em",
         color="white",
         background="linear-gradient(180deg, #ffffff 0%, #f8fafc 25%, #e2e8f0 50%, #cbd5e1 75%, #94a3b8 100%)",

@@ -14,12 +14,11 @@ class SpeedDialState(rx.State):
 def radial_speed_dial() -> rx.Component:
     """Create a radial speed dial component with navigation items."""
     nav_items = [
-        {"icon": "users", "label": "User Management", "route": "/users"},
-        {"icon": "database", "label": "Asset Management", "route": "/assets"},
-        {"icon": "shield", "label": "Security", "route": "/vulnerabilities"},
-        {"icon": "activity", "label": "Activity Logs", "route": "/logs"},
-        {"icon": "file-text", "label": "Reports", "route": "/reports"},
-        {"icon": "settings", "label": "Settings", "route": "/settings"}
+        {"icon": "book-open", "label": "Log Collection", "route": "/logs"},
+        {"icon": "refresh-cw", "label": "DAT Updates", "route": "/dats"},
+        {"icon": "monitor", "label": "Device Patching", "route": "/patching"},
+        {"icon": "image", "label": "Image Collection", "route": "/images"},
+        {"icon": "user", "label": "Access Control", "route": "/access"}
     ]
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:
@@ -89,11 +88,25 @@ def radial_speed_dial() -> rx.Component:
             ),
             transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(SpeedDialState.is_open, "auto", "none"),
+            on_click=SpeedDialState.toggle_speed_dial,
         )
     
     nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
     
     return rx.box(
+        # Glass backdrop strip for all speed dials
+        rx.box(
+            position="fixed",
+            bottom="0",
+            left="0",
+            width="100vw",
+            height="8rem",
+            background="linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.2) 100%)",
+            backdrop_filter="blur(20px)",
+            z_index="999",  # Behind speed dials and text labels
+            pointer_events="none",  # Allow clicks to pass through
+        ),
+        
         rx.box(
             position="fixed",
             top="0",
@@ -174,15 +187,19 @@ def radial_speed_dial() -> rx.Component:
                 transition="all 0.3s ease",
                 text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
                 white_space="nowrap",
+                position="relative",
+                z_index="1003",
             ),
             spacing="0",
             align="center",
+            width="auto",
+            min_width="200px",
         ),
         
         position="fixed",
         bottom="2rem",
-        left="2rem",
-        z_index="1002",
+        left="1rem",
+        z_index="1003",
     )
 
 
@@ -271,6 +288,7 @@ def analytics_speed_dial() -> rx.Component:
             ),
             transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(AnalyticsSpeedDialState.is_open, "auto", "none"),
+            on_click=AnalyticsSpeedDialState.toggle_speed_dial,
         )
     
     nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
@@ -356,6 +374,8 @@ def analytics_speed_dial() -> rx.Component:
                 transition="all 0.3s ease",
                 text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
                 white_space="nowrap",
+                position="relative",
+                z_index="1003",
             ),
             spacing="0",
             align="center",
@@ -364,7 +384,7 @@ def analytics_speed_dial() -> rx.Component:
         position="fixed",
         bottom="2rem",
         left="15rem",
-        z_index="1002",
+        z_index="1003",
     )
 
 
@@ -456,6 +476,7 @@ def asset_data_speed_dial() -> rx.Component:
             ),
             transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(AssetDataSpeedDialState.is_open, "auto", "none"),
+            on_click=AssetDataSpeedDialState.toggle_speed_dial,
         )
     
     nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
@@ -541,6 +562,8 @@ def asset_data_speed_dial() -> rx.Component:
                 transition="all 0.3s ease",
                 text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
                 white_space="nowrap",
+                position="relative",
+                z_index="1003",
             ),
             spacing="0",
             align="center",
@@ -548,8 +571,8 @@ def asset_data_speed_dial() -> rx.Component:
         
         position="fixed",
         bottom="2rem",
-        left="29rem",
-        z_index="1002",
+        left="26rem",
+        z_index="1003",
     )
 
 
@@ -641,6 +664,7 @@ def playbook_speed_dial() -> rx.Component:
             ),
             transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(PlaybookSpeedDialState.is_open, "auto", "none"),
+            on_click=PlaybookSpeedDialState.toggle_speed_dial,
         )
     
     nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
@@ -726,6 +750,8 @@ def playbook_speed_dial() -> rx.Component:
                 transition="all 0.3s ease",
                 text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
                 white_space="nowrap",
+                position="relative",
+                z_index="1003",
             ),
             spacing="0",
             align="center",
@@ -733,8 +759,8 @@ def playbook_speed_dial() -> rx.Component:
         
         position="fixed",
         bottom="2rem",
-        left="43rem",
-        z_index="1002",
+        left="37.5rem",
+        z_index="1003",
     )
 
 
@@ -820,6 +846,7 @@ def vault_speed_dial() -> rx.Component:
             ),
             transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
             pointer_events=rx.cond(VaultSpeedDialState.is_open, "auto", "none"),
+            on_click=VaultSpeedDialState.toggle_speed_dial,
         )
     
     nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
@@ -905,6 +932,8 @@ def vault_speed_dial() -> rx.Component:
                 transition="all 0.3s ease",
                 text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
                 white_space="nowrap",
+                position="relative",
+                z_index="1003",
             ),
             spacing="0",
             align="center",
@@ -912,8 +941,8 @@ def vault_speed_dial() -> rx.Component:
         
         position="fixed",
         bottom="2rem",
-        left="55rem",
-        z_index="1002",
+        left="48.5rem",
+        z_index="1003",
     )
 
 
