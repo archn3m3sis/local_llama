@@ -24,3 +24,5 @@ from .cpu_type import CPUType
 from .gpu_type import GPUType
 from .vm_type import VMType
 from .virt_source import VirtualizationSource
+from .vm_status import VMStatus
+from .virtual_machine import VirtualMachine

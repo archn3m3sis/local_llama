@@ -34,10 +34,10 @@ Ensure you have a `.env` file with:
 local_llama/
 ├── local_llama.py          # Main app entry point with authentication
 ├── pages/                  # Page components (dashboard, assets, etc.)
-├── models/                 # SQLModel database models (28+ tables)
+├── models/                 # SQLModel database models (30+ tables)
 ├── components/             # Reusable UI components
 ├── database/               # Database utilities and seeding system
-│   └── seeds/              # Database seed files (25 seed scripts)
+│   └── seeds/              # Database seed files (26 seed scripts)
 ├── states/                 # Reflex state management
 └── alembic/                # Database migration files
     └── versions/           # Migration version files
@@ -70,6 +70,8 @@ local_llama/
 - `GPUType`: GPU type lookup (187 GPU types)
 - `VMType`: Virtual machine type lookup (vmtype_id, vm_type)
 - `VirtualizationSource`: Virtualization source lookup (virtsource_id, virt_source)
+- `VMStatus`: Virtual machine status lookup (vmstatus_id, vm_status)
+- `VirtualMachine`: Virtual machine tracking with full specifications and relationships
 
 #### Operating System Models
 - `OperatingSystem`: OS lookup (os_id, os_name)
@@ -283,10 +285,10 @@ Based on the overview, the system will include:
 - **Z-Index Requirements**: Elements must have `position="relative"`, `absolute`, or `fixed` for z-index to work in Reflex
 - **Minimal Container Approach**: Use `rx.fragment()` instead of nested `rx.box()` containers to avoid layout conflicts
 
-### Complete Seed File List (25 files)
-**Current Database Tables with Models**: 28 tables total
+### Complete Seed File List (26 files)
+**Current Database Tables with Models**: 30 tables total
 
-**Models with Seed Data (25 files):**
+**Models with Seed Data (26 files):**
 - `appuser_seed.py` - 9 app users with FK relationships
 - `asset_seed.py` - 60 baseline assets across 6 projects with location/system assignments
 - `avversion_seed.py` - 2 antivirus versions
@@ -312,10 +314,12 @@ Based on the overview, the system will include:
 - `systype_seed.py` - System types
 - `vm_type_seed.py` - 2 HyperV virtual machine types
 - `virt_source_seed.py` - 2 virtualization servers (UHA, UHB)
+- `vm_status_seed.py` - 7 VM status options (functional to non-functional states)
 
-**Models WITHOUT Seed Data (3 tables):**
+**Models WITHOUT Seed Data (4 tables):**
 - `DatUpdate` - Activity tracking table (populated by user submissions)
 - `ImageCollection` - Activity tracking table (populated by user submissions)  
 - `LogCollection` - Activity tracking table (populated by user submissions)
+- `VirtualMachine` - VM instance tracking table (populated by VM creation workflows)
 
 These activity tracking tables are designed to be populated through user interactions and don't require seed data.
