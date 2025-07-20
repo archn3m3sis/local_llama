@@ -149,6 +149,29 @@ def image_collection_form() -> rx.Component:
                     spacing="2",
                 ),
                 
+                # Collection Date/Time
+                rx.vstack(
+                    rx.hstack(
+                        rx.text("Collection Date & Time", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
+                        rx.text("*", color="red", font_size="0.9rem"),
+                        spacing="1",
+                    ),
+                    rx.input(
+                        type="datetime-local",
+                        value=ImageCollectionState.collection_date,
+                        on_change=ImageCollectionState.set_collection_date,
+                        width="100%",
+                        style={
+                            "background": "rgba(255, 255, 255, 0.05)",
+                            "border": "1px solid rgba(255, 255, 255, 0.2)",
+                            "color": "white",
+                            "_focus": {"border": "1px solid rgba(59, 130, 246, 0.5)"},
+                        },
+                    ),
+                    width="100%",
+                    spacing="2",
+                ),
+                
                 spacing="4",
                 width="100%",
             ),

@@ -17,7 +17,7 @@ def radial_speed_dial() -> rx.Component:
         {"icon": "book-open", "label": "Log Collection", "route": "/logs"},
         {"icon": "refresh-cw", "label": "DAT Updates", "route": "/dats"},
         {"icon": "monitor", "label": "Device Patching", "route": "/patching"},
-        {"icon": "image", "label": "Image Collection", "route": "/images"},
+        {"icon": "image", "label": "Image Capture", "route": "/images"},
         {"icon": "user", "label": "Access Control", "route": "/access"}
     ]
     
@@ -383,7 +383,7 @@ def analytics_speed_dial() -> rx.Component:
         
         position="fixed",
         bottom="2rem",
-        left="15rem",
+        left="14rem",
         z_index="1003",
     )
 
@@ -571,7 +571,7 @@ def asset_data_speed_dial() -> rx.Component:
         
         position="fixed",
         bottom="2rem",
-        left="26rem",
+        left="24.5rem",
         z_index="1003",
     )
 
@@ -759,7 +759,7 @@ def playbook_speed_dial() -> rx.Component:
         
         position="fixed",
         bottom="2rem",
-        left="37.5rem",
+        left="35.5rem",
         z_index="1003",
     )
 
@@ -941,7 +941,7 @@ def vault_speed_dial() -> rx.Component:
         
         position="fixed",
         bottom="2rem",
-        left="48.5rem",
+        left="46rem",
         z_index="1003",
     )
 

@@ -63,23 +63,23 @@ def dat_update_form() -> rx.Component:
             ),
         ),
         
-        # Auto-fade script for toast notifications
+        # Auto-fade script for toast notifications (using unique namespace)
         rx.script(
             """
-            // Auto-fade toast notification after 5 seconds
+            // Auto-fade toast notification after 5 seconds (DAT Updates)
             (function() {
-                let fadeTimer = null;
+                let datFadeTimer = null;
                 
-                const checkAndFade = () => {
+                const datCheckAndFade = () => {
                     const toastContainer = document.querySelector('[data-toast-container]');
                     const message = document.querySelector('[data-toast-message]');
                     
                     if (toastContainer && message && message.textContent.includes('successfully')) {
                         // Clear any existing timer
-                        if (fadeTimer) clearTimeout(fadeTimer);
+                        if (datFadeTimer) clearTimeout(datFadeTimer);
                         
                         // Set new timer to fade out the toast
-                        fadeTimer = setTimeout(() => {
+                        datFadeTimer = setTimeout(() => {
                             toastContainer.style.transition = 'opacity 0.5s ease-out';
                             toastContainer.style.opacity = '0';
                             setTimeout(() => {
@@ -90,9 +90,9 @@ def dat_update_form() -> rx.Component:
                 };
                 
                 // Run check when page loads and when content changes
-                checkAndFade();
-                const observer = new MutationObserver(checkAndFade);
-                observer.observe(document.body, { childList: true, subtree: true });
+                datCheckAndFade();
+                const datObserver = new MutationObserver(datCheckAndFade);
+                datObserver.observe(document.body, { childList: true, subtree: true });
             })();
             """
         ),
@@ -149,6 +149,29 @@ def dat_update_form() -> rx.Component:
                     spacing="2",
                 ),
                 
+                # Update Date/Time
+                rx.vstack(
+                    rx.hstack(
+                        rx.text("Update Date & Time", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
+                        rx.text("*", color="red", font_size="0.9rem"),
+                        spacing="1",
+                    ),
+                    rx.input(
+                        type="datetime-local",
+                        value=DatUpdateState.update_date,
+                        on_change=DatUpdateState.set_update_date,
+                        width="100%",
+                        style={
+                            "background": "rgba(255, 255, 255, 0.05)",
+                            "border": "1px solid rgba(255, 255, 255, 0.2)",
+                            "color": "white",
+                            "_focus": {"border": "1px solid rgba(59, 130, 246, 0.5)"},
+                        },
+                    ),
+                    width="100%",
+                    spacing="2",
+                ),
+                
                 spacing="4",
                 width="100%",
             ),
@@ -186,7 +209,11 @@ def dat_update_form() -> rx.Component:
                 
                 # DAT Version Selection
                 rx.vstack(
-                    rx.text("DAT Version", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
+                    rx.hstack(
+                        rx.text("DAT Version", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
+                        rx.text("*", color="red", font_size="0.9rem"),
+                        spacing="1",
+                    ),
                     rx.select(
                         DatUpdateState.dat_versions,
                         value=DatUpdateState.selected_datversion_id,

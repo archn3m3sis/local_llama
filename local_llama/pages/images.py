@@ -7,7 +7,7 @@ from ..states.image_collection_state import ImageCollectionState
 def Images() -> rx.Component:
     return rx.vstack(
         # Massive metallic title matching dashboard style
-        metallic_title("IAMS - Image Collection"),
+        metallic_title("IAMS - Image Capture"),
 
         # Content area with tab system
         rx.vstack(
@@ -16,6 +16,7 @@ def Images() -> rx.Component:
                 color="gray.400", 
                 font_size="1.1rem",
                 margin_bottom="2em",
+                margin_top="-1.5em",
                 style={
                     "animation": "pixelateIn 1.5s ease-out forwards",
                     "filter": "blur(0px)",

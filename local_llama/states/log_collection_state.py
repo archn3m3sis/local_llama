@@ -1,6 +1,6 @@
 import reflex as rx
 from typing import Optional, List, Dict
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlmodel import Session, select
 from ..models.log_collection import LogCollection
 from ..models.log_type import LogType
@@ -110,6 +110,9 @@ class LogCollectionState(rx.State):
                 "Windows Event Security Logs"
             ]
             
+            # Populate common log types dropdown (include the "All" option)
+            self.logtypes = ["All Required Baseline Logs"] + common_logs.copy()
+            
             # Separate extended log types (all except common ones)
             self.extended_logtypes = []
             self.extended_logtype_map = {}
@@ -189,20 +192,73 @@ class LogCollectionState(rx.State):
         """Set logtype search value."""
         self.logtype_search = value
     
+    def check_baseline_logs_exist(self) -> bool:
+        """Check if all three baseline logs exist for the selected asset within the past 30 days."""
+        if not self.selected_asset_id:
+            return False
+            
+        try:
+            with rx.session() as session:
+                # Define the baseline log types
+                baseline_logs = [
+                    "Windows Event System Logs",
+                    "Windows Event Application Logs",
+                    "Windows Event Security Logs"
+                ]
+                
+                # Calculate 30 days ago
+                thirty_days_ago = datetime.now() - timedelta(days=30)
+                
+                # Count successful baseline log collections for this asset in the past 30 days
+                for log_type in baseline_logs:
+                    logtype_id = self.logtype_map.get(log_type)
+                    if not logtype_id:
+                        continue
+                        
+                    # Check if this log type exists for this asset in the past 30 days
+                    existing_log = session.exec(
+                        select(LogCollection)
+                        .where(
+                            LogCollection.asset_id == self.selected_asset_id,
+                            LogCollection.logtype_id == logtype_id,
+                            LogCollection.logcollection_date >= thirty_days_ago,
+                            LogCollection.logcollection_result == "Success"
+                        )
+                        .limit(1)
+                    ).first()
+                    
+                    if not existing_log:
+                        return False  # This baseline log is missing
+                
+                return True  # All baseline logs found
+                
+        except Exception as e:
+            print(f"Error checking baseline logs: {str(e)}")
+            return False
+    
+    @rx.var
+    def baseline_logs_completed(self) -> bool:
+        """Reactive var to check if baseline logs are completed."""
+        return self.check_baseline_logs_exist()
     
     @rx.var
     def form_is_valid(self) -> bool:
         """Check if form has all required fields."""
-        # Common logtype is required, extended logtype is optional
-        return all([
+        base_fields = [
             self.selected_employee_id,
             self.selected_asset_id,
             self.selected_project_id,
-            self.selected_common_logtype,  # Required
             self.collection_result,
             self.collection_date
-        ])
-        # Note: self.selected_logtype_id (extended log type) is not required
+        ]
+        
+        # If baseline logs are completed, allow extended-only submissions
+        if self.baseline_logs_completed:
+            # Can submit with just extended log type if baseline logs exist
+            return all(base_fields) and (self.selected_common_logtype or self.selected_logtype_id)
+        else:
+            # Require common logtype if baseline logs are not completed
+            return all(base_fields + [self.selected_common_logtype])
     
     async def submit_log_collection(self):
         """Submit the log collection to database."""
@@ -223,8 +279,8 @@ class LogCollectionState(rx.State):
                 
                 records_created = 0
                 
-                # Handle "All Common Logtypes" special case
-                if self.selected_common_logtype == "All Common Logtypes":
+                # Handle "All Required Baseline Logs" special case
+                if self.selected_common_logtype == "All Required Baseline Logs":
                     common_logs = [
                         "Windows Event System Logs",
                         "Windows Event Application Logs", 
@@ -248,7 +304,7 @@ class LogCollectionState(rx.State):
                             records_created += 1
                 
                 # Handle single common logtype selection
-                elif self.selected_common_logtype and self.selected_common_logtype != "All Common Logtypes":
+                elif self.selected_common_logtype and self.selected_common_logtype != "All Required Baseline Logs":
                     logtype_id = self.logtype_map.get(self.selected_common_logtype)
                     if logtype_id:
                         new_collection = LogCollection(

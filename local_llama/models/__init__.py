@@ -6,6 +6,7 @@ from .hardware_manufacturer import HardwareManufacturer
 from .sw_manufacturer import SWManufacturer
 from .av_version import AVVersion
 from .dat_version import DatVersion
+from .dat_update import DatUpdate
 from .privilege_level import PrivilegeLevel
 from .department import Department
 from .building import Building

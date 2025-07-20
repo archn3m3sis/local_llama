@@ -21,6 +21,7 @@ class ImageCollectionState(rx.State):
     image_size_mb: str = ""
     imaging_result: str = ""
     imaging_comments: str = ""
+    collection_date: str = ""
     
     # Form validation and submission
     is_submitting: bool = False
@@ -57,7 +58,8 @@ class ImageCollectionState(rx.State):
             bool(self.selected_asset_id) and
             bool(self.selected_project_id) and
             bool(self.selected_imaging_method_id) and
-            bool(self.imaging_result)
+            bool(self.imaging_result) and
+            bool(self.collection_date)
         )
     
     def load_form_data(self):
@@ -162,9 +164,12 @@ class ImageCollectionState(rx.State):
                     self.is_submitting = False
                     return
                 
+                # Parse the collection date
+                collection_datetime = datetime.fromisoformat(self.collection_date) if self.collection_date else datetime.now()
+                
                 # Create new image collection record
                 new_collection = ImageCollection(
-                    imgcollection_date=datetime.now(),
+                    imgcollection_date=collection_datetime,
                     employee_id=int(employee_id),
                     asset_id=int(asset_id),
                     project_id=int(project_id),
@@ -209,6 +214,7 @@ class ImageCollectionState(rx.State):
         self.image_size_mb = ""
         self.imaging_result = ""
         self.imaging_comments = ""
+        self.collection_date = ""
         self.assets = []
         self.form_key += 1  # Force form re-render
     

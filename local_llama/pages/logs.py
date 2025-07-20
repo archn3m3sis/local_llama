@@ -16,6 +16,7 @@ def Logs() -> rx.Component:
                 color="gray.400", 
                 font_size="1.1rem",
                 margin_bottom="2em",
+                margin_top="-1.5em",
                 style={
                     "animation": "pixelateIn 1.5s ease-out forwards",
                     "filter": "blur(0px)",

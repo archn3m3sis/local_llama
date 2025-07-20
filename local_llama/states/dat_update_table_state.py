@@ -137,7 +137,7 @@ class DatUpdateTableState(rx.State):
                         Asset.asset_name,
                         Project.project_name,
                         DatVersion.datversion_name,
-                        AVVersion.avversion_name
+                        AVVersion.av_version
                     )
                     .join(Employee, DatUpdate.employee_id == Employee.id)
                     .join(Asset, DatUpdate.asset_id == Asset.asset_id)

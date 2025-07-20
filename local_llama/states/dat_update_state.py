@@ -22,6 +22,7 @@ class DatUpdateState(rx.State):
     datfile_name: str = ""
     update_result: str = ""
     update_comments: str = ""
+    update_date: str = ""
     
     # Form validation and submission
     is_submitting: bool = False
@@ -59,7 +60,8 @@ class DatUpdateState(rx.State):
             bool(self.selected_project_id) and
             bool(self.selected_datversion_id) and
             bool(self.datfile_name.strip()) and
-            bool(self.update_result)
+            bool(self.update_result) and
+            bool(self.update_date)
         )
     
     def load_form_data(self):
@@ -94,8 +96,8 @@ class DatUpdateState(rx.State):
                     .order_by(DatVersion.datversion_name)
                 ).all()
                 
-                self.dat_versions = [f"{dat.datversion_name} (AV: {av.avversion_name})" for dat, av in dat_versions]
-                self.datversion_map = {f"{dat.datversion_name} (AV: {av.avversion_name})": str(dat.datversion_id) for dat, av in dat_versions}
+                self.dat_versions = [f"{dat.datversion_name} (AV: {av.av_version})" for dat, av in dat_versions]
+                self.datversion_map = {f"{dat.datversion_name} (AV: {av.av_version})": str(dat.datversion_id) for dat, av in dat_versions}
                 
         except Exception as e:
             print(f"Error loading form data: {str(e)}")
@@ -160,9 +162,12 @@ class DatUpdateState(rx.State):
                     self.is_submitting = False
                     return
                 
+                # Parse the update date
+                update_datetime = datetime.fromisoformat(self.update_date) if self.update_date else datetime.now()
+                
                 # Create new DAT update record
                 new_update = DatUpdate(
-                    date_of_update=datetime.now(),
+                    date_of_update=update_datetime,
                     employee_id=int(employee_id),
                     asset_id=int(asset_id),
                     project_id=int(project_id),
@@ -207,6 +212,7 @@ class DatUpdateState(rx.State):
         self.datfile_name = ""
         self.update_result = ""
         self.update_comments = ""
+        self.update_date = ""
         self.assets = []
         self.form_key += 1  # Force form re-render
     
