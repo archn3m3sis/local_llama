@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import reflex_type_animation as ta
 
 from rxconfig import config
-from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, Software, Vulnerabilities, Analytics
+from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, Software, Vulnerabilities, Analytics, VM
 from .models import Employee, AppUser, Project, HardwareManufacturer, SWManufacturer, LogType, ImagingMethod, SysArchitecture, CPUType, GPUType
 from .components import advanced_smoke_system, page_wrapper, universal_background, radial_speed_dial
 
@@ -998,6 +998,45 @@ def tickets_with_custom_wrapper():
         register_user_state=True,
     )
 
+def vm_with_custom_wrapper():
+    """VM with custom wrapper to fix positioning."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    VM()
+                )
+            ),
+            clerk.signed_out(
+                rx.redirect("/")
+            ),
+            fallback=rx.fragment(
+                universal_background(),
+                rx.center(
+                    rx.hstack(
+                        rx.icon(
+                            tag="loader",
+                            size=30,
+                            color="white",
+                            animation="spin 1s linear infinite",
+                        ),
+                        rx.text(
+                            "Authenticating...",
+                            color="white",
+                            font_size="1.2rem",
+                        ),
+                        spacing="4",
+                        align="center",
+                    ),
+                    height="100vh",
+                    width="100vw",
+                )
+            )
+        ),
+        register_user_state=True,
+    )
+
 def analytics_with_custom_wrapper():
     """Analytics with custom wrapper to fix positioning."""
     return clerk.clerk_provider(
@@ -1044,4 +1083,5 @@ app.add_page(assets_with_custom_wrapper, route="/assets")
 app.add_page(playbook_with_custom_wrapper, route="/playbook")
 app.add_page(software_with_custom_wrapper, route="/software")
 app.add_page(vulnerabilities_with_custom_wrapper, route="/vulnerabilities")
+app.add_page(vm_with_custom_wrapper, route="/vm")
 app.add_page(analytics_with_custom_wrapper, route="/analytics")

@@ -7,4 +7,5 @@ from .assets import Assets
 from .playbook import Playbook
 from .software import Software
 from .vulnerabilities import Vulnerabilities
+from .vm import VM
 from .analytics import Analytics
