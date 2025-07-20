@@ -34,10 +34,10 @@ Ensure you have a `.env` file with:
 local_llama/
 ├── local_llama.py          # Main app entry point with authentication
 ├── pages/                  # Page components (dashboard, assets, etc.)
-├── models/                 # SQLModel database models (25+ tables)
+├── models/                 # SQLModel database models (28+ tables)
 ├── components/             # Reusable UI components
 ├── database/               # Database utilities and seeding system
-│   └── seeds/              # Database seed files (11 seed scripts)
+│   └── seeds/              # Database seed files (25 seed scripts)
 ├── states/                 # Reflex state management
 └── alembic/                # Database migration files
     └── versions/           # Migration version files
@@ -68,6 +68,8 @@ local_llama/
 - `SysArchitecture`: System architecture lookup (46 architectures: x86_64, ARM, etc.)
 - `CPUType`: CPU type lookup (498 CPU types)
 - `GPUType`: GPU type lookup (187 GPU types)
+- `VMType`: Virtual machine type lookup (vmtype_id, vm_type)
+- `VirtualizationSource`: Virtualization source lookup (virtsource_id, virt_source)
 
 #### Operating System Models
 - `OperatingSystem`: OS lookup (os_id, os_name)
@@ -89,6 +91,41 @@ local_llama/
 
 #### Support Models
 - `TEMTicket`: Test Equipment Maintenance tickets with asset, project, employee foreign keys
+
+### Database Table Creation Process
+
+When adding new database tables to IAMS:
+
+1. **Create Model File**: Create new SQLModel class in `local_llama/models/` directory
+   - Use SQLModel with proper field types and relationships
+   - Define primary keys, foreign keys, and constraints
+   - Follow existing naming conventions (table names should match class names in lowercase)
+
+2. **Update Model Imports**: Add new model to `local_llama/models/__init__.py`
+   - Import the new model class
+   - Ensure it's available for migration detection
+
+3. **Generate Migration**: Run database migration commands
+   ```bash
+   reflex db makemigrations  # Generate migration file
+   reflex db migrate         # Apply migration to database
+   ```
+
+4. **Create Seed Data** (if applicable):
+   - Create seed file in `local_llama/database/seeds/` 
+   - Follow naming convention: `{table_name}_seed.py`
+   - Include duplicate checking logic
+   - Add to `master_seed.py` in dependency order
+
+5. **Test Migration**: Verify table creation and relationships work correctly
+
+#### Database Model Design Guidelines
+- **Primary Keys**: Use auto-incrementing integers with `Field(primary_key=True)`
+- **Foreign Keys**: Use `Field(foreign_key="table.column")` with proper type matching
+- **Required Fields**: Use non-Optional types for required fields
+- **Optional Fields**: Use `Optional[Type]` for nullable columns
+- **Timestamps**: Use `Optional[datetime] = Field(default=None)` for creation/update times
+- **String Length**: Specify max_length for varchar fields where appropriate
 
 ### Database Seed Data Directory
 - `seeds` is a directory intended to hold the seed data for information that will need to be inserted to the database. this information will contain known good data to prepopulate the database with some baseline data for the initial testing of certain relationships and to be able to display the appropriate data visuals within the application.
@@ -246,7 +283,10 @@ Based on the overview, the system will include:
 - **Z-Index Requirements**: Elements must have `position="relative"`, `absolute`, or `fixed` for z-index to work in Reflex
 - **Minimal Container Approach**: Use `rx.fragment()` instead of nested `rx.box()` containers to avoid layout conflicts
 
-### Complete Seed File List (23 files)
+### Complete Seed File List (25 files)
+**Current Database Tables with Models**: 28 tables total
+
+**Models with Seed Data (25 files):**
 - `appuser_seed.py` - 9 app users with FK relationships
 - `asset_seed.py` - 60 baseline assets across 6 projects with location/system assignments
 - `avversion_seed.py` - 2 antivirus versions
@@ -270,3 +310,12 @@ Based on the overview, the system will include:
 - `swmanufacturer_seed.py` - Software manufacturers
 - `sysarchitecture_seed.py` - 46 system architectures
 - `systype_seed.py` - System types
+- `vm_type_seed.py` - 2 HyperV virtual machine types
+- `virt_source_seed.py` - 2 virtualization servers (UHA, UHB)
+
+**Models WITHOUT Seed Data (3 tables):**
+- `DatUpdate` - Activity tracking table (populated by user submissions)
+- `ImageCollection` - Activity tracking table (populated by user submissions)  
+- `LogCollection` - Activity tracking table (populated by user submissions)
+
+These activity tracking tables are designed to be populated through user interactions and don't require seed data.

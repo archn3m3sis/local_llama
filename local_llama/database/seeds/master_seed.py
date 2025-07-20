@@ -26,6 +26,8 @@ from local_llama.models.dat_version import DatVersion
 from local_llama.models.employee import Employee
 from local_llama.models.app_user import AppUser
 from local_llama.models.room import Room
+from local_llama.models.vm_type import VMType
+from local_llama.models.virt_source import VirtualizationSource
 import os
 from dotenv import load_dotenv
 
@@ -1211,6 +1213,72 @@ def seed_rooms():
         else:
             print("All rooms already exist in the database.")
 
+def seed_vmtypes():
+    """Seed the VMType table with predefined virtual machine type data."""
+    
+    # Create database engine
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is not set")
+    
+    engine = create_engine(database_url)
+    
+    # VMType data to insert
+    vmtypes_data = [
+        {"vm_type": "HyperV Virtual Machine Type 1"},
+        {"vm_type": "HyperV Virtual Machine Type 2"},
+    ]
+    
+    with Session(engine) as session:
+        # Check if vmtypes already exist to avoid duplicates
+        existing_vmtypes = session.exec(select(VMType)).all()
+        existing_types = {vmtype.vm_type for vmtype in existing_vmtypes}
+        
+        vmtypes_to_add = []
+        for vmtype_data in vmtypes_data:
+            if vmtype_data["vm_type"] not in existing_types:
+                vmtypes_to_add.append(VMType(**vmtype_data))
+        
+        if vmtypes_to_add:
+            session.add_all(vmtypes_to_add)
+            session.commit()
+            print(f"Added {len(vmtypes_to_add)} VM types to the database.")
+        else:
+            print("All VM types already exist in the database.")
+
+def seed_virtualization_sources():
+    """Seed the VirtualizationSource table with predefined virtualization source data."""
+    
+    # Create database engine
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is not set")
+    
+    engine = create_engine(database_url)
+    
+    # VirtualizationSource data to insert
+    virtualization_sources_data = [
+        {"virt_source": "UHA Virtualization Server"},
+        {"virt_source": "UHB Virtualization Server"},
+    ]
+    
+    with Session(engine) as session:
+        # Check if virtualization sources already exist to avoid duplicates
+        existing_sources = session.exec(select(VirtualizationSource)).all()
+        existing_source_names = {source.virt_source for source in existing_sources}
+        
+        sources_to_add = []
+        for source_data in virtualization_sources_data:
+            if source_data["virt_source"] not in existing_source_names:
+                sources_to_add.append(VirtualizationSource(**source_data))
+        
+        if sources_to_add:
+            session.add_all(sources_to_add)
+            session.commit()
+            print(f"Added {len(sources_to_add)} virtualization sources to the database.")
+        else:
+            print("All virtualization sources already exist in the database.")
+
 def run_all_seeds():
     """Run all seed functions in the correct order to avoid foreign key constraint errors."""
     print("Starting database seeding process...")
@@ -1230,6 +1298,8 @@ def run_all_seeds():
     seed_sysarchitectures()
     seed_cputypes()
     seed_gputypes()
+    seed_vmtypes()
+    seed_virtualization_sources()
     seed_privilegelevels()
     seed_departments()
     seed_avversions()

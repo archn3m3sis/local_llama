@@ -22,3 +22,5 @@ from .imaging_method import ImagingMethod
 from .sys_architecture import SysArchitecture
 from .cpu_type import CPUType
 from .gpu_type import GPUType
+from .vm_type import VMType
+from .virt_source import VirtualizationSource
