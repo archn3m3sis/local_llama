@@ -53,12 +53,13 @@ def universal_background() -> rx.Component:
         
         # JavaScript for mouse tracking and Clerk popup styling
         rx.script("""
-            // Throttled mouse movement for better performance
-            let mouseTimeout;
-            let lastMouseMove = 0;
-            const MOUSE_THROTTLE = 16; // ~60fps
-            
-            document.addEventListener('mousemove', function(e) {
+            (function() {
+                // Throttled mouse movement for better performance
+                let mouseTimeout;
+                let lastMouseMove = 0;
+                const MOUSE_THROTTLE = 16; // ~60fps
+                
+                document.addEventListener('mousemove', function(e) {
                 const now = Date.now();
                 if (now - lastMouseMove < MOUSE_THROTTLE) return;
                 lastMouseMove = now;
@@ -154,6 +155,7 @@ def universal_background() -> rx.Component:
             
             // Also try to style any existing popups
             styleClerkPopup();
+            })();
         """),
         
         
