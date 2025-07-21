@@ -18,7 +18,7 @@ def radial_speed_dial() -> rx.Component:
         {"icon": "refresh-cw", "label": "DAT Updates", "route": "/dats"},
         {"icon": "monitor", "label": "Device Patching", "route": "/patching"},
         {"icon": "image", "label": "Image Capture", "route": "/images"},
-        {"icon": "server", "label": "VM Creation", "route": "/vm"},
+        # {"icon": "server", "label": "VM Creation", "route": "/vm"},
         {"icon": "user", "label": "Access Control", "route": "/access"}
     ]
     
