@@ -10,6 +10,7 @@ from ..models.virt_source import VirtualizationSource
 from ..models.vm_type import VMType
 from ..models.vm_status import VMStatus
 from ..models.virtual_machine import VirtualMachine
+from ..services.activity_tracker import ActivityTracker
 
 class VMCreationTableState(rx.State):
     """State for VM Creation table."""
@@ -34,9 +35,9 @@ class VMCreationTableState(rx.State):
     show_edit_modal: bool = False
     editing_vm_id: int = 0
     edit_vm_status: str = ""
-    edit_ram_gb: str = ""
+    edit_ram_mb: str = ""
     edit_cpu_cores: str = ""
-    edit_disk_size_gb: str = ""
+    edit_disk_size_mb: str = ""
     edit_acas_scan: bool = False
     edit_scap_scan: bool = False
     
@@ -80,9 +81,9 @@ class VMCreationTableState(rx.State):
                 query = (
                     select(
                         VirtualMachine.virtmachine_id,
-                        VirtualMachine.ram_gb,
+                        VirtualMachine.ram_mb,
                         VirtualMachine.cpu_cores,
-                        VirtualMachine.disk_size_gb,
+                        VirtualMachine.disk_size_mb,
                         VirtualMachine.acas_scan_completed,
                         VirtualMachine.scap_scan_completed,
                         Employee.first_name,
@@ -128,14 +129,17 @@ class VMCreationTableState(rx.State):
                         "vm_type": row.vm_type,
                         "vm_status": row.vm_status,
                         "status_color": status_color,
-                        "ram_gb": row.ram_gb or "N/A",
+                        "ram_mb": row.ram_mb or "N/A",
                         "cpu_cores": row.cpu_cores or "N/A",
-                        "disk_size_gb": row.disk_size_gb or "N/A",
+                        "disk_size_mb": row.disk_size_mb or "N/A",
                         "acas_scan": row.acas_scan_completed,
                         "scap_scan": row.scap_scan_completed,
                         "is_recent": False,  # Will be set later
                         "is_duplicate": False,  # Will be set later
-                        "is_ready": "Fully Functional" in row.vm_status or row.vm_status == "Machine Created | Ready For Use"  # Check if ready
+                        "is_ready": row.vm_status == "Fully Functional | Ready For Use" or row.vm_status == "Machine Created | Ready For Use",  # Check if ready
+                        "is_waiting_scans": row.vm_status == "Fully Functional | Waiting For Scans",  # Check if waiting for scans
+                        "is_testing": row.vm_status == "Machine Created | Testing Startup Processes",  # Check if testing
+                        "is_broken": "Non-Functional" in row.vm_status  # Check if non-functional
                     })
                 
                 # Mark 10 most recent entries
@@ -204,9 +208,9 @@ class VMCreationTableState(rx.State):
             "virt_source": lambda x: x["virt_source"],
             "vm_type": lambda x: x["vm_type"],
             "vm_status": lambda x: x["vm_status"],
-            "ram_gb": lambda x: int(x["ram_gb"]) if x["ram_gb"] != "N/A" else 0,
+            "ram_mb": lambda x: int(x["ram_mb"]) if x["ram_mb"] != "N/A" else 0,
             "cpu_cores": lambda x: int(x["cpu_cores"]) if x["cpu_cores"] != "N/A" else 0,
-            "disk_size_gb": lambda x: int(x["disk_size_gb"]) if x["disk_size_gb"] != "N/A" else 0
+            "disk_size_mb": lambda x: int(x["disk_size_mb"]) if x["disk_size_mb"] != "N/A" else 0
         }
         
         if column in sort_keys:
@@ -241,9 +245,9 @@ class VMCreationTableState(rx.State):
         vm_record = next((vm for vm in self.vm_records if vm["virtmachine_id"] == vm_id), None)
         if vm_record:
             self.edit_vm_status = vm_record["vm_status"]
-            self.edit_ram_gb = str(vm_record["ram_gb"]) if vm_record["ram_gb"] != "N/A" else ""
+            self.edit_ram_mb = str(vm_record["ram_mb"]) if vm_record["ram_mb"] != "N/A" else ""
             self.edit_cpu_cores = str(vm_record["cpu_cores"]) if vm_record["cpu_cores"] != "N/A" else ""
-            self.edit_disk_size_gb = str(vm_record["disk_size_gb"]) if vm_record["disk_size_gb"] != "N/A" else ""
+            self.edit_disk_size_mb = str(vm_record["disk_size_mb"]) if vm_record["disk_size_mb"] != "N/A" else ""
             self.edit_acas_scan = vm_record["acas_scan"]
             self.edit_scap_scan = vm_record["scap_scan"]
             self.show_edit_modal = True
@@ -253,9 +257,9 @@ class VMCreationTableState(rx.State):
         self.show_edit_modal = False
         self.editing_vm_id = 0
         self.edit_vm_status = ""
-        self.edit_ram_gb = ""
+        self.edit_ram_mb = ""
         self.edit_cpu_cores = ""
-        self.edit_disk_size_gb = ""
+        self.edit_disk_size_mb = ""
         self.edit_acas_scan = False
         self.edit_scap_scan = False
     
@@ -263,17 +267,17 @@ class VMCreationTableState(rx.State):
         """Set VM status in edit modal."""
         self.edit_vm_status = value
     
-    def set_edit_ram_gb(self, value: str):
-        """Set RAM GB in edit modal."""
-        self.edit_ram_gb = value
+    def set_edit_ram_mb(self, value: str):
+        """Set RAM MB in edit modal."""
+        self.edit_ram_mb = value
     
     def set_edit_cpu_cores(self, value: str):
         """Set CPU cores in edit modal."""
         self.edit_cpu_cores = value
     
-    def set_edit_disk_size_gb(self, value: str):
-        """Set disk size in edit modal."""
-        self.edit_disk_size_gb = value
+    def set_edit_disk_size_mb(self, value: str):
+        """Set disk size MB in edit modal."""
+        self.edit_disk_size_mb = value
     
     def toggle_edit_acas_scan(self, value: bool):
         """Toggle ACAS scan in edit modal."""
@@ -293,16 +297,47 @@ class VMCreationTableState(rx.State):
                 ).first()
                 
                 if vm:
-                    # Update VM status
+                    # Validation: Check if status is "Fully Functional" but scans are not completed
+                    vm_status_id = None
+                    status_was_overridden = False
                     if self.edit_vm_status:
-                        vm_status_id = self.vm_status_map.get(self.edit_vm_status)
+                        if ("Fully Functional" in self.edit_vm_status and 
+                            "Ready For Use" in self.edit_vm_status and
+                            (not self.edit_acas_scan or not self.edit_scap_scan)):
+                            # Override status to "Fully Functional | Waiting For Scans"
+                            waiting_status = "Fully Functional | Waiting For Scans"
+                            vm_status_id = self.vm_status_map.get(waiting_status)
+                            status_was_overridden = True
+                            if not vm_status_id:
+                                # Fallback error if status doesn't exist
+                                yield rx.window_alert("Error: 'Fully Functional | Waiting For Scans' status not found in database.")
+                                return
+                        else:
+                            # Use the selected status
+                            vm_status_id = self.vm_status_map.get(self.edit_vm_status)
+                        
                         if vm_status_id:
                             vm.vmstatus_id = vm_status_id
                     
                     # Update specs
-                    vm.ram_gb = int(self.edit_ram_gb) if self.edit_ram_gb else None
+                    vm.ram_mb = int(self.edit_ram_mb) if self.edit_ram_mb else None
                     vm.cpu_cores = int(self.edit_cpu_cores) if self.edit_cpu_cores else None
-                    vm.disk_size_gb = int(self.edit_disk_size_gb) if self.edit_disk_size_gb else None
+                    vm.disk_size_mb = int(self.edit_disk_size_mb) if self.edit_disk_size_mb else None
+                    
+                    # Track what changed
+                    changes = {}
+                    if vm_status_id and vm.vmstatus_id != vm_status_id:
+                        changes["status"] = self.edit_vm_status
+                    if vm.ram_mb != (int(self.edit_ram_mb) if self.edit_ram_mb else None):
+                        changes["ram_mb"] = self.edit_ram_mb
+                    if vm.cpu_cores != (int(self.edit_cpu_cores) if self.edit_cpu_cores else None):
+                        changes["cpu_cores"] = self.edit_cpu_cores
+                    if vm.disk_size_mb != (int(self.edit_disk_size_mb) if self.edit_disk_size_mb else None):
+                        changes["disk_size_mb"] = self.edit_disk_size_mb
+                    if vm.acas_scan_completed != self.edit_acas_scan:
+                        changes["acas_scan"] = self.edit_acas_scan
+                    if vm.scap_scan_completed != self.edit_scap_scan:
+                        changes["scap_scan"] = self.edit_scap_scan
                     
                     # Update scans
                     vm.acas_scan_completed = self.edit_acas_scan
@@ -310,11 +345,24 @@ class VMCreationTableState(rx.State):
                     
                     session.commit()
                     
+                    # Track activity if changes were made
+                    if changes:
+                        # Get employee ID from the VM record
+                        employee_id = vm.creator_employee_id
+                        ActivityTracker.track_vm_update(
+                            vm_id=self.editing_vm_id,
+                            employee_id=employee_id,
+                            changes=changes
+                        )
+                    
                     # Close modal
                     self.close_edit_modal()
                     
                     # Show success message
-                    yield rx.window_alert("Virtual Machine updated successfully!")
+                    if status_was_overridden:
+                        yield rx.window_alert("Virtual Machine updated successfully! Note: Status was automatically set to 'Fully Functional | Waiting For Scans' because ACAS/SCAP scans are not complete.")
+                    else:
+                        yield rx.window_alert("Virtual Machine updated successfully!")
                     
                     # Refresh the page to reload the table
                     yield rx.call_script("window.location.reload()")

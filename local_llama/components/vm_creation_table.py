@@ -290,7 +290,7 @@ def vm_creation_table() -> rx.Component:
                                     # Status indicator cell
                                     rx.table.cell(
                                         rx.hstack(
-                                            # Green pulsating play icon for ready VMs
+                                            # Status icon - Green play for ready, Orange pause for waiting scans
                                             rx.box(
                                                 rx.cond(
                                                     record["is_ready"],
@@ -317,7 +317,85 @@ def vm_creation_table() -> rx.Component:
                                                             }
                                                         }
                                                     ),
-                                                    rx.box()  # Empty when not ready
+                                                    rx.cond(
+                                                        record["is_waiting_scans"],
+                                                        rx.icon(
+                                                            tag="scan_barcode",
+                                                            size=14,
+                                                            color="#88ff00",
+                                                            style={
+                                                                "filter": "drop-shadow(0 0 4px #88ff00) drop-shadow(0 0 8px #88ff00)",
+                                                                "animation": "waitingPulse 2s ease-in-out infinite",
+                                                                "@keyframes waitingPulse": {
+                                                                    "0%": {
+                                                                        "filter": "drop-shadow(0 0 2px #88ff00) drop-shadow(0 0 4px #88ff00)",
+                                                                        "opacity": "0.8"
+                                                                    },
+                                                                    "50%": {
+                                                                        "filter": "drop-shadow(0 0 6px #88ff00) drop-shadow(0 0 12px #88ff00)",
+                                                                        "opacity": "1"
+                                                                    },
+                                                                    "100%": {
+                                                                        "filter": "drop-shadow(0 0 2px #88ff00) drop-shadow(0 0 4px #88ff00)",
+                                                                        "opacity": "0.8"
+                                                                    }
+                                                                }
+                                                            }
+                                                        ),
+                                                        rx.cond(
+                                                            record["is_testing"],
+                                                            rx.icon(
+                                                                tag="flask-conical",
+                                                                size=14,
+                                                                color="#ff8800",
+                                                                style={
+                                                                    "filter": "drop-shadow(0 0 4px #ff8800) drop-shadow(0 0 8px #ff8800)",
+                                                                    "animation": "testingPulse 2s ease-in-out infinite",
+                                                                    "@keyframes testingPulse": {
+                                                                        "0%": {
+                                                                            "filter": "drop-shadow(0 0 2px #ff8800) drop-shadow(0 0 4px #ff8800)",
+                                                                            "opacity": "0.8"
+                                                                        },
+                                                                        "50%": {
+                                                                            "filter": "drop-shadow(0 0 6px #ff8800) drop-shadow(0 0 12px #ff8800)",
+                                                                            "opacity": "1"
+                                                                        },
+                                                                        "100%": {
+                                                                            "filter": "drop-shadow(0 0 2px #ff8800) drop-shadow(0 0 4px #ff8800)",
+                                                                            "opacity": "0.8"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ),
+                                                            rx.cond(
+                                                                record["is_broken"],
+                                                                rx.icon(
+                                                                    tag="wrench",
+                                                                    size=14,
+                                                                    color="#ff0000",
+                                                                    style={
+                                                                        "filter": "drop-shadow(0 0 4px #ff0000) drop-shadow(0 0 8px #ff0000)",
+                                                                        "animation": "brokenPulse 2s ease-in-out infinite",
+                                                                        "@keyframes brokenPulse": {
+                                                                            "0%": {
+                                                                                "filter": "drop-shadow(0 0 2px #ff0000) drop-shadow(0 0 4px #ff0000)",
+                                                                                "opacity": "0.8"
+                                                                            },
+                                                                            "50%": {
+                                                                                "filter": "drop-shadow(0 0 6px #ff0000) drop-shadow(0 0 12px #ff0000)",
+                                                                                "opacity": "1"
+                                                                            },
+                                                                            "100%": {
+                                                                                "filter": "drop-shadow(0 0 2px #ff0000) drop-shadow(0 0 4px #ff0000)",
+                                                                                "opacity": "0.8"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ),
+                                                                rx.box()  # Empty when not in any special status
+                                                            )
+                                                        )
+                                                    )
                                                 ),
                                                 width="14px",
                                                 height="14px",
@@ -512,7 +590,7 @@ def vm_creation_table() -> rx.Component:
                                     # Specs cell
                                     rx.table.cell(
                                         rx.text(
-                                            f"{record['ram_gb']}GB | {record['cpu_cores']}C | {record['disk_size_gb']}GB",
+                                            f"{record['ram_mb']}MB | {record['cpu_cores']}C | {record['disk_size_mb']}MB",
                                             font_size="0.75rem",
                                             color="rgba(255, 255, 255, 0.7)",
                                         )
@@ -632,7 +710,7 @@ def vm_creation_table() -> rx.Component:
                                     rx.table.cell(
                                         rx.button(
                                             rx.hstack(
-                                                rx.icon(tag="edit", size=16),
+                                                rx.icon(tag="pencil", size=16),
                                                 rx.text("Edit", size="2"),
                                                 spacing="1",
                                                 align="center",

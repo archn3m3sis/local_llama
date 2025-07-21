@@ -1,6 +1,8 @@
 """Virtual Machine Creation Form Component."""
 import reflex as rx
 from ..states.vm_creation_state import VMCreationState
+from .ram_slider_dialog import ram_slider_dialog
+from .disk_slider_dialog import disk_slider_dialog
 
 def vm_creation_form() -> rx.Component:
     """Virtual Machine Creation form component."""
@@ -283,11 +285,12 @@ def vm_creation_form() -> rx.Component:
                     # Hardware Specs
                     rx.hstack(
                         rx.vstack(
-                            rx.text("RAM (GB)", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
+                            rx.text("RAM (MB)", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
                             rx.input(
-                                placeholder="16",
-                                value=VMCreationState.ram_gb,
-                                on_change=VMCreationState.set_ram_gb,
+                                placeholder="16384",
+                                value=VMCreationState.ram_mb,
+                                on_change=VMCreationState.set_ram_mb,
+                                on_focus=VMCreationState.open_ram_dialog,
                                 width="100%",
                                 type="number",
                                 min="1",
@@ -295,6 +298,7 @@ def vm_creation_form() -> rx.Component:
                                     "background": "rgba(255, 255, 255, 0.05)",
                                     "border": "1px solid rgba(255, 255, 255, 0.2)",
                                     "color": "white",
+                                    "cursor": "pointer",
                                     "_focus": {"border": "1px solid rgba(59, 130, 246, 0.5)"},
                                     "_placeholder": {"color": "rgba(255, 255, 255, 0.4)"},
                                 },
@@ -323,11 +327,12 @@ def vm_creation_form() -> rx.Component:
                             spacing="2",
                         ),
                         rx.vstack(
-                            rx.text("Disk (GB)", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
+                            rx.text("Disk (MB)", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
                             rx.input(
-                                placeholder="256",
-                                value=VMCreationState.disk_size_gb,
-                                on_change=VMCreationState.set_disk_size_gb,
+                                placeholder="262144",
+                                value=VMCreationState.disk_size_mb,
+                                on_change=VMCreationState.set_disk_size_mb,
+                                on_focus=VMCreationState.open_disk_dialog,
                                 width="100%",
                                 type="number",
                                 min="1",
@@ -335,6 +340,7 @@ def vm_creation_form() -> rx.Component:
                                     "background": "rgba(255, 255, 255, 0.05)",
                                     "border": "1px solid rgba(255, 255, 255, 0.2)",
                                     "color": "white",
+                                    "cursor": "pointer",
                                     "_focus": {"border": "1px solid rgba(59, 130, 246, 0.5)"},
                                     "_placeholder": {"color": "rgba(255, 255, 255, 0.4)"},
                                 },
@@ -397,6 +403,12 @@ def vm_creation_form() -> rx.Component:
             box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
             on_mount=VMCreationState.load_dropdowns,
         ),
+        
+        # RAM Slider Dialog
+        ram_slider_dialog(),
+        
+        # Disk Slider Dialog
+        disk_slider_dialog(),
         
         spacing="0",
         width="100%",

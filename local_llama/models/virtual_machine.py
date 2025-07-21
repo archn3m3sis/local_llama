@@ -13,9 +13,9 @@ class VirtualMachine(SQLModel, table=True):
     vmstatus_id: int = Field(foreign_key="vmstatus.vmstatus_id")
     
     # VM Specifications
-    ram_gb: Optional[int] = Field(default=None, description="RAM in GB")
+    ram_mb: Optional[int] = Field(default=None, description="RAM in MB")
     cpu_cores: Optional[int] = Field(default=None, description="Number of CPU cores")
-    disk_size_gb: Optional[int] = Field(default=None, description="Disk size in GB")
+    disk_size_mb: Optional[int] = Field(default=None, description="Disk size in MB")
     
     # Scan Status
     acas_scan_completed: bool = Field(default=False)

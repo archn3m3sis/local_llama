@@ -13,6 +13,7 @@ from ..models.vm_status import VMStatus
 from ..models.virtual_machine import VirtualMachine
 from ..models.department import Department
 from ..models.imaging_method import ImagingMethod
+from ..services.activity_tracker import ActivityTracker
 
 class VMCreationState(rx.State):
     """State for VM Creation form."""
@@ -25,9 +26,9 @@ class VMCreationState(rx.State):
     selected_virt_source: str = ""
     selected_vm_type: str = ""
     selected_vm_status: str = ""
-    ram_gb: str = ""
+    ram_mb: str = ""
     cpu_cores: str = ""
-    disk_size_gb: str = ""
+    disk_size_mb: str = ""
     acas_scan_completed: bool = False
     scap_scan_completed: bool = False
     
@@ -59,6 +60,32 @@ class VMCreationState(rx.State):
     submission_message: str = ""
     submission_status: str = ""  # success, error, ""
     
+    # Slider dialog state
+    show_ram_dialog: bool = False
+    temp_ram_mb: str = ""
+    show_disk_dialog: bool = False
+    temp_disk_mb: str = ""
+    
+    @rx.var
+    def slider_ram_value(self) -> list[int]:
+        """Get the RAM value for the slider as a list."""
+        try:
+            if self.temp_ram_mb and self.temp_ram_mb.isdigit():
+                return [int(self.temp_ram_mb)]
+        except:
+            pass
+        return [8192]
+    
+    @rx.var
+    def slider_disk_value(self) -> list[int]:
+        """Get the Disk value for the slider as a list."""
+        try:
+            if self.temp_disk_mb and self.temp_disk_mb.isdigit():
+                return [int(self.temp_disk_mb)]
+        except:
+            pass
+        return [262144]  # 256 GB default
+    
     @rx.var
     def is_form_valid(self) -> bool:
         """Check if form is valid for submission."""
@@ -78,11 +105,11 @@ class VMCreationState(rx.State):
             return False
         
         # Check optional numeric fields are valid if provided
-        if self.ram_gb and not self.ram_gb.isdigit():
+        if self.ram_mb and not self.ram_mb.isdigit():
             return False
         if self.cpu_cores and not self.cpu_cores.isdigit():
             return False
-        if self.disk_size_gb and not self.disk_size_gb.isdigit():
+        if self.disk_size_mb and not self.disk_size_mb.isdigit():
             return False
         
         return True
@@ -251,17 +278,17 @@ class VMCreationState(rx.State):
         """Set selected VM status."""
         self.selected_vm_status = value
     
-    def set_ram_gb(self, value: str):
-        """Set RAM GB value."""
-        self.ram_gb = value
+    def set_ram_mb(self, value: str):
+        """Set RAM MB value."""
+        self.ram_mb = value
     
     def set_cpu_cores(self, value: str):
         """Set CPU cores value."""
         self.cpu_cores = value
     
-    def set_disk_size_gb(self, value: str):
-        """Set disk size GB value."""
-        self.disk_size_gb = value
+    def set_disk_size_mb(self, value: str):
+        """Set disk size MB value."""
+        self.disk_size_mb = value
     
     def toggle_acas_scan(self, value: bool):
         """Toggle ACAS scan completed status."""
@@ -289,6 +316,21 @@ class VMCreationState(rx.State):
                 vm_type_id = self.vm_type_map.get(self.selected_vm_type)
                 vm_status_id = self.vm_status_map.get(self.selected_vm_status)
                 
+                # Validation: Check if status is "Fully Functional" but scans are not completed
+                status_was_overridden = False
+                if ("Fully Functional" in self.selected_vm_status and 
+                    "Ready For Use" in self.selected_vm_status and
+                    (not self.acas_scan_completed or not self.scap_scan_completed)):
+                    # Override status to "Fully Functional | Waiting For Scans"
+                    waiting_status = "Fully Functional | Waiting For Scans"
+                    vm_status_id = self.vm_status_map.get(waiting_status)
+                    status_was_overridden = True
+                    if not vm_status_id:
+                        # Fallback if status doesn't exist - shouldn't happen with proper seeding
+                        self.submission_status = "error"
+                        self.submission_message = "Error: 'Fully Functional | Waiting For Scans' status not found in database."
+                        return
+                
                 # Create new VirtualMachine record
                 new_vm = VirtualMachine(
                     asset_id=asset_id,
@@ -298,9 +340,9 @@ class VMCreationState(rx.State):
                     creator_employee_id=employee_id,
                     vmtype_id=vm_type_id,
                     vmstatus_id=vm_status_id,
-                    ram_gb=int(self.ram_gb) if self.ram_gb else None,
+                    ram_mb=int(self.ram_mb) if self.ram_mb else None,
                     cpu_cores=int(self.cpu_cores) if self.cpu_cores else None,
-                    disk_size_gb=int(self.disk_size_gb) if self.disk_size_gb else None,
+                    disk_size_mb=int(self.disk_size_mb) if self.disk_size_mb else None,
                     acas_scan_completed=self.acas_scan_completed,
                     scap_scan_completed=self.scap_scan_completed
                 )
@@ -308,9 +350,22 @@ class VMCreationState(rx.State):
                 session.add(new_vm)
                 session.commit()
                 
+                # Track activity
+                vm_type_name = self.selected_vm_type
+                ActivityTracker.track_vm_creation(
+                    vm_id=new_vm.virtmachine_id,
+                    asset_id=asset_id,
+                    project_id=project_id,
+                    employee_id=employee_id,
+                    vm_type=vm_type_name
+                )
+                
                 # Success notification
                 self.submission_status = "success"
-                self.submission_message = "Virtual Machine created successfully!"
+                if status_was_overridden:
+                    self.submission_message = "Virtual Machine created successfully! Note: Status was automatically set to 'Fully Functional | Waiting For Scans' because ACAS/SCAP scans are not complete."
+                else:
+                    self.submission_message = "Virtual Machine created successfully!"
                 
                 # Reset form
                 self.reset_form()
@@ -334,9 +389,9 @@ class VMCreationState(rx.State):
         self.selected_virt_source = ""
         self.selected_vm_type = ""
         self.selected_vm_status = ""
-        self.ram_gb = ""
+        self.ram_mb = ""
         self.cpu_cores = ""
-        self.disk_size_gb = ""
+        self.disk_size_mb = ""
         self.acas_scan_completed = False
         self.scap_scan_completed = False
         self.form_key = f"reset-{datetime.now().timestamp()}"
@@ -345,3 +400,63 @@ class VMCreationState(rx.State):
         """Clear submission message."""
         self.submission_message = ""
         self.submission_status = ""
+    
+    def open_ram_dialog(self):
+        """Open the RAM slider dialog."""
+        self.temp_ram_mb = self.ram_mb or "8192"
+        self.show_ram_dialog = True
+    
+    def close_ram_dialog(self):
+        """Close the RAM slider dialog without saving."""
+        self.show_ram_dialog = False
+        self.temp_ram_mb = ""
+    
+    def cancel_ram_dialog(self):
+        """Cancel and close the RAM slider dialog."""
+        self.close_ram_dialog()
+    
+    def apply_ram_dialog(self):
+        """Apply the selected RAM value and close dialog."""
+        if self.temp_ram_mb and self.temp_ram_mb.isdigit():
+            self.ram_mb = self.temp_ram_mb
+        self.close_ram_dialog()
+    
+    def set_temp_ram_mb(self, value: str):
+        """Set temporary RAM MB value in dialog from text input."""
+        if value and (value.isdigit() or value == ""):
+            self.temp_ram_mb = value
+    
+    def set_temp_ram_mb_from_slider(self, value: list[int | float]):
+        """Set temporary RAM MB value from slider."""
+        if value and len(value) > 0:
+            self.temp_ram_mb = str(int(value[0]))
+    
+    def open_disk_dialog(self):
+        """Open the Disk slider dialog."""
+        self.temp_disk_mb = self.disk_size_mb or "262144"
+        self.show_disk_dialog = True
+    
+    def close_disk_dialog(self):
+        """Close the Disk slider dialog without saving."""
+        self.show_disk_dialog = False
+        self.temp_disk_mb = ""
+    
+    def cancel_disk_dialog(self):
+        """Cancel and close the Disk slider dialog."""
+        self.close_disk_dialog()
+    
+    def apply_disk_dialog(self):
+        """Apply the selected Disk value and close dialog."""
+        if self.temp_disk_mb and self.temp_disk_mb.isdigit():
+            self.disk_size_mb = self.temp_disk_mb
+        self.close_disk_dialog()
+    
+    def set_temp_disk_mb(self, value: str):
+        """Set temporary Disk MB value in dialog from text input."""
+        if value and (value.isdigit() or value == ""):
+            self.temp_disk_mb = value
+    
+    def set_temp_disk_mb_from_slider(self, value: list[int | float]):
+        """Set temporary Disk MB value from slider."""
+        if value and len(value) > 0:
+            self.temp_disk_mb = str(int(value[0]))

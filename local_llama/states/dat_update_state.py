@@ -9,6 +9,7 @@ from ..models.project import Project
 from ..models.dat_version import DatVersion
 from ..models.av_version import AVVersion
 from ..models.department import Department
+from ..services.activity_tracker import ActivityTracker
 
 
 class DatUpdateState(rx.State):
@@ -181,6 +182,16 @@ class DatUpdateState(rx.State):
                 session.commit()
                 
                 print(f"Successfully submitted DAT update: {new_update.datupdate_id}")
+                
+                # Track activity
+                dat_version_name = self.selected_datversion_id
+                ActivityTracker.track_dat_update(
+                    dat_id=new_update.datupdate_id,
+                    asset_id=asset_id,
+                    project_id=project_id,
+                    employee_id=employee_id,
+                    dat_version=dat_version_name
+                )
                 
                 # Set success message
                 self.submission_status = "success"

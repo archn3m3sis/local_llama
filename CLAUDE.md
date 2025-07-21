@@ -94,6 +94,9 @@ local_llama/
 #### Support Models
 - `TEMTicket`: Test Equipment Maintenance tickets with asset, project, employee foreign keys
 
+#### Activity Tracking Models
+- `UserActivity`: Comprehensive activity tracking table with relationships to all major entities
+
 ### Database Table Creation Process
 
 When adding new database tables to IAMS:

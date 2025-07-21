@@ -26,3 +26,4 @@ from .vm_type import VMType
 from .virt_source import VirtualizationSource
 from .vm_status import VMStatus
 from .virtual_machine import VirtualMachine
+from .user_activity import UserActivity

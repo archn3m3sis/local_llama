@@ -1,83 +1,112 @@
 import reflex as rx
 import reflex_type_animation as ta
 from ..components.metallic_text import metallic_title, metallic_text
+from ..components.dashboard_stats import stats_grid
+from ..components.activity_chart import activity_timeline_chart, activity_donut_chart
+from ..components.recent_activity import recent_activity_panel
+from ..components.top_performers import top_performers_panel, project_activity_panel
+from ..states.dashboard_state import DashboardState
 
 def Dashboard() -> rx.Component:
+    stats = [
+        {
+            "title": "Total Activities",
+            "value": DashboardState.total_activities,
+            "icon": "activity",
+            "color": "#06b6d4"
+        },
+        {
+            "title": "Today",
+            "value": DashboardState.activities_today,
+            "icon": "calendar",
+            "color": "#10b981"
+        },
+        {
+            "title": "This Week",
+            "value": DashboardState.activities_this_week,
+            "icon": "calendar_days",
+            "color": "#a78bfa"
+        },
+        {
+            "title": "This Month",
+            "value": DashboardState.activities_this_month,
+            "icon": "calendar_month",
+            "color": "#f59e0b"
+        }
+    ]
+    
     return rx.vstack(
-        # Massive 3D chrome metallic title - xAI Colossus style
+        # Massive 3D chrome metallic title
         metallic_title("Industrial Cyber Dashboard"),
-
-        # Dashboard content area
-        rx.vstack(
-            rx.box(
-                ta.type_animation(
-                    sequence=[
-                        "Welcome to the Industrial Asset Management System",
-                        2000,
-                        "Advanced Cybersecurity Asset Tracking", 
-                        2000,
-                        "Next Generation Industrial Protection",
-                        2000,
-                        "Real-Time Asset Intelligence Platform",
-                        2000,
-                    ],
-                    wrapper="span",
-                    cursor=True,
-                    repeat=True,
-                    speed=50,
-                    style={
-                        "color": "rgb(156, 163, 175)",  # gray.300 equivalent
-                        "font_size": "1.35rem",
-                        "font_weight": "500",
-                        "line_height": "1.3",
-                        "text_align": "left",
-                        "display": "block",
-                        "min_height": "1.8rem",  # Prevent layout shift
-                        "transition": "text-shadow 0.8s ease-in-out",
-                        "animation": "fadeInShadow 3s ease-in-out infinite"
-                    }
+        
+        # Loading spinner
+        rx.cond(
+            DashboardState.is_loading,
+            rx.center(
+                rx.spinner(
+                    size="3",
+                    style={"color": "#06b6d4"}
                 ),
-                # Add CSS animation for whispy shadow effect
-                rx.html("""
-                <style>
-                    @keyframes fadeInShadow {
-                        0%, 70% {
-                            text-shadow: none;
-                        }
-                        85% {
-                            text-shadow: 
-                                0 0 15px rgba(156, 163, 175, 0.5),
-                                0 0 25px rgba(156, 163, 175, 0.35),
-                                0 0 35px rgba(156, 163, 175, 0.25),
-                                0 0 45px rgba(156, 163, 175, 0.15);
-                        }
-                        100% {
-                            text-shadow: 
-                                0 0 20px rgba(156, 163, 175, 0.6),
-                                0 0 30px rgba(156, 163, 175, 0.4),
-                                0 0 40px rgba(156, 163, 175, 0.3),
-                                0 0 50px rgba(156, 163, 175, 0.2),
-                                0 0 60px rgba(156, 163, 175, 0.1);
-                        }
-                    }
-                </style>
-                """),
+                style={"height": "400px"}
             ),
-
-            spacing="4",
-            align="start",  # Changed from center to left
-            width="100%",
+            rx.vstack(
+                # Stats grid
+                stats_grid(stats),
+                
+                # Charts row
+                rx.hstack(
+                    # Activity timeline
+                    rx.box(
+                        activity_timeline_chart(DashboardState.activity_timeline),
+                        style={"flex": "2"}
+                    ),
+                    # Donut chart
+                    rx.box(
+                        activity_donut_chart(
+                            vm=DashboardState.vm_creations,
+                            image=DashboardState.image_captures,
+                            log=DashboardState.log_collections,
+                            dat=DashboardState.dat_updates
+                        ),
+                        style={"flex": "1"}
+                    ),
+                    spacing="4",
+                    width="100%",
+                    align="stretch",
+                ),
+                
+                # Bottom row
+                rx.hstack(
+                    # Recent activity
+                    rx.box(
+                        recent_activity_panel(DashboardState.recent_activities),
+                        style={"flex": "2"}
+                    ),
+                    # Top performers and projects
+                    rx.vstack(
+                        top_performers_panel(DashboardState.top_employees),
+                        project_activity_panel(DashboardState.project_activities),
+                        spacing="4",
+                        style={"flex": "1"}
+                    ),
+                    spacing="4",
+                    width="100%",
+                    align="start",
+                ),
+                
+                spacing="6",
+                width="100%",
+            )
         ),
-
-        spacing="0",
-        align="start",  # Changed from center to left
+        
+        spacing="6",
+        align="start",
         width="100%",
-        height="90vh",
-        padding="3em",  # Increased padding for better spacing
-        padding_top="4em",  # More space from top to position text lower
-        # Absolute positioning to bypass container issues
+        padding="3em",
+        padding_top="4em",
         position="absolute",
         top="0",
         left="0",
         z_index="10",
+        on_mount=DashboardState.load_dashboard_data,
     )

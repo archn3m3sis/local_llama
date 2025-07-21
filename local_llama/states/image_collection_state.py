@@ -8,6 +8,7 @@ from ..models.asset import Asset
 from ..models.project import Project
 from ..models.imaging_method import ImagingMethod
 from ..models.department import Department
+from ..services.activity_tracker import ActivityTracker
 
 
 class ImageCollectionState(rx.State):
@@ -183,6 +184,16 @@ class ImageCollectionState(rx.State):
                 session.commit()
                 
                 print(f"Successfully submitted image collection: {new_collection.imgcollection_id}")
+                
+                # Track activity
+                imaging_method_name = self.selected_imaging_method_id
+                ActivityTracker.track_image_capture(
+                    image_id=new_collection.imgcollection_id,
+                    asset_id=asset_id,
+                    project_id=project_id,
+                    employee_id=employee_id,
+                    method=imaging_method_name
+                )
                 
                 # Set success message
                 self.submission_status = "success"

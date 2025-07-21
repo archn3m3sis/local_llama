@@ -9,6 +9,7 @@ from ..models.asset import Asset
 from ..models.project import Project
 from ..models.app_user import AppUser
 from ..models.department import Department
+from ..services.activity_tracker import ActivityTracker
 
 
 class LogCollectionState(rx.State):
@@ -301,6 +302,17 @@ class LogCollectionState(rx.State):
                                 logcollection_comments=self.collection_comments if self.collection_comments else None
                             )
                             session.add(new_collection)
+                            session.commit()  # Commit to get the ID
+                            
+                            # Track activity
+                            ActivityTracker.track_log_collection(
+                                log_id=new_collection.logcollection_id,
+                                asset_id=self.selected_asset_id,
+                                project_id=self.selected_project_id,
+                                employee_id=self.selected_employee_id,
+                                log_type=log_name
+                            )
+                            
                             records_created += 1
                 
                 # Handle single common logtype selection
@@ -317,6 +329,17 @@ class LogCollectionState(rx.State):
                             logcollection_comments=self.collection_comments if self.collection_comments else None
                         )
                         session.add(new_collection)
+                        session.commit()  # Commit to get the ID
+                        
+                        # Track activity
+                        ActivityTracker.track_log_collection(
+                            log_id=new_collection.logcollection_id,
+                            asset_id=self.selected_asset_id,
+                            project_id=self.selected_project_id,
+                            employee_id=self.selected_employee_id,
+                            log_type=self.selected_common_logtype
+                        )
+                        
                         records_created += 1
                 
                 # Handle extended logtype selection (if provided in addition to common)
@@ -331,11 +354,29 @@ class LogCollectionState(rx.State):
                         logcollection_comments=self.collection_comments if self.collection_comments else None
                     )
                     session.add(new_collection)
+                    session.commit()  # Commit to get the ID
+                    
+                    # Get the log type name
+                    log_type_name = None
+                    for name, id in self.extended_logtype_map.items():
+                        if id == self.selected_logtype_id:
+                            log_type_name = name
+                            break
+                    
+                    # Track activity
+                    if log_type_name:
+                        ActivityTracker.track_log_collection(
+                            log_id=new_collection.logcollection_id,
+                            asset_id=self.selected_asset_id,
+                            project_id=self.selected_project_id,
+                            employee_id=self.selected_employee_id,
+                            log_type=log_type_name
+                        )
+                    
                     records_created += 1
                 
-                # Commit all records
+                # Final message handling
                 if records_created > 0:
-                    session.commit()
                     self.submission_status = "success"
                     if records_created == 1:
                         self.submission_message = "Log collection recorded successfully!"

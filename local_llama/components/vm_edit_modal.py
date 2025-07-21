@@ -54,11 +54,11 @@ def vm_edit_modal() -> rx.Component:
                 rx.text("Hardware Specifications", color="rgba(255, 255, 255, 0.8)", font_size="0.95rem", font_weight="500", margin_bottom="0.5rem"),
                 rx.hstack(
                     rx.vstack(
-                        rx.text("RAM (GB)", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
+                        rx.text("RAM (MB)", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
                         rx.input(
-                            placeholder="16",
-                            value=VMCreationTableState.edit_ram_gb,
-                            on_change=VMCreationTableState.set_edit_ram_gb,
+                            placeholder="16384",
+                            value=VMCreationTableState.edit_ram_mb,
+                            on_change=VMCreationTableState.set_edit_ram_mb,
                             width="100%",
                             type="number",
                             min="1",
@@ -94,11 +94,11 @@ def vm_edit_modal() -> rx.Component:
                         spacing="2",
                     ),
                     rx.vstack(
-                        rx.text("Disk (GB)", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
+                        rx.text("Disk (MB)", color="rgba(255, 255, 255, 0.8)", font_size="0.9rem"),
                         rx.input(
-                            placeholder="256",
-                            value=VMCreationTableState.edit_disk_size_gb,
-                            on_change=VMCreationTableState.set_edit_disk_size_gb,
+                            placeholder="262144",
+                            value=VMCreationTableState.edit_disk_size_mb,
+                            on_change=VMCreationTableState.set_edit_disk_size_mb,
                             width="100%",
                             type="number",
                             min="1",
