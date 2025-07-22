@@ -2,7 +2,10 @@ import os
 import reflex as rx
 import reflex_clerk_api as clerk
 from dotenv import load_dotenv
-import reflex_type_animation as ta
+try:
+    import reflex_type_animation as ta
+except ImportError:
+    ta = None  # Handle gracefully for offline mode
 
 from rxconfig import config
 from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, Software, Vulnerabilities, VMCreation, Analytics
@@ -231,32 +234,50 @@ def hero_section() -> rx.Component:
             z_index="10",
         ),
 
-        # Subtitle with type animation
+        # Subtitle with type animation or fallback
         rx.box(
-            ta.type_animation(
-                sequence=[
-                    "Next Generation Visibility",
-                    2000,
-                    "Next Generation Insight",
-                    2000,
+            rx.cond(
+                ta is not None,
+                ta.type_animation(
+                    sequence=[
+                        "Next Generation Visibility",
+                        2000,
+                        "Next Generation Insight",
+                        2000,
+                        "Next Generation Industrial Asset Management System",
+                        2000,
+                    ],
+                    wrapper="span",
+                    speed=50,
+                    repeat=True,
+                    style={
+                        "fontSize": "clamp(1.5rem, 4vw, 3rem)",
+                        "fontWeight": "600",
+                        "color": "rgba(255, 255, 255, 0.9)",
+                        "textAlign": "center",
+                        "lineHeight": "1.2",
+                        "background": "linear-gradient(135deg, #ffffff 0%, #f8fafc 25%, #e2e8f0 50%, #cbd5e1 75%, #94a3b8 100%)",
+                        "backgroundClip": "text",
+                        "WebkitBackgroundClip": "text",
+                        "WebkitTextFillColor": "transparent",
+                        "textShadow": "0 0 20px rgba(255, 255, 255, 0.3)",
+                    }
+                ),
+                rx.text(
                     "Next Generation Industrial Asset Management System",
-                    2000,
-                ],
-                wrapper="span",
-                speed=50,
-                repeat=True,
-                style={
-                    "fontSize": "clamp(1.5rem, 4vw, 3rem)",
-                    "fontWeight": "600",
-                    "color": "rgba(255, 255, 255, 0.9)",
-                    "textAlign": "center",
-                    "lineHeight": "1.2",
-                    "background": "linear-gradient(135deg, #ffffff 0%, #f8fafc 25%, #e2e8f0 50%, #cbd5e1 75%, #94a3b8 100%)",
-                    "backgroundClip": "text",
-                    "WebkitBackgroundClip": "text",
-                    "WebkitTextFillColor": "transparent",
-                    "textShadow": "0 0 20px rgba(255, 255, 255, 0.3)",
-                }
+                    style={
+                        "fontSize": "clamp(1.5rem, 4vw, 3rem)",
+                        "fontWeight": "600",
+                        "color": "rgba(255, 255, 255, 0.9)",
+                        "textAlign": "center",
+                        "lineHeight": "1.2",
+                        "background": "linear-gradient(135deg, #ffffff 0%, #f8fafc 25%, #e2e8f0 50%, #cbd5e1 75%, #94a3b8 100%)",
+                        "backgroundClip": "text",
+                        "WebkitBackgroundClip": "text",
+                        "WebkitTextFillColor": "transparent",
+                        "textShadow": "0 0 20px rgba(255, 255, 255, 0.3)",
+                    }
+                )
             ),
             text_align="center",
             margin_bottom="3em",

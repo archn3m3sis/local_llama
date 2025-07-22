@@ -28,4 +28,4 @@ class ComplianceCheck(SQLModel, table=True):
     approval_date: Optional[datetime] = Field(default=None)
     next_check_date: Optional[datetime] = Field(default=None)
     remediation_required: bool = Field(default=False)
-    remediation_ticket_id: Optional[int] = Field(foreign_key="temticket.ticket_id", default=None)
+    remediation_ticket_id: Optional[int] = Field(foreign_key="temticket.temticket_id", default=None)

@@ -1,5 +1,8 @@
 import reflex as rx
-import reflex_type_animation as ta
+try:
+    import reflex_type_animation as ta
+except ImportError:
+    ta = None  # Handle gracefully for offline mode
 from reflex.experimental import ClientStateVar
 from ..components.metallic_text import metallic_title, metallic_text
 from ..components.dashboard_stats import stats_grid

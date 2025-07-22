@@ -15,6 +15,6 @@ class ConfigurationChange(SQLModel, table=True):
     old_value: Optional[str] = Field(default=None)
     new_value: Optional[str] = Field(default=None)
     change_reason: Optional[str] = Field(default=None)
-    ticket_id: Optional[int] = Field(foreign_key="temticket.ticket_id", default=None)
+    ticket_id: Optional[int] = Field(foreign_key="temticket.temticket_id", default=None)
     approved_by: Optional[int] = Field(foreign_key="employee.id", default=None)
     approval_date: Optional[datetime] = Field(default=None)
