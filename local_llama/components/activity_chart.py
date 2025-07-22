@@ -1,5 +1,6 @@
 """Activity chart components for dashboard."""
 import reflex as rx
+from .shared_styles import CARD_STYLE
 
 
 def activity_timeline_chart(data: list[dict]) -> rx.Component:
@@ -8,7 +9,7 @@ def activity_timeline_chart(data: list[dict]) -> rx.Component:
         rx.vstack(
             rx.hstack(
                 rx.icon(
-                    tag="chart",
+                    tag="line_chart",
                     size=20,
                     style={
                         "color": "#06b6d4",
@@ -62,24 +63,27 @@ def activity_timeline_chart(data: list[dict]) -> rx.Component:
             width="100%",
         ),
         style={
-            "background": "rgba(17, 24, 39, 0.6)",
-            "backdrop_filter": "blur(10px)",
-            "border": "1px solid rgba(55, 65, 81, 0.5)",
-            "border_radius": "12px",
+            **CARD_STYLE,
             "padding": "1.5rem",
-            "box_shadow": "0 8px 32px rgba(0, 0, 0, 0.3)",
         }
     )
 
 
-def activity_donut_chart(vm: int, image: int, log: int, dat: int) -> rx.Component:
-    """Create a donut chart showing activity distribution."""
-    data = [
-        {"name": "VM Created", "value": vm, "fill": "#10b981"},
-        {"name": "Images", "value": image, "fill": "#06b6d4"},
-        {"name": "Logs", "value": log, "fill": "#a78bfa"},
-        {"name": "DAT Updates", "value": dat, "fill": "#f59e0b"},
-    ]
+def activity_donut_chart(data: list[dict]) -> rx.Component:
+    """Create a donut chart showing activity distribution with neon labels."""
+    
+    # Create custom label component with neon effect
+    def custom_label(entry, index):
+        return rx.text(
+            entry["name"] + ": " + str(entry["value"]),
+            style={
+                "fill": entry["fill"],
+                "font_size": "0.875rem",
+                "font_weight": "600",
+                "filter": f"drop-shadow(0 0 8px {entry['fill']})",
+                "text_shadow": f"0 0 10px {entry['fill']}",
+            }
+        )
     
     return rx.box(
         rx.vstack(
@@ -93,7 +97,7 @@ def activity_donut_chart(vm: int, image: int, log: int, dat: int) -> rx.Componen
                     }
                 ),
                 rx.text(
-                    "Activity Distribution",
+                    "Activity Distribution By Action Type",
                     style={
                         "color": "rgba(255, 255, 255, 0.9)",
                         "font_size": "1.125rem",
@@ -108,25 +112,112 @@ def activity_donut_chart(vm: int, image: int, log: int, dat: int) -> rx.Componen
                     data=data,
                     data_key="value",
                     name_key="name",
-                    inner_radius="60%",
-                    outer_radius="80%",
-                    padding_angle=5,
+                    inner_radius="50%",
+                    outer_radius="65%",
+                    padding_angle=8,
+                    label=True,
+                    label_line=True,
+                    min_angle=15,
+                    cx="50%",
+                    cy="50%",
                 ),
-                rx.recharts.graphing_tooltip(),
+                rx.recharts.graphing_tooltip(
+                    style={
+                        "background": "rgba(17, 24, 39, 0.9)",
+                        "border": "1px solid rgba(255, 255, 255, 0.2)",
+                        "border_radius": "8px",
+                        "box_shadow": "0 4px 20px rgba(0, 0, 0, 0.5)",
+                    }
+                ),
                 height=300,
+                margin={"top": 20, "right": 80, "bottom": 20, "left": 80},
                 style={
                     "width": "100%",
+                    "& .recharts-pie-sector": {
+                        "filter": "drop-shadow(0 0 8px rgba(0, 0, 0, 0.5))",
+                        "transition": "filter 0.3s ease",
+                        "cursor": "pointer",
+                    },
+                    "& .recharts-pie-sector:hover": {
+                        "filter": "drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)) brightness(1.15)",
+                        "opacity": "0.95",
+                    },
+                    # VM Created - Green
+                    "& .recharts-layer g:nth-child(1) .recharts-pie-label-line line": {
+                        "stroke": "#10b981",
+                        "stroke_width": "3px",
+                        "filter": "drop-shadow(0 0 8px #10b981)",
+                    },
+                    # Images - Cyan
+                    "& .recharts-layer g:nth-child(2) .recharts-pie-label-line line": {
+                        "stroke": "#06b6d4",
+                        "stroke_width": "3px",
+                        "filter": "drop-shadow(0 0 8px #06b6d4)",
+                    },
+                    # Logs - Purple
+                    "& .recharts-layer g:nth-child(3) .recharts-pie-label-line line": {
+                        "stroke": "#a78bfa",
+                        "stroke_width": "3px",
+                        "filter": "drop-shadow(0 0 8px #a78bfa)",
+                    },
+                    # DAT Updates - Orange
+                    "& .recharts-layer g:nth-child(4) .recharts-pie-label-line line": {
+                        "stroke": "#f59e0b",
+                        "stroke_width": "3px",
+                        "filter": "drop-shadow(0 0 8px #f59e0b)",
+                    },
+                    "& .recharts-pie-label-text": {
+                        "fill": "rgba(255, 255, 255, 0.95)",
+                        "font_weight": "600",
+                        "font_size": "0.875rem",
+                        "filter": "drop-shadow(0 0 4px rgba(0, 0, 0, 0.8))",
+                    },
+                    "& .recharts-surface": {
+                        "overflow": "visible",
+                    }
                 }
+            ),
+            # Legend with neon effect
+            rx.hstack(
+                rx.foreach(
+                    data,
+                    lambda item: rx.hstack(
+                        rx.box(
+                            style={
+                                "width": "12px",
+                                "height": "12px",
+                                "background": item["fill"],
+                                "border_radius": "2px",
+                                "box_shadow": f"0 0 10px {item['fill']}",
+                            }
+                        ),
+                        rx.text(
+                            item["name"],
+                            style={
+                                "color": "rgba(255, 255, 255, 0.9)",
+                                "font_size": "0.875rem",
+                                "font_weight": "500",
+                            }
+                        ),
+                        spacing="2",
+                        align="center",
+                    )
+                ),
+                spacing="4",
+                wrap="wrap",
+                justify="center",
+                width="100%",
             ),
             spacing="4",
             width="100%",
         ),
         style={
-            "background": "rgba(17, 24, 39, 0.6)",
-            "backdrop_filter": "blur(10px)",
-            "border": "1px solid rgba(55, 65, 81, 0.5)",
-            "border_radius": "12px",
+            **CARD_STYLE,
             "padding": "1.5rem",
-            "box_shadow": "0 8px 32px rgba(0, 0, 0, 0.3)",
+            "position": "relative",
+            "overflow": "visible",
+            "height": "fit-content",
+            "display": "flex",
+            "align_items": "stretch",
         }
     )

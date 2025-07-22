@@ -2,28 +2,24 @@
 import reflex as rx
 
 
-def performer_bar(name: str, count: int, max_count: int, rank: int) -> rx.Component:
+def performer_bar(performer: dict) -> rx.Component:
     """Create a single performer bar."""
-    percentage = (count / max_count * 100) if max_count > 0 else 0
-    
-    # Rank colors
-    rank_colors = {
-        1: "#fbbf24",  # Gold
-        2: "#9ca3af",  # Silver
-        3: "#f97316",  # Bronze
-    }
-    rank_color = rank_colors.get(rank, "#06b6d4")
+    name = performer["name"]
+    count = performer["count"]
+    rank = performer["rank"]
+    percentage = performer["percentage"]
+    rank_color = performer["rank_color"]
     
     return rx.hstack(
         rx.text(
-            str(rank),
+            rank.to_string(),
             style={
                 "color": rank_color,
                 "font_weight": "700",
                 "font_size": "1.25rem",
                 "width": "30px",
                 "text_align": "center",
-                "filter": f"drop-shadow(0 0 10px {rank_color})" if rank <= 3 else "none",
+                "filter": "drop-shadow(0 0 10px currentColor)",
             }
         ),
         rx.vstack(
@@ -37,7 +33,7 @@ def performer_bar(name: str, count: int, max_count: int, rank: int) -> rx.Compon
                     }
                 ),
                 rx.text(
-                    str(count),
+                    count.to_string(),
                     style={
                         "color": "rgba(156, 163, 175, 0.9)",
                         "font_weight": "500",
@@ -50,12 +46,12 @@ def performer_bar(name: str, count: int, max_count: int, rank: int) -> rx.Compon
             rx.box(
                 rx.box(
                     style={
-                        "width": f"{percentage}%",
+                        "width": percentage.to(str) + "%",
                         "height": "100%",
-                        "background": f"linear-gradient(90deg, {rank_color} 0%, {rank_color}80 100%)",
+                        "background": rank_color,
                         "border_radius": "4px",
                         "transition": "width 1s ease-out",
-                        "box_shadow": f"0 0 10px {rank_color}40",
+                        "box_shadow": "0 0 10px rgba(0, 0, 0, 0.4)",
                     }
                 ),
                 style={
@@ -75,10 +71,8 @@ def performer_bar(name: str, count: int, max_count: int, rank: int) -> rx.Compon
     )
 
 
-def top_performers_panel(employees: list[dict], title: str = "Top Performers") -> rx.Component:
+def top_performers_panel(performers: list[dict], title: str = "Top Performers") -> rx.Component:
     """Create the top performers panel."""
-    max_count = max([emp["count"] for emp in employees]) if employees else 1
-    
     return rx.box(
         rx.vstack(
             rx.hstack(
@@ -102,15 +96,7 @@ def top_performers_panel(employees: list[dict], title: str = "Top Performers") -
                 align="center",
             ),
             rx.vstack(
-                *[
-                    performer_bar(
-                        name=emp["name"],
-                        count=emp["count"],
-                        max_count=max_count,
-                        rank=idx + 1
-                    )
-                    for idx, emp in enumerate(employees)
-                ],
+                rx.foreach(performers, performer_bar),
                 spacing="2",
                 width="100%",
             ),

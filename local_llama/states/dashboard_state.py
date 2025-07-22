@@ -11,6 +11,7 @@ from ..models.virtual_machine import VirtualMachine
 from ..models.image_collection import ImageCollection
 from ..models.log_collection import LogCollection
 from ..models.dat_update import DatUpdate
+from ..models.operating_system import OperatingSystem
 
 
 class DashboardState(rx.State):
@@ -22,17 +23,34 @@ class DashboardState(rx.State):
     activities_this_week: int = 0
     activities_this_month: int = 0
     
+    # Asset statistics
+    total_assets: int = 0
+    total_projects: int = 0
+    total_operating_systems: int = 0
+    
+    # Month-over-month comparisons
+    total_activities_last_month: int = 0
+    activities_today_last_month: int = 0
+    activities_this_week_last_month: int = 0
+    activities_this_month_last_month: int = 0
+    
     # Activity by type
     vm_creations: int = 0
     image_captures: int = 0
     log_collections: int = 0
     dat_updates: int = 0
     
+    # Donut chart data
+    activity_donut_data: list[dict] = []
+    
     # Activity by employee
     top_employees: list[dict] = []
     
     # Activity by project
     project_activities: list[dict] = []
+    
+    # Employee performance breakdown
+    employee_performance_breakdown: list[dict] = []
     
     # Recent activities
     recent_activities: list[dict] = []
@@ -78,6 +96,47 @@ class DashboardState(rx.State):
                     .where(UserActivity.activity_timestamp >= month_ago)
                 ).one()
                 
+                # Calculate last month's data for comparisons
+                last_month_start = month_ago - timedelta(days=30)
+                last_month_end = month_ago
+                
+                # Total activities as of last month
+                self.total_activities_last_month = session.exec(
+                    select(func.count(UserActivity.activity_id))
+                    .where(UserActivity.activity_timestamp < month_ago)
+                ).one()
+                
+                # Activities on same day last month
+                last_month_today = today - timedelta(days=30)
+                last_month_tomorrow = last_month_today + timedelta(days=1)
+                self.activities_today_last_month = session.exec(
+                    select(func.count(UserActivity.activity_id))
+                    .where(and_(
+                        UserActivity.activity_timestamp >= last_month_today,
+                        UserActivity.activity_timestamp < last_month_tomorrow
+                    ))
+                ).one()
+                
+                # Activities in same week last month
+                last_month_week_start = week_ago - timedelta(days=30)
+                last_month_week_end = today - timedelta(days=30)
+                self.activities_this_week_last_month = session.exec(
+                    select(func.count(UserActivity.activity_id))
+                    .where(and_(
+                        UserActivity.activity_timestamp >= last_month_week_start,
+                        UserActivity.activity_timestamp < last_month_week_end
+                    ))
+                ).one()
+                
+                # Activities in the previous month period
+                self.activities_this_month_last_month = session.exec(
+                    select(func.count(UserActivity.activity_id))
+                    .where(and_(
+                        UserActivity.activity_timestamp >= last_month_start,
+                        UserActivity.activity_timestamp < last_month_end
+                    ))
+                ).one()
+                
                 # Count by activity type
                 self.vm_creations = session.exec(
                     select(func.count(UserActivity.activity_id))
@@ -99,6 +158,14 @@ class DashboardState(rx.State):
                     .where(UserActivity.activity_type == "dat_updated")
                 ).one()
                 
+                # Create donut chart data
+                self.activity_donut_data = [
+                    {"name": "VM Created", "value": self.vm_creations, "fill": "#10b981"},
+                    {"name": "Images", "value": self.image_captures, "fill": "#06b6d4"},
+                    {"name": "Logs", "value": self.log_collections, "fill": "#a78bfa"},
+                    {"name": "DAT Updates", "value": self.dat_updates, "fill": "#f59e0b"},
+                ]
+                
                 # Get top 5 employees by activity count
                 employee_activities = session.exec(
                     select(
@@ -111,15 +178,24 @@ class DashboardState(rx.State):
                     .limit(5)
                 ).all()
                 
+                # Process employee data
                 self.top_employees = []
-                for emp_id, count in employee_activities:
+                max_emp_count = max([count for _, count in employee_activities]) if employee_activities else 1
+                
+                # Rank colors
+                rank_colors = ["#fbbf24", "#9ca3af", "#f97316", "#06b6d4", "#06b6d4"]
+                
+                for idx, (emp_id, count) in enumerate(employee_activities):
                     employee = session.exec(
                         select(Employee).where(Employee.id == emp_id)
                     ).first()
                     if employee:
                         self.top_employees.append({
                             "name": f"{employee.first_name} {employee.last_name}",
-                            "count": count
+                            "count": count,
+                            "rank": idx + 1,
+                            "percentage": (count / max_emp_count * 100) if max_emp_count > 0 else 0,
+                            "rank_color": rank_colors[idx] if idx < len(rank_colors) else "#06b6d4"
                         })
                 
                 # Get activities by project
@@ -134,16 +210,105 @@ class DashboardState(rx.State):
                     .limit(5)
                 ).all()
                 
+                # Process project data
                 self.project_activities = []
-                for proj_id, count in project_activities:
+                max_proj_count = max([count for _, count in project_activities]) if project_activities else 1
+                
+                for idx, (proj_id, count) in enumerate(project_activities):
                     project = session.exec(
                         select(Project).where(Project.project_id == proj_id)
                     ).first()
                     if project:
                         self.project_activities.append({
                             "name": project.project_name,
-                            "count": count
+                            "count": count,
+                            "rank": idx + 1,
+                            "percentage": (count / max_proj_count * 100) if max_proj_count > 0 else 0,
+                            "rank_color": rank_colors[idx] if idx < len(rank_colors) else "#06b6d4"
                         })
+                
+                # Calculate employee performance breakdown
+                self.employee_performance_breakdown = []
+                
+                # Get all employees with any activity
+                employee_ids_with_activity = session.exec(
+                    select(UserActivity.employee_id).distinct()
+                    .where(UserActivity.employee_id.isnot(None))
+                ).all()
+                
+                for emp_id in employee_ids_with_activity:
+                    employee = session.exec(
+                        select(Employee).where(Employee.id == emp_id)
+                    ).first()
+                    
+                    if employee:
+                        # Get total actions for this employee
+                        total_actions = session.exec(
+                            select(func.count(UserActivity.activity_id))
+                            .where(UserActivity.employee_id == emp_id)
+                        ).one()
+                        
+                        if total_actions > 0:
+                            # Count each activity type
+                            vm_count = session.exec(
+                                select(func.count(UserActivity.activity_id))
+                                .where(and_(
+                                    UserActivity.employee_id == emp_id,
+                                    UserActivity.activity_type == "vm_created"
+                                ))
+                            ).one()
+                            
+                            image_count = session.exec(
+                                select(func.count(UserActivity.activity_id))
+                                .where(and_(
+                                    UserActivity.employee_id == emp_id,
+                                    UserActivity.activity_type == "image_captured"
+                                ))
+                            ).one()
+                            
+                            log_count = session.exec(
+                                select(func.count(UserActivity.activity_id))
+                                .where(and_(
+                                    UserActivity.employee_id == emp_id,
+                                    UserActivity.activity_type == "log_added"
+                                ))
+                            ).one()
+                            
+                            dat_count = session.exec(
+                                select(func.count(UserActivity.activity_id))
+                                .where(and_(
+                                    UserActivity.employee_id == emp_id,
+                                    UserActivity.activity_type == "dat_updated"
+                                ))
+                            ).one()
+                            
+                            # Calculate percentages
+                            self.employee_performance_breakdown.append({
+                                "name": f"{employee.first_name} {employee.last_name}",
+                                "total_actions": total_actions,
+                                "vm_percentage": round((vm_count / total_actions) * 100, 1),
+                                "image_percentage": round((image_count / total_actions) * 100, 1),
+                                "log_percentage": round((log_count / total_actions) * 100, 1),
+                                "dat_percentage": round((dat_count / total_actions) * 100, 1),
+                            })
+                
+                # Sort by total actions descending
+                self.employee_performance_breakdown.sort(key=lambda x: x["total_actions"], reverse=True)
+                
+                # Get asset statistics
+                self.total_assets = session.exec(
+                    select(func.count(Asset.asset_id))
+                ).one()
+                
+                self.total_projects = session.exec(
+                    select(func.count(Project.project_id))
+                ).one()
+                
+                # Get unique operating systems that are actually used by assets
+                self.total_operating_systems = session.exec(
+                    select(func.count(func.distinct(Asset.os_id)))
+                    .where(Asset.os_id.isnot(None))
+                ).one()
                 
                 # Get recent activities (last 10)
                 recent = session.exec(

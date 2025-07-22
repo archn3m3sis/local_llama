@@ -1,8 +1,10 @@
 """Dashboard statistics components."""
 import reflex as rx
+from .shared_styles import get_card_style_with_hover
 
 
-def stat_card(title: str, value: rx.Var | str | int, icon: str, color: str) -> rx.Component:
+def stat_card(title: str, value: rx.Var | str | int, icon: str, color: str, 
+              comparison_percent: rx.Var | float = None, comparison_count: rx.Var | int = None) -> rx.Component:
     """Create a statistics card with glassmorphism effect."""
     # Convert value to string properly if it's a Var
     if isinstance(value, rx.Var):
@@ -49,24 +51,68 @@ def stat_card(title: str, value: rx.Var | str | int, icon: str, color: str) -> r
                     "filter": f"drop-shadow(0 0 20px {color})"
                 }
             ),
+            # Comparison text in bottom right
+            rx.cond(
+                comparison_percent is not None,
+                rx.vstack(
+                    rx.text(
+                        rx.cond(
+                            comparison_percent >= 0,
+                            "↑ " + comparison_percent.to(str) + "% over last month",
+                            "↓ " + (-comparison_percent).to(str) + "% over last month"
+                        ),
+                        style={
+                            "color": rx.cond(
+                                comparison_percent >= 0,
+                                "#06b6d4",
+                                "#ec4899"
+                            ),
+                            "font_size": "0.7rem",
+                            "font_weight": "600",
+                            "filter": rx.cond(
+                                comparison_percent >= 0,
+                                "drop-shadow(0 0 8px #06b6d4)",
+                                "drop-shadow(0 0 8px #ec4899)"
+                            ),
+                        }
+                    ),
+                    rx.text(
+                        rx.cond(
+                            comparison_count >= 0,
+                            "↑ " + comparison_count.to(str) + " actions over last month",
+                            "↓ " + (-comparison_count).to(str) + " actions over last month"
+                        ),
+                        style={
+                            "color": rx.cond(
+                                comparison_count >= 0,
+                                "#06b6d4",
+                                "#ec4899"
+                            ),
+                            "font_size": "0.7rem",
+                            "font_weight": "600",
+                            "filter": rx.cond(
+                                comparison_count >= 0,
+                                "drop-shadow(0 0 8px #06b6d4)",
+                                "drop-shadow(0 0 8px #ec4899)"
+                            ),
+                        }
+                    ),
+                    spacing="0",
+                    align="end",
+                    position="absolute",
+                    bottom="1rem",
+                    right="1rem",
+                ),
+                rx.fragment()
+            ),
             spacing="3",
             align="start",
             width="100%",
+            position="relative",
         ),
         style={
-            "background": "rgba(17, 24, 39, 0.6)",
-            "backdrop_filter": "blur(10px)",
-            "border": "1px solid rgba(55, 65, 81, 0.5)",
-            "border_radius": "12px",
+            **get_card_style_with_hover(color),
             "padding": "1.5rem",
-            "box_shadow": "0 8px 32px rgba(0, 0, 0, 0.3)",
-            "transition": "all 0.3s ease",
-            "_hover": {
-                "background": "rgba(17, 24, 39, 0.8)",
-                "border_color": color,
-                "transform": "translateY(-2px)",
-                "box_shadow": f"0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px {color}20"
-            }
         }
     )
 
@@ -79,11 +125,17 @@ def stats_grid(stats: list[dict]) -> rx.Component:
                 title=stat["title"],
                 value=stat["value"],
                 icon=stat["icon"],
-                color=stat["color"]
+                color=stat["color"],
+                comparison_percent=stat.get("comparison_percent"),
+                comparison_count=stat.get("comparison_count")
             )
             for stat in stats
         ],
-        columns=rx.breakpoints(default="1", sm="2", md="4"),
+        columns=rx.breakpoints({
+            "initial": "1",
+            "sm": "2", 
+            "md": "4"
+        }),
         spacing="4",
         width="100%",
     )

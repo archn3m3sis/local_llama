@@ -401,12 +401,9 @@ class AssetDataSpeedDialState(rx.State):
 def asset_data_speed_dial() -> rx.Component:
     """Create an asset data focused speed dial component."""
     nav_items = [
-        {"icon": "hard-drive", "label": "Hardware Assets", "route": "/assets/hardware"},
-        {"icon": "wifi", "label": "Network Assets", "route": "/assets/network"},
-        {"icon": "server", "label": "Server Inventory", "route": "/assets/servers"},
-        {"icon": "smartphone", "label": "Mobile Devices", "route": "/assets/mobile"},
-        {"icon": "monitor", "label": "Workstations", "route": "/assets/workstations"},
-        {"icon": "database", "label": "Storage Systems", "route": "/assets/storage"}
+        {"icon": "server", "label": "Industrial Assets", "route": "/assets"},
+        {"icon": "file-text", "label": "Cradle To Graves", "route": "/cradle-to-grave"},
+        {"icon": "clock", "label": "Configuration Timelines", "route": "/configuration-timelines"}
     ]
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:

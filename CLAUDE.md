@@ -97,6 +97,20 @@ local_llama/
 #### Activity Tracking Models
 - `UserActivity`: Comprehensive activity tracking table with relationships to all major entities
 
+#### Configuration Management Models (NEW)
+- `ConfigurationChange`: Full audit trail of all asset configuration changes
+- `AssetConfiguration`: Point-in-time configuration snapshots with JSON data
+- `NetworkInterface`: Network configuration tracking (IP, MAC, VLAN, DNS)
+- `NetworkZone`: Network security zones and segments
+- `InstalledSoftware`: Software inventory with version and license tracking
+- `SoftwareBaseline`: Required software standards by system type
+- `PatchHistory`: Patch and update tracking with rollback capability
+- `ServiceDependency`: Asset-to-asset dependency mapping
+- `ComplianceCheck`: Security compliance audit results (STIG, CIS, NIST)
+- `ConfigurationBaseline`: Standard configuration templates
+- `ConfigurationItem`: CMDB items with full lifecycle tracking
+- `CIRelationship`: Configuration item relationships
+
 ### Database Table Creation Process
 
 When adding new database tables to IAMS:
@@ -289,7 +303,7 @@ Based on the overview, the system will include:
 - **Minimal Container Approach**: Use `rx.fragment()` instead of nested `rx.box()` containers to avoid layout conflicts
 
 ### Complete Seed File List (26 files)
-**Current Database Tables with Models**: 30 tables total
+**Current Database Tables with Models**: 42 tables total (30 original + 12 configuration management)
 
 **Models with Seed Data (26 files):**
 - `appuser_seed.py` - 9 app users with FK relationships

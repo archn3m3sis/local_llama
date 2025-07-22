@@ -1,5 +1,6 @@
 """Recent activity components for dashboard."""
 import reflex as rx
+from .shared_styles import CARD_STYLE
 
 
 def activity_item(activity: dict) -> rx.Component:
@@ -106,25 +107,22 @@ def recent_activity_panel(activities: list[dict]) -> rx.Component:
             ),
             rx.scroll_area(
                 rx.vstack(
-                    *[activity_item(activity) for activity in activities],
+                    rx.foreach(activities, activity_item),
                     spacing="0",
                     width="100%",
                 ),
                 style={
-                    "max_height": "400px",
+                    "height": "335px",
                     "width": "100%",
+                    "overflow_y": "auto",
                 }
             ),
             spacing="4",
             width="100%",
         ),
         style={
-            "background": "rgba(17, 24, 39, 0.6)",
-            "backdrop_filter": "blur(10px)",
-            "border": "1px solid rgba(55, 65, 81, 0.5)",
-            "border_radius": "12px",
+            **CARD_STYLE,
             "padding": "1.5rem",
-            "box_shadow": "0 8px 32px rgba(0, 0, 0, 0.3)",
-            "height": "100%",
+            "height": "fit-content",
         }
     )
