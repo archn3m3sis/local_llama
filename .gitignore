@@ -89,3 +89,8 @@ rxconfig.py
 # Specific Directories
 /home/archn3m3sis/Developer/dev_project/local_llama/assets/icons/
 /home/archn3m3sis/Developer/dev_project/local_llama/offline_app/
+/home/archn3m3sis/Developer/dev_project/local_llama/npm-offline-cache
+
+# Ignore offline demo files
+offline_app/
+npm-offline-cache/
