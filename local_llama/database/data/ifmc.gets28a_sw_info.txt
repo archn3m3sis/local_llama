@@ -1,3 +1,7 @@
+### ifmc.28a software inventory (07.23.2025) #################################
+-------------------------------------------------------------------------------
+(sw_vendor, sw_name, sw_version, sw_architecture_compatibility)
+-------------------------------------------------------------------------------
 Acronis, Backup & Recovery, version 41.0.0.36, 32-bit
 Acronis, Backup, version 11.1.0.43759, 32-bit
 Acronis, Backup, version 11.5.0.43759, 32-bit

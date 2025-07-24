@@ -9,6 +9,7 @@ from ..components.shared_styles import CARD_STYLE
 from ..components.metallic_text import metallic_title
 from ..components.asset_view_modal import asset_view_modal
 from ..components.asset_delete_modal import asset_delete_modal
+from ..components.enhanced_export_menu import enhanced_export_menu
 
 
 def stats_card(title: str, value: rx.Var | str | int, icon: str, color: str) -> rx.Component:
@@ -404,7 +405,13 @@ def Assets() -> rx.Component:
                 }
             ),
             rx.spacer(),
-            export_menu(),
+            enhanced_export_menu(
+                selected_count=AssetsState.selected_rows.length(),
+                on_export_current_page=AssetsState.export_selected,
+                on_export_all_data=AssetsState.export_all_data,
+                current_page_count=AssetsState.current_page_count,
+                total_count=AssetsState.total_count
+            ),
             width="100%",
             align="center",
             margin_bottom="1rem",

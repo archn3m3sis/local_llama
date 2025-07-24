@@ -13,6 +13,7 @@ from ..models.sys_type import SysType
 from ..models.operating_system import OperatingSystem
 from ..models.hardware_manufacturer import HardwareManufacturer
 from ..models.employee import Employee
+from ..utils.export_utils import export_to_csv, export_to_json, export_to_excel, export_to_print
 
 
 class AssetsState(rx.State):
@@ -140,6 +141,11 @@ class AssetsState(rx.State):
             return False
         current_page_ids = [str(asset["asset_id"]) for asset in self.paginated_assets]
         return all(asset_id in self.selected_rows for asset_id in current_page_ids)
+    
+    @rx.var
+    def current_page_count(self) -> int:
+        """Get the number of items on the current page."""
+        return len(self.paginated_assets)
     
     async def load_assets_data(self):
         """Load all assets data with relationships."""
@@ -493,10 +499,37 @@ class AssetsState(rx.State):
             self.visible_columns.append(column)
     
     def export_selected(self, format: str):
-        """Export selected rows."""
-        # This would be implemented with actual export logic
-        print(f"Exporting {len(self.selected_rows)} rows as {format}")
-        self.show_export_menu = False
+        """Export selected rows (current page only)."""
+        # Get the data to export
+        if len(self.selected_rows) == 0:
+            # Export all items on current page if nothing selected
+            export_data = self.paginated_assets
+        else:
+            # Export only selected rows from current page
+            export_data = [asset for asset in self.paginated_assets if str(asset["asset_id"]) in self.selected_rows]
+        
+        if format == "csv":
+            return export_to_csv(export_data, "assets_page")
+        elif format == "json":
+            return export_to_json(export_data, "assets_page")
+        elif format == "excel":
+            return export_to_excel(export_data, "assets_page", "Assets")
+        elif format == "print":
+            return export_to_print(export_data, "Assets Report")
+    
+    def export_all_data(self, format: str):
+        """Export all filtered assets data (entire dataset)."""
+        # Export all filtered data regardless of pagination
+        export_data = self.filtered_assets
+        
+        if format == "csv":
+            return export_to_csv(export_data, "assets_all")
+        elif format == "json":
+            return export_to_json(export_data, "assets_all")
+        elif format == "excel":
+            return export_to_excel(export_data, "assets_all", "Assets - All Data")
+        elif format == "print":
+            return export_to_print(export_data, "Assets Report - All Data")
     
     def clear_filters(self):
         """Clear all filters."""

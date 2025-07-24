@@ -20,7 +20,8 @@ def radial_speed_dial() -> rx.Component:
         {"icon": "image", "label": "Image Capture", "route": "/images"},
         {"icon": "server", "label": "VM Creation", "route": "/vm_creation"},
         {"icon": "user", "label": "Access Control", "route": "/access"},
-        {"icon": "git-branch", "label": "Change Management", "route": "/configuration_management"}
+        {"icon": "git-branch", "label": "Change Management", "route": "/configuration_management"},
+        {"icon": "book", "label": "Playbook Library", "route": "/playbook"}
     ]
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:
@@ -213,6 +214,196 @@ class AnalyticsSpeedDialState(rx.State):
     def toggle_speed_dial(self):
         """Toggle the speed dial open/closed state."""
         self.is_open = not self.is_open
+
+
+class SecuritySpeedDialState(rx.State):
+    """State for the security speed dial component."""
+    is_open: bool = False
+    
+    def toggle_speed_dial(self):
+        """Toggle the speed dial open/closed state."""
+        self.is_open = not self.is_open
+
+
+def security_speed_dial() -> rx.Component:
+    """Create a security-focused speed dial component with playbook options."""
+    nav_items = [
+        {"icon": "book", "label": "Playbook Home", "route": "/playbook"},
+        {"icon": "file-plus", "label": "Create Playbook", "route": "/playbook/create"},
+        {"icon": "folder-open", "label": "Browse Templates", "route": "/playbook/templates"},
+        {"icon": "shield", "label": "Security Policies", "route": "/security/policies"},
+        {"icon": "alert-triangle", "label": "Incident Response", "route": "/security/incidents"},
+        {"icon": "lock", "label": "Access Control", "route": "/security/access"}
+    ]
+    
+    def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:
+        delay = f"{(index + 1) * 0.1}s"
+        
+        # Color scheme for security - reds and purples
+        colors = [
+            {"bg": "linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(239, 68, 68, 0.4)", "glow": "239, 68, 68"},  # Red
+            {"bg": "linear-gradient(135deg, rgba(236, 72, 153, 0.3) 0%, rgba(219, 39, 119, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(236, 72, 153, 0.4)", "glow": "236, 72, 153"},  # Pink
+            {"bg": "linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(147, 51, 234, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(168, 85, 247, 0.4)", "glow": "168, 85, 247"},  # Purple
+            {"bg": "linear-gradient(135deg, rgba(217, 70, 239, 0.3) 0%, rgba(196, 25, 225, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(217, 70, 239, 0.4)", "glow": "217, 70, 239"},  # Fuchsia
+            {"bg": "linear-gradient(135deg, rgba(244, 63, 94, 0.3) 0%, rgba(225, 29, 72, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(244, 63, 94, 0.4)", "glow": "244, 63, 94"},  # Rose
+            {"bg": "linear-gradient(135deg, rgba(190, 18, 60, 0.3) 0%, rgba(159, 18, 57, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(190, 18, 60, 0.4)", "glow": "190, 18, 60"},  # Wine
+        ]
+        
+        color_scheme = colors[index % len(colors)]
+        
+        return rx.link(
+            rx.hstack(
+                rx.box(
+                    rx.icon(
+                        tag=item["icon"],
+                        size=20,
+                        color="white"
+                    ),
+                    width="3rem",
+                    height="3rem",
+                    border_radius="50%",
+                    background=color_scheme["bg"],
+                    border=f"2px solid {color_scheme['border']}",
+                    display="flex",
+                    align_items="center",
+                    justify_content="center",
+                    backdrop_filter="blur(20px)",
+                    box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                    transition="all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    _hover={
+                        "box_shadow": f"0 0 25px rgba({color_scheme['glow']}, 0.6), 0 8px 32px rgba(0, 0, 0, 0.3)",
+                        "border": f"2px solid rgba({color_scheme['glow']}, 0.8)",
+                        "transform": "scale(1.1)",
+                    }
+                ),
+                rx.text(
+                    item["label"],
+                    color="white",
+                    font_size="0.875rem",
+                    font_weight="500",
+                    margin_left="1rem",
+                    white_space="nowrap",
+                    text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                    _hover={
+                        "text_shadow": "0 0 8px rgba(255, 255, 255, 0.5)",
+                        "transform": "scale(1.05)",
+                    }
+                ),
+                spacing="1",
+                align="center",
+                justify="start",
+            ),
+            href=item["route"],
+            style={"text-decoration": "none"},
+            opacity=rx.cond(SecuritySpeedDialState.is_open, "1", "0"),
+            transform=rx.cond(
+                SecuritySpeedDialState.is_open, 
+                "translateY(0) scale(1)", 
+                "translateY(20px) scale(0.8)"
+            ),
+            transition=f"all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) {delay}",
+            pointer_events=rx.cond(SecuritySpeedDialState.is_open, "auto", "none"),
+            on_click=SecuritySpeedDialState.toggle_speed_dial,
+        )
+    
+    nav_buttons = [create_nav_item(item, i) for i, item in enumerate(nav_items)]
+    
+    return rx.box(
+        # Glass backdrop strip
+        rx.box(
+            style={
+                "position": "absolute",
+                "right": "-10px",
+                "top": "50%",
+                "transform": "translateY(-50%)",
+                "width": "300px",
+                "height": rx.cond(SecuritySpeedDialState.is_open, "400px", "80px"),
+                "background": rx.cond(
+                    SecuritySpeedDialState.is_open,
+                    "linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%)",
+                    "linear-gradient(90deg, rgba(0, 0, 0, 0.4) 0%, transparent 100%)"
+                ),
+                "backdrop_filter": "blur(10px)",
+                "border_radius": "40px 0 0 40px",
+                "transition": "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                "z_index": "1001",
+            }
+        ),
+        
+        # Navigation items
+        rx.vstack(
+            *nav_buttons,
+            spacing="2",
+            align="end",
+            position="absolute",
+            right="80px",
+            top="50%",
+            transform="translateY(-50%)",
+            z_index="1002",
+        ),
+        
+        # Main trigger button
+        rx.hstack(
+            rx.box(
+                rx.icon(
+                    tag=rx.cond(SecuritySpeedDialState.is_open, "x", "shield"),
+                    size=24,
+                    color="white",
+                ),
+                width="4rem",
+                height="4rem",
+                border_radius="50%",
+                background=rx.cond(
+                    SecuritySpeedDialState.is_open,
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%), linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.1) 100%)",
+                    "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)"
+                ),
+                border="2px solid rgba(255, 255, 255, 0.2)",
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                cursor="pointer",
+                position="relative",
+                z_index="1003",
+                backdrop_filter="blur(20px)",
+                box_shadow="0 8px 32px rgba(0, 0, 0, 0.3)",
+                transition="all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                _hover={
+                    "transform": "scale(1.05)",
+                    "background": rx.cond(
+                        SecuritySpeedDialState.is_open,
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%), linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 100%)",
+                        "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)"
+                    ),
+                    "box_shadow": "0 12px 40px rgba(0, 0, 0, 0.4)",
+                },
+                on_click=SecuritySpeedDialState.toggle_speed_dial,
+            ),
+            rx.text(
+                "Security",
+                color="white",
+                font_size="1rem",
+                font_weight="600",
+                margin_left="1rem",
+                opacity=rx.cond(SecuritySpeedDialState.is_open, "0", "1"),
+                transform=rx.cond(SecuritySpeedDialState.is_open, "translateX(-10px)", "translateX(0)"),
+                transition="all 0.3s ease",
+                text_shadow="0 2px 4px rgba(0, 0, 0, 0.8)",
+                white_space="nowrap",
+                position="relative",
+                z_index="1003",
+            ),
+            spacing="0",
+            align="center",
+            width="auto",
+            min_width="180px",
+        ),
+        
+        position="fixed",
+        bottom="8rem",
+        left="1rem",
+        z_index="1003",
+    )
 
 
 def analytics_speed_dial() -> rx.Component:
@@ -588,11 +779,13 @@ class PlaybookSpeedDialState(rx.State):
 def playbook_speed_dial() -> rx.Component:
     """Create a playbook-focused speed dial component."""
     nav_items = [
+        {"icon": "home", "label": "Playbook Home", "route": "/playbook"},
+        {"icon": "edit", "label": "Playbook Editor", "route": "/playbook/editor"},
         {"icon": "book-open", "label": "SOP Documentation", "route": "/playbook/sop"},
         {"icon": "workflow", "label": "Internal Processes", "route": "/playbook/processes"},
         {"icon": "file-text", "label": "Technical Documentation", "route": "/playbook/technical"},
         {"icon": "user", "label": "Personal Logs", "route": "/playbook/personal"},
-        {"icon": "pen_tool", "label": "Create Content", "route": "/playbook/create"},
+        {"icon": "pen-tool", "label": "Create Content", "route": "/playbook/create"},
         {"icon": "code", "label": "Code Snippets", "route": "/playbook/snippets"}
     ]
     

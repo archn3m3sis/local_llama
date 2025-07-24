@@ -14,6 +14,8 @@ class SoftwareCatalog(SQLModel, table=True):
     latest_version: Optional[str] = Field(max_length=50, default=None)
     sw_architecture_compatibility: Optional[str] = Field(max_length=500, default=None)  # CSV list of architectures
     dod_compliant: bool = Field(default=False)  # DoD compliance status
+    compliance_status: Optional[str] = Field(max_length=50, default=None)  # Extended compliance status
+    army_gold_master: bool = Field(default=False)  # Part of Army baseline OS deployment image
     is_approved: bool = Field(default=True)  # Approved for use in organization
     is_licensed: bool = Field(default=True)  # Requires license
     license_model: Optional[str] = Field(max_length=50, default=None)  # 'per-seat', 'site', 'subscription'

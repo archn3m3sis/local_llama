@@ -5,6 +5,7 @@ from .logs import Logs
 from .tickets import Tickets
 from .assets import Assets
 from .playbook import Playbook
+from .playbook_editor import PlaybookEditor
 from .software import Software
 from .vulnerabilities import Vulnerabilities
 from .vm_creation import VMCreation
