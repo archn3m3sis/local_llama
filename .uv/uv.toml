@@ -1,0 +1,6 @@
+[pip]
+offline = true
+no-cache = false
+cache-dir = "./.uv-cache"
+find-links = ["./offline_packages"]
+no-index = true

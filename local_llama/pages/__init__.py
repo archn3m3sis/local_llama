@@ -9,3 +9,4 @@ from .software import Software
 from .vulnerabilities import Vulnerabilities
 from .vm_creation import VMCreation
 from .analytics import Analytics
+from .configuration_management import ConfigurationManagement

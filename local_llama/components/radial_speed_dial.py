@@ -19,7 +19,8 @@ def radial_speed_dial() -> rx.Component:
         {"icon": "monitor", "label": "Device Patching", "route": "/patching"},
         {"icon": "image", "label": "Image Capture", "route": "/images"},
         {"icon": "server", "label": "VM Creation", "route": "/vm_creation"},
-        {"icon": "user", "label": "Access Control", "route": "/access"}
+        {"icon": "user", "label": "Access Control", "route": "/access"},
+        {"icon": "git-branch", "label": "Change Management", "route": "/configuration_management"}
     ]
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:
@@ -33,6 +34,7 @@ def radial_speed_dial() -> rx.Component:
             {"bg": "linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(239, 68, 68, 0.4)", "glow": "239, 68, 68"},  # Red
             {"bg": "linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(245, 158, 11, 0.4)", "glow": "245, 158, 11"},  # Amber
             {"bg": "linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(8, 145, 178, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(6, 182, 212, 0.4)", "glow": "6, 182, 212"},  # Cyan
+            {"bg": "linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(79, 70, 229, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%)", "border": "rgba(99, 102, 241, 0.4)", "glow": "99, 102, 241"},  # Indigo
         ]
         
         color_scheme = colors[index % len(colors)]

@@ -1,12 +1,14 @@
 """Assets page with advanced table and filtering."""
 import reflex as rx
 from ..states.assets_state import AssetsState
-from ..components.assets_table import assets_table
+from ..components.assets_table_inline_edit import assets_table_inline
 from ..components.assets_filters import (
     search_bar, filter_dropdown, filter_stats, column_selector
 )
 from ..components.shared_styles import CARD_STYLE
 from ..components.metallic_text import metallic_title
+from ..components.asset_view_modal import asset_view_modal
+from ..components.asset_delete_modal import asset_delete_modal
 
 
 def stats_card(title: str, value: rx.Var | str | int, icon: str, color: str) -> rx.Component:
@@ -66,17 +68,45 @@ def pagination_controls() -> rx.Component:
         # Page size selector
         rx.select(
             ["10", "25", "50", "100"],
-            value=str(AssetsState.page_size),
+            value=AssetsState.page_size.to_string(),
+            default_value="25",
+            placeholder="25",
             on_change=AssetsState.set_page_size,
             style={
-                "width": "80px",
-                "padding": "0.5rem",
+                "width": "120px",
+                "min_width": "120px",
+                "padding": "0.5rem 0.75rem",
+                "padding_right": "2rem",  # Extra space for dropdown arrow
                 "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)",
                 "border": "1px solid rgba(255, 255, 255, 0.1)",
                 "border_radius": "6px",
-                "color": "rgba(255, 255, 255, 0.95)",
+                "color": "rgba(255, 255, 255, 0.95) !important",
                 "font_size": "0.875rem",
+                "font_weight": "500",
                 "cursor": "pointer",
+                "appearance": "none",
+                "-webkit-appearance": "none",
+                "-moz-appearance": "none",
+                "background_image": "url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27rgba(255,255,255,0.6)%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')",
+                "background_repeat": "no-repeat",
+                "background_position": "right 0.5rem center",
+                "background_size": "1.25rem",
+                "text_align": "left",
+                "line_height": "1.5",
+                "_hover": {
+                    "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)",
+                    "border_color": "rgba(255, 255, 255, 0.2)",
+                },
+                "_focus": {
+                    "outline": "none",
+                    "border_color": "rgba(6, 182, 212, 0.6)",
+                    "box_shadow": "0 0 0 2px rgba(6, 182, 212, 0.2)",
+                },
+                "& option": {
+                    "background": "#1a1a1a",
+                    "color": "rgba(255, 255, 255, 0.95)",
+                    "padding": "0.5rem",
+                },
             }
         ),
         rx.text(
@@ -247,7 +277,8 @@ def export_menu() -> rx.Component:
 
 def Assets() -> rx.Component:
     """The main assets page with advanced table."""
-    return rx.box(
+    return rx.fragment(
+        rx.box(
         rx.vstack(
         # Page header
         metallic_title("Industrial Assets Management"),
@@ -273,8 +304,8 @@ def Assets() -> rx.Component:
                 "#a78bfa"
             ),
             stats_card(
-                "System Types",
-                AssetsState.systype_count,
+                "Operating Systems",
+                AssetsState.os_count,
                 "cpu",
                 "#f59e0b"
             ),
@@ -402,12 +433,13 @@ def Assets() -> rx.Component:
                 ),
                 style={"height": "400px"}
             ),
-            assets_table(
+            assets_table_inline(
                 assets=AssetsState.paginated_assets,
                 selected_rows=AssetsState.selected_rows,
                 select_all=AssetsState.is_current_page_selected,
                 sort_column=AssetsState.sort_column,
                 sort_direction=AssetsState.sort_direction,
+                editing_asset_id=AssetsState.editing_asset_id,
                 on_select=AssetsState.toggle_row_selection,
                 on_sort=AssetsState.sort_by_column,
                 on_select_all=AssetsState.toggle_select_all
@@ -421,6 +453,7 @@ def Assets() -> rx.Component:
         width="100%",
         padding="3em",
         padding_top="4em",
+        padding_bottom="8em",  # Increased bottom padding for space
         on_mount=AssetsState.load_assets_data,
     ),
         position="absolute",
@@ -430,4 +463,9 @@ def Assets() -> rx.Component:
         bottom="0",
         overflow_y="auto",
         z_index="10",
+    ),
+    # Add the view modal
+    asset_view_modal(),
+    # Add the delete modal
+    asset_delete_modal(),
     )

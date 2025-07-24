@@ -12,6 +12,8 @@ class SoftwareCatalog(SQLModel, table=True):
     sw_category: Optional[str] = Field(max_length=50, default=None)  # 'OS', 'Security', 'Productivity', 'Development'
     sw_type: Optional[str] = Field(max_length=50, default=None)  # 'Application', 'Driver', 'Firmware', 'Patch'
     latest_version: Optional[str] = Field(max_length=50, default=None)
+    sw_architecture_compatibility: Optional[str] = Field(max_length=500, default=None)  # CSV list of architectures
+    dod_compliant: bool = Field(default=False)  # DoD compliance status
     is_approved: bool = Field(default=True)  # Approved for use in organization
     is_licensed: bool = Field(default=True)  # Requires license
     license_model: Optional[str] = Field(max_length=50, default=None)  # 'per-seat', 'site', 'subscription'

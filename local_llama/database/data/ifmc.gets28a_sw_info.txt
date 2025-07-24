@@ -1,0 +1,109 @@
+Acronis, Backup & Recovery, version 41.0.0.36, 32-bit
+Acronis, Backup, version 11.1.0.43759, 32-bit
+Acronis, Backup, version 11.5.0.43759, 32-bit
+Acronis, Managed Machine Service, version 11.5.0.43759, 32-bit
+Acronis, MediaBuilder, version 11.5.0.43759, 32-bit
+Acronis, Removable Storage Management Service, version 11.5.0.43759, 32-bit
+Acronis, Scheduler 2, version 8.0.0.8204, 64-bit
+Acronis, Scheduler Helper, version 8.0.0.8204, 32-bit
+Acronis, Tib Mounter, version 4.3.0.2131, 32-bit
+Adobe Systems, Acrobat Reader DC, version 15.9.20071.159680, 32-bit
+Adobe Systems, Acrobat Update Service, version 1.824.15.7129, 32-bit
+Adobe Systems, Flash Player Update Service, version 17.0.0.169, 32-bit
+Adobe Systems, Shockwave Flash, version 17.0.0.169, 32/64-bit
+Advanced Micro Devices, Catalyst Control Center, version 3.5.0.0, 64-bit
+AMD, External Events, version 6.14.11.1180, 64-bit
+ATI Technologies, Catalyst Control Center, version 4.5.0.0, 64-bit
+Belarc, Advisor, version 13.1, 32-bit
+Dell, Backup and Recovery Manager, version 1.3.1.0, 64-bit
+Dell, Command | Update, version 2.0.0.565, 64-bit
+Dell, Data Vault, version 4.1.9.0, 64-bit
+Dell, Dell.DFS.Agent.WinService, version 2.2.65.0, 32/64-bit
+Dell, EDocs, version 2.0.1.0, 64-bit
+Dell, Performance Optimizer, version 1.0.0.0, 64-bit
+Dell, Precision Performance Optimizer, version 2.5.0.0, 64-bit
+Dell Products, Digital Delivery, version 3.1.1002, 64-bit
+Dell Products, Digital Delivery Windows Service, version 3.1.1002, 64-bit
+GETS-1000, ELTD_Browser, version 1.0, 32-bit
+Intel, Capability Licensing Service TCP IP Interface, version 1,35,133,1, 64-bit
+Intel, Delayed launcher, version 1.0.0.1, 32-bit
+Intel, Dynamic Application Loader Host Interface, version 10.0.30.1054, 32-bit
+Intel, IAStorDataSvc, version 13.1.0.1058, 64-bit
+Intel, IAStorUI, version 13.1.0.1058, 64-bit
+Intel, Management and Security Application Local Management Service, version 10.0.30.1054, 32-bit
+Intel, PROSet Monitoring Service, version 19.2.103.0, 64-bit
+Intel, USB 3.0 Monitor, version 2.5.4.40, 32-bit
+Invincea, Dell Protected Workspace, version 4.0.0-18189, 32/64-bit
+Invincea, Sandbox, version 4.13.1, 64-bit
+Leidos, GETS 1000, version 75.00, 32-bit
+Lockheed Martin, GETS-1000 GetsIDN,version 1.0, 32-bit
+Macrovision, NI License Server, version 11.5.0.0, 32-bit
+McAfee, Agent, version 5.7.2.162, 32/64-bit
+McAfee, SYSCORE, version 20.11.0.138, 64-bit
+McAfee, VirusScan Enterprise, version 8.8.0, 32-bit
+McAfee, VSCORE, version 20.11.0.138, 64-bit
+Microsoft, .NET Framework, version 2.0.50727.5483, 32/64-bit
+Microsoft, .NET Framework, version 3.0.6920.5011, 64-bit
+Microsoft, .NET Framework, version 4.0.41210.0, 32/64-bit
+Microsoft, Application Virtualization, version 5.151.36.0, 32-bit
+Microsoft, DFS.SystrayUI, version 1.0.0.19, 64-bit
+Microsoft, Internet Explorer, version 11.00.9600.18057, 32/64-bit
+Microsoft, Office 2013, version 15.0.4569.1506, 32-bit
+Microsoft, Office, version 15.0.4569.1504, 64-bit
+Microsoft, Office InfoPath, version 15.0.4569.1503, 64-bit
+Microsoft, Office Source Engine, version 15.0.4454.1000, 32-bit
+Microsoft, OneDrive, version 17.0.4023.1211, 32-bit
+Microsoft, OneNote, version 15.0.4569.1503, 32-bit
+Microsoft, Outlook, version 15.0.4569.1503, 32-bit
+Microsoft, Silverlight, version 5.1.20125.0, 32/64-bit
+Microsoft, Silverlight Plug-In, version 5.1.20125.0, 32/64-bit
+Microsoft, Windows Installer - Unicode, version 5.0.7600.16385, 32/64-bit
+Microsoft, Windows Live, version 17.0.4023.1211, 32-bit
+Microsoft, Windows Media Player, version 12.0.7600.16385, 32/64-bit
+Microsoft, Windows Script Host, version 5.8.7600.16385, 32/64-bit
+Microsoft, Windows Search, version 7.00.7600.16385, 32/64-bit
+National Instruments, ANALYZER, version 2.8.0f0, 32-bit
+National Instruments, APPLICATIONWEBSERVER, version 13.0.0f1, 32/64-bit
+National Instruments, CWDSS, version 4.6.0f0, 32-bit
+National Instruments, Excel Importer, version 3.3.0.1, 64-bit
+National Instruments, GPIBENETWIZARD, version 3.0.0f0, 32-bit
+National Instruments, GPIBINTCTRL, version 5.0.0f15, 32-bit
+National Instruments, LabWindows/CVI 2012, version 12.0.1.127, 32-bit
+National Instruments, LKADS, version 5.5.0f0, 32-bit
+National Instruments, LKTSRV, version 5.5.0f0, 32-bit
+National Instruments, Logos, version 4.5.2.0, 32-bit
+National Instruments, LXI_DISCOVERY_SERVICE, version 5.2.0f0, 32-bit
+National Instruments, MeasurementStudio, version 4.05.0018, 32-bit
+National Instruments, NI License Manager, version 3, 7, 0, 50, 32-bit
+National Instruments, NI Update Service, version 15.0.0.46, 64-bit
+National Instruments, NI USI, version 11.0.0f4901, 32-bit
+National Instruments, NI_DISCOVERY_SERVICE, version 5.5.0f0, 32-bit
+National Instruments, NI_ZEROCONF_SERVICE, version 214.3.2f0, 32-bit
+National Instruments, NIDMSRV, version 5.5.0f0, 32-bit
+National Instruments, NIPALSM, version 2.1.1f0, 32-bit
+National Instruments, NIPXISM, version 2.10.3f0, 32-bit
+National Instruments, NISPY_APPLICATION, version 2.6.0.1, 32-bit
+National Instruments, NISVCLOC, version 13.0.0f1, 32-bit
+National Instruments, NIVISA_DDW_APPLICATION, version 5.4.0.49152, 32-bit
+National Instruments, NIVISA_REMOTE_SERVER, version 5.4.0f0, 32-bit
+National Instruments, NIVXIAUTORESMAN, version 4.0.2f0, 32-bit
+National Instruments, NIVXIRESMAN, version 4.0.2f0, 32-bit
+National Instruments, NIVXISVC, version 3.8.1f0, 32-bit
+National Instruments, Registration Wizard, version 1.0.3, 32-bit
+National Instruments, SCS_MAX_LAUNCH, version 5.5.0f0, 32-bit
+National Instruments, SCS_MXS_SERVICE, version 5.5.0f0, 32-bit
+National Instruments, SCS_NETWORK_BROWSER_LAUNCHER, version 5.4.0f0, 32-bit
+National Instruments, SYSTEMMANAGER, version 12.0.1f0, 32-bit
+National Instruments, SYSTEMWEBSERVER, version 13.0.0f1, 32-bit
+National Instruments, TAGSRV, version 12.0.0f1, 32-bit
+National Instruments, TROUBLESHOOT, version 3.1.1f0, 32-bit
+National Instruments, VICGUI, version 3.8.0f0, 32-bit
+National Instruments, WELCOME, version 3.1.1f0, 32-bit
+NI, NIvisaic, version 5.4.0.49152, 32-bit
+No Company Name, TestPartner_Display, version 1.0, 32-bit
+OPC Foundation, Server Enumerator 1.10, version 1.10.2.02, 32-bit
+Realtek Semiconductor, HD Audio Background Process, version 1.0.0.207, 64-bit
+Realtek Semiconductor, HD Audio Manager, version 1.0.417.0, 64-bit
+Sun Microsystems, Java Platform SE 6 U43, version 6.0.430.1, 32-bit
+Sun Microsystems, Java Platform SE Auto Updater 2 0, version 2.0.7.2, 32-bit
+UltraVNC, VNCViewer, version 1.2.0.6, 64-bit

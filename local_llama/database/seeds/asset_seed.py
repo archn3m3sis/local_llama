@@ -97,6 +97,63 @@ def seed_assets():
         
         # TAGM project assets
         {"asset_name": "tagm.tuts", "project_id": 6, "building_id": 1, "floor_id": 9, "room_id": 46, "systype_id": 1},
+        {"asset_name": "tagm.jsts004", "project_id": 6, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "tagm.jsts800", "project_id": 6, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "tagm.mlv", "project_id": 6, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        
+        # Additional STORM assets
+        {"asset_name": "storm.pump", "project_id": 4, "building_id": 1, "floor_id": 7, "room_id": None, "systype_id": 1},
+        
+        # Additional IFMC numbered assets
+        {"asset_name": "ifmc.226114", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.226118", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.2271", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.2275", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        
+        # Additional IFMC test equipment
+        {"asset_name": "ifmc.actuatortest", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.hoffman", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.legacythermal", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.lts1", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.ltsctc", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.nts1", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.nts2", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.thermal", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.v281", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.v323", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        {"asset_name": "ifmc.vmeprogrammer", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 1},
+        
+        # IFMC Oscilloscopes (Digital Oscilloscope - systype_id: 4)
+        {"asset_name": "ifmc.oscope.aqg485", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.bgv085", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.cn4024", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.cn5201", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.cn6242", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.cn6256", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.cn6309", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.cn6310", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.cn6312", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.cn6387", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.hxx865", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.r7057", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.zue544", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.zuf375", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.zug348", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        {"asset_name": "ifmc.oscope.zug356", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 4},
+        
+        # IFMC Analyzers (Signal Analyzer - systype_id: 5)
+        {"asset_name": "ifmc.analyzer.5617", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.bgv083", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.cn4322", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.cn5612", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.cn5625", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.cn5626", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.cn6111", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.cn6129", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.cn6378", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.cn6473", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.cn6615", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
+        {"asset_name": "ifmc.analyzer.hxr172", "project_id": 1, "building_id": 1, "floor_id": 9, "room_id": None, "systype_id": 5},
     ]
     
     with Session(engine) as session:

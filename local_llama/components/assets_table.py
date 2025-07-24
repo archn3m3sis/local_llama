@@ -1,6 +1,7 @@
 """Advanced assets table component with stunning visuals."""
 import reflex as rx
 from typing import Dict, List, Any
+from ..states.assets_state import AssetsState
 
 
 def table_header_cell(title: str, column: str, sort_column: str, sort_direction: str, on_sort) -> rx.Component:
@@ -190,7 +191,7 @@ def asset_row(asset: Dict[str, Any], is_selected: bool, on_select) -> rx.Compone
         rx.table.cell(
             rx.hstack(
                 action_button("eye", "#06b6d4", "View Details"),
-                action_button("pencil", "#10b981", "Edit Asset"),
+                action_button("pencil", "#10b981", "Edit Asset", on_click=lambda: AssetsState.open_edit_modal(asset["asset_id"])),
                 action_button("trash_2", "#ef4444", "Delete Asset"),
                 spacing="2",
             ),

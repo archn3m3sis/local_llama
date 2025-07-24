@@ -305,6 +305,7 @@ class DashboardState(rx.State):
                 ).one()
                 
                 # Get unique operating systems that are actually used by assets
+                # This will be used for the "System Types" count on the dashboard
                 self.total_operating_systems = session.exec(
                     select(func.count(func.distinct(Asset.os_id)))
                     .where(Asset.os_id.isnot(None))

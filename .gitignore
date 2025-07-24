@@ -84,3 +84,8 @@ config.json
 secrets.json
 api_keys.txt
 rxconfig.py
+
+
+# Specific Directories
+/home/archn3m3sis/Developer/dev_project/local_llama/assets/icons/
+/home/archn3m3sis/Developer/dev_project/local_llama/offline_app/

@@ -1,9 +1,12 @@
 # CLAUDE.md
-
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## MCP Usage For Development
+- Use the Context7 MCP Server to address issues when working with reflex python framework
+- Always remember to use the latest version of reflex (0.8.3)
+- This project is to be written in Reflex Python framework, and attempts should be made to use native reflex solutions, before creating our own
 
+## Project Overview
 IAMS (Industrial Asset Management System) is a Reflex-based web application for managing industrial assets and maintenance logs. The system includes authentication via Clerk, database management with SQLModel/Alembic, and pages for assets, vulnerabilities, playbooks, and more.
 
 ## Common Development Commands
@@ -33,12 +36,30 @@ Ensure you have a `.env` file with:
 ```
 local_llama/
 ├── local_llama.py          # Main app entry point with authentication
-├── pages/                  # Page components (dashboard, assets, etc.)
-├── models/                 # SQLModel database models (30+ tables)
+├── pages/                  # Page components
+│   ├── dashboard.py        # Main dashboard view
+│   ├── assets.py           # Asset management
+│   ├── configuration_management.py  # Software catalog and version tracking
+│   ├── dats.py             # DAT file management
+│   ├── images.py           # Image management
+│   ├── logs.py             # Log viewing
+│   ├── tickets.py          # Ticket management
+│   └── (placeholders)      # vulnerabilities, playbook, software, analytics
+├── models/                 # SQLModel database models (42+ tables)
+│   ├── software_catalog.py # Software inventory models
+│   └── (40+ other models)  # Asset, Employee, Project, etc.
 ├── components/             # Reusable UI components
+│   ├── universal_background.py  # Particle effects background
+│   ├── radial_speed_dial.py    # Navigation menu
+│   └── metallic_text.py        # Styled text components
 ├── database/               # Database utilities and seeding system
-│   └── seeds/              # Database seed files (26 seed scripts)
+│   └── seeds/              # Database seed files (27 seed scripts)
+│       ├── master_seed.py  # Runs all seeds in order
+│       ├── software_catalog_seed.py  # Software catalog entries
+│       └── (25+ other seeds)
 ├── states/                 # Reflex state management
+│   ├── configuration_management_state.py  # Config mgmt page state
+│   └── (other state files)
 └── alembic/                # Database migration files
     └── versions/           # Migration version files
 ```
@@ -131,7 +152,7 @@ When adding new database tables to IAMS:
    ```
 
 4. **Create Seed Data** (if applicable):
-   - Create seed file in `local_llama/database/seeds/` 
+   - Create seed file in `local_llama/database/seeds/`
    - Follow naming convention: `{table_name}_seed.py`
    - Include duplicate checking logic
    - Add to `master_seed.py` in dependency order
@@ -155,14 +176,15 @@ When adding new database tables to IAMS:
 Pages are organized by functionality:
 - `/dashboard`: Main dashboard view
 - `/assets`: Asset management
-- `/vulnerabilities`: Vulnerability tracking
-- `/playbook`: Documentation and playbooks
-- `/software`: Software management
+- `/vulnerabilities`: Vulnerability tracking (placeholder)
+- `/playbook`: Documentation and playbooks (placeholder)
+- `/software`: Software management (placeholder)
+- `/configuration_management`: Software catalog and version tracking
 - `/dats`: DAT file management
 - `/images`: Image management
 - `/logs`: Log viewing
 - `/tickets`: Ticket management
-- `/analytics`: Analytics and reporting
+- `/analytics`: Analytics and reporting (placeholder)
 
 ### Universal Background System
 All protected pages now use a universal background system that includes:
@@ -269,6 +291,194 @@ Based on the overview, the system will include:
 - Always ensure if there are repeated obstacles that are solved after a time, that you log the instructions to properly execute in your claude.md file
 - **CRITICAL**: NEVER assume a problem is fixed without explicit user confirmation. Always ask user to verify fixes before marking tasks complete
 
+## Creating New Pages in Reflex (CRITICAL GUIDE)
+
+### ⚠️ CRITICAL LAYOUT FIX - PREVENT CONTENT AT BOTTOM ⚠️
+
+**THE PROBLEM**: Content appears at the bottom of the screen because `rx.container` and wrapper components have default flex properties that push content down when used with the universal background.
+
+**THE SOLUTION**: Use absolute positioning with specific properties to ensure content starts at the top:
+
+```python
+def YourPage() -> rx.Component:
+    return rx.vstack(
+        # Your content here
+        
+        # CRITICAL POSITIONING PROPERTIES
+        spacing="6",
+        align="start",
+        width="100%",
+        max_width="1200px",
+        padding="3em",
+        padding_top="4em",
+        position="absolute",  # CRITICAL
+        top="0",              # CRITICAL
+        left="50%",           # For center alignment
+        transform="translateX(-50%)",  # For center alignment
+        min_height="100vh",
+        z_index="10",         # CRITICAL - must be above background
+    )
+```
+
+### Step-by-Step Process for Adding New Pages
+
+1. **Create the Page Component File**
+   ```python
+   # local_llama/pages/new_page.py
+   import reflex as rx
+   from ..components.universal_background import page_wrapper
+   from ..components.metallic_text import metallic_title
+   from ..states.new_page_state import NewPageState
+   from ..components.shared_styles import CARD_STYLE
+
+   # IMPORTANT: Do NOT use @page_wrapper decorator here
+   def NewPage() -> rx.Component:
+       """Your page description."""
+       # DO NOT USE rx.container - it causes layout issues!
+       return rx.vstack(
+           metallic_title("Page Title"),
+           
+           # Your page content here
+           
+           # CRITICAL POSITIONING - Copy these exactly!
+           spacing="6",
+           align="start",
+           width="100%",
+           max_width="1200px",
+           padding="3em",
+           padding_top="4em",
+           position="absolute",
+           top="0",
+           left="50%",
+           transform="translateX(-50%)",
+           min_height="100vh",
+           z_index="10",
+       )
+   ```
+
+2. **Create the State File**
+   ```python
+   # local_llama/states/new_page_state.py
+   import reflex as rx
+   import os
+   from typing import List, Dict, Optional
+   from sqlmodel import Session, create_engine, select
+   from ..models import YourModels
+
+   class NewPageState(rx.State):
+       """State for the new page."""
+       
+       # CRITICAL: For database access, always create engine from env
+       def any_db_method(self):
+           database_url = os.getenv("DATABASE_URL")
+           if not database_url:
+               print("Database URL not found")
+               return
+           
+           engine = create_engine(database_url)
+           with Session(engine) as session:
+               # Your database logic here
+   ```
+
+3. **Update Page Imports**
+   ```python
+   # local_llama/pages/__init__.py
+   # Add your import
+   from .new_page import NewPage
+   ```
+
+4. **Update Main App File**
+   ```python
+   # local_llama/local_llama.py
+   # Step 1: Import the page
+   from .pages import Dashboard, ..., NewPage
+   
+   # Step 2: Create custom wrapper function (at the end of file)
+   def new_page_with_custom_wrapper():
+       """NewPage with custom wrapper to fix positioning."""
+       return clerk.clerk_provider(
+           clerk.clerk_loaded(
+               clerk.signed_in(
+                   rx.fragment(
+                       universal_background(),
+                       NewPage()  # Call the component function
+                   )
+               ),
+               clerk.signed_out(
+                   page_wrapper(
+                       rx.vstack(
+                           rx.heading("Access Denied", size="6", color="white"),
+                           rx.text("Please sign in to access this page.", color="gray.300"),
+                           rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                           spacing="5",
+                           align="center",
+                       )
+                   )
+               )
+           ),
+           publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+           secret_key=os.environ["CLERK_SECRET_KEY"],
+           register_user_state=True,
+       )
+   
+   # Step 3: Add the route
+   app.add_page(new_page_with_custom_wrapper, route="/new_page")
+   ```
+
+5. **Add Navigation Entry (if needed)**
+   ```python
+   # local_llama/components/radial_speed_dial.py
+   # Add to the appropriate menu items list
+   {"icon": "your-icon", "label": "New Page", "route": "/new_page"}
+   ```
+
+### Common Pitfalls and Solutions
+
+1. **TypeError: Cannot pass a Var to a built-in function**
+   - **Problem**: Using list concatenation or operations with state vars
+   - **Solution**: Create computed vars in state:
+   ```python
+   @rx.var
+   def combined_list(self) -> List[str]:
+       return ["Static Item"] + self.dynamic_list
+   ```
+
+2. **Lambda Functions in Templates**
+   - **Problem**: Reflex doesn't support lambda functions in templates
+   - **Solution**: Create helper methods in state:
+   ```python
+   # Instead of: on_click=lambda: State.method("value")
+   # Create: 
+   def handle_click(self):
+       self.method("value")
+   # Use: on_click=State.handle_click
+   ```
+
+3. **Foreach with Complex Objects**
+   - **Problem**: Can't access dictionary keys in foreach
+   - **Solution**: Use state indices or simplify data structure
+
+4. **Database Connection**
+   - **Problem**: ImportError for database.db module
+   - **Solution**: Always create engine from environment variable:
+   ```python
+   database_url = os.getenv("DATABASE_URL")
+   engine = create_engine(database_url)
+   ```
+
+5. **Page Wrapper Issues**
+   - **Problem**: Double wrapping causes component type errors
+   - **Solution**: Don't use @page_wrapper decorator on page component when using custom wrapper
+
+### Testing New Pages
+```bash
+# Always test compilation after adding a new page
+reflex compile
+
+# If successful, run the app
+reflex run
+```
+
 ## Common Issues and Solutions
 
 ### Database Migration Issues
@@ -297,17 +507,45 @@ Based on the overview, the system will include:
 - **Metallic Text Styling**: Implemented sophisticated metallic text component with gradients, shadows, and effects for dashboard titles
 - **Universal Background**: All protected pages use consistent background with particle effects and mouse-following glow
 
-### Layout Issue Solutions
-- **Content Pushed to Bottom**: Container wrappers cause this issue. Use absolute positioning (`position="absolute"`, `top="0"`) to bypass container flex properties
-- **Z-Index Requirements**: Elements must have `position="relative"`, `absolute`, or `fixed` for z-index to work in Reflex
-- **Minimal Container Approach**: Use `rx.fragment()` instead of nested `rx.box()` containers to avoid layout conflicts
+### ⚠️ CRITICAL: Layout Issue Solutions (MUST READ FOR NEW PAGES) ⚠️
 
-### Complete Seed File List (26 files)
+**COMMON PROBLEM**: Content appears at the bottom of the screen instead of the top.
+
+**ROOT CAUSE**: `rx.container` and flex containers have default properties that push content down when combined with the universal background system.
+
+**PROVEN SOLUTION**: 
+```python
+# NEVER use rx.container as the root element
+# ALWAYS use rx.vstack with these exact properties:
+return rx.vstack(
+    # Your content
+    position="absolute",      # REQUIRED
+    top="0",                 # REQUIRED
+    left="50%",              # For center alignment
+    transform="translateX(-50%)",  # For center alignment
+    z_index="10",            # REQUIRED - above background
+    padding="3em",
+    padding_top="4em",
+    max_width="1200px",
+    width="100%",
+    min_height="100vh",
+    spacing="6",
+    align="start",
+)
+```
+
+**Quick Reference**:
+- **Content at Bottom?** → Missing `position="absolute"` and `top="0"`
+- **Content behind background?** → Missing `z_index="10"`
+- **Content not centered?** → Missing `left="50%"` and `transform="translateX(-50%)"`
+- **Using rx.container?** → STOP! Use `rx.vstack` instead
+
+### Complete Seed File List (27 files)
 **Current Database Tables with Models**: 42 tables total (30 original + 12 configuration management)
 
-**Models with Seed Data (26 files):**
+**Models with Seed Data (27 files):**
 - `appuser_seed.py` - 9 app users with FK relationships
-- `asset_seed.py` - 60 baseline assets across 6 projects with location/system assignments
+- `asset_seed.py` - 107 assets (updated from 60) across 6 projects with location/system assignments
 - `avversion_seed.py` - 2 antivirus versions
 - `building_seed.py` - Building data
 - `cputype_seed.py` - 498 CPU types
@@ -326,6 +564,7 @@ Based on the overview, the system will include:
 - `privilegelevel_seed.py` - 3 privilege levels
 - `project_seed.py` - Project data
 - `room_seed.py` - 24 rooms with building and floor FK relationships
+- `software_catalog_seed.py` - 18 common software entries with DoD compliance tracking
 - `swmanufacturer_seed.py` - Software manufacturers
 - `sysarchitecture_seed.py` - 46 system architectures
 - `systype_seed.py` - System types
@@ -335,7 +574,7 @@ Based on the overview, the system will include:
 
 **Models WITHOUT Seed Data (4 tables):**
 - `DatUpdate` - Activity tracking table (populated by user submissions)
-- `ImageCollection` - Activity tracking table (populated by user submissions)  
+- `ImageCollection` - Activity tracking table (populated by user submissions)
 - `LogCollection` - Activity tracking table (populated by user submissions)
 - `VirtualMachine` - VM instance tracking table (populated by VM creation workflows)
 
