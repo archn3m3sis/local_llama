@@ -1,0 +1,193 @@
+
+Host Name:                 TPD-GEARBOX
+OS Name:                   Microsoft Windows XP Professional
+OS Version:                5.1.2600 Service Pack 2 Build 2600
+OS Manufacturer:           Microsoft Corporation
+OS Configuration:          Standalone Workstation
+OS Build Type:             Multiprocessor Free
+Registered Owner:          Tri-Power
+Registered Organization:   
+Product ID:                76487-OEM-0011903-00102
+Original Install Date:     7/14/2008, 6:59:18 AM
+System Up Time:            0 Days, 0 Hours, 1 Minutes, 41 Seconds
+System Manufacturer:       Dell Inc.
+System Model:              Vostro 200
+System type:               X86-based PC
+Processor(s):              2 Processor(s) Installed.
+                           [01]: x86 Family 6 Model 15 Stepping 13 GenuineIntel ~1795 Mhz
+                           [02]: x86 Family 6 Model 15 Stepping 13 GenuineIntel ~1184 Mhz
+BIOS Version:              DELL   - 42302e31
+Windows Directory:         C:\WINDOWS
+System Directory:          C:\WINDOWS\system32
+Boot Device:               \Device\HarddiskVolume2
+System Locale:             en-us;English (United States)
+Input Locale:              en-us;English (United States)
+Time Zone:                 (GMT-05:00) Eastern Time (US & Canada)
+Total Physical Memory:     2,037 MB
+Available Physical Memory: 1,545 MB
+Virtual Memory: Max Size:  2,048 MB
+Virtual Memory: Available: 1,968 MB
+Virtual Memory: In Use:    80 MB
+Page File Location(s):     C:\pagefile.sys
+Domain:                    WORKGROUP
+Logon Server:              \\TPD-GEARBOX
+Hotfix(s):                 155 Hotfix(s) Installed.
+                           [01]: File 1
+                           [02]: File 1
+                           [03]: File 1
+                           [04]: File 1
+                           [05]: File 1
+                           [06]: File 1
+                           [07]: File 1
+                           [08]: File 1
+                           [09]: File 1
+                           [10]: File 1
+                           [11]: File 1
+                           [12]: File 1
+                           [13]: File 1
+                           [14]: File 1
+                           [15]: File 1
+                           [16]: File 1
+                           [17]: File 1
+                           [18]: File 1
+                           [19]: File 1
+                           [20]: File 1
+                           [21]: File 1
+                           [22]: File 1
+                           [23]: File 1
+                           [24]: File 1
+                           [25]: File 1
+                           [26]: File 1
+                           [27]: File 1
+                           [28]: File 1
+                           [29]: File 1
+                           [30]: File 1
+                           [31]: File 1
+                           [32]: File 1
+                           [33]: File 1
+                           [34]: File 1
+                           [35]: File 1
+                           [36]: File 1
+                           [37]: File 1
+                           [38]: File 1
+                           [39]: File 1
+                           [40]: File 1
+                           [41]: File 1
+                           [42]: File 1
+                           [43]: File 1
+                           [44]: File 1
+                           [45]: File 1
+                           [46]: File 1
+                           [47]: File 1
+                           [48]: File 1
+                           [49]: File 1
+                           [50]: File 1
+                           [51]: File 1
+                           [52]: File 1
+                           [53]: File 1
+                           [54]: File 1
+                           [55]: File 1
+                           [56]: File 1
+                           [57]: File 1
+                           [58]: File 1
+                           [59]: File 1
+                           [60]: File 1
+                           [61]: File 1
+                           [62]: File 1
+                           [63]: File 1
+                           [64]: File 1
+                           [65]: File 1
+                           [66]: File 1
+                           [67]: File 1
+                           [68]: File 1
+                           [69]: File 1
+                           [70]: File 1
+                           [71]: File 1
+                           [72]: File 1
+                           [73]: File 1
+                           [74]: File 1
+                           [75]: File 1
+                           [76]: Q147222
+                           [77]: S867460 - Update
+                           [78]: KB925398_WMP64
+                           [79]: KB936782_WMP9
+                           [80]: KB923689
+                           [81]: KB873339 - Update
+                           [82]: KB885250 - Update
+                           [83]: KB885835 - Update
+                           [84]: KB887472 - Update
+                           [85]: KB889673 - Update
+                           [86]: KB891781 - Update
+                           [87]: KB896256 - Update
+                           [88]: KB896358 - Update
+                           [89]: KB896423 - Update
+                           [90]: KB899588 - Update
+                           [91]: KB899591 - Update
+                           [92]: KB901214 - Update
+                           [93]: KB904706 - Update
+                           [94]: KB906569 - Update
+                           [95]: KB908519 - Update
+                           [96]: KB908531 - Update
+                           [97]: KB908673 - Update
+                           [98]: KB909095 - Update
+                           [99]: KB911562 - Update
+                           [100]: KB912945 - Update
+                           [101]: KB914388 - Update
+                           [102]: KB917344 - Update
+                           [103]: KB917422 - Update
+                           [104]: KB918118 - Update
+                           [105]: KB918439 - Update
+                           [106]: KB919007 - Update
+                           [107]: KB920213 - Update
+                           [108]: KB920670 - Update
+                           [109]: KB920683 - Update
+                           [110]: KB920685 - Update
+                           [111]: KB921411 - Update
+                           [112]: KB921503 - Update
+                           [113]: KB923191 - Update
+                           [114]: KB923414 - Update
+                           [115]: KB923980 - Update
+                           [116]: KB924191 - Update
+                           [117]: KB924270 - Update
+                           [118]: KB924455 - Update
+                           [119]: KB924496 - Update
+                           [120]: KB924667 - Update
+                           [121]: KB925902 - Update
+                           [122]: KB926255 - Update
+                           [123]: KB926436 - Update
+                           [124]: KB927802 - Update
+                           [125]: KB928255 - Update
+                           [126]: KB928843 - Update
+                           [127]: KB929123 - Update
+                           [128]: KB930178 - Update
+                           [129]: KB931261 - Update
+                           [130]: KB931784 - Update
+                           [131]: KB932168 - Update
+                           [132]: KB933360 - Update
+                           [133]: KB933729 - Update
+                           [134]: KB934428-v2 - Update
+                           [135]: KB935448 - Update
+                           [136]: KB935839 - Update
+                           [137]: KB935840 - Update
+                           [138]: KB936021 - Update
+                           [139]: KB936357 - Update
+                           [140]: KB937894 - Update
+                           [141]: KB938127 - Update
+                           [142]: KB938828 - Update
+                           [143]: KB938829 - Update
+                           [144]: KB941202 - Update
+                           [145]: KB941568 - Update
+                           [146]: KB941644 - Update
+                           [147]: KB942763 - Update
+                           [148]: KB943055 - Update
+                           [149]: KB943460 - Update
+                           [150]: KB943485 - Update
+                           [151]: KB944533 - Update
+                           [152]: KB944653 - Update
+                           [153]: KB946026 - Update
+                           [154]: KB946627 - Update
+                           [155]: KB835221WXP - Update
+NetWork Card(s):           1 NIC(s) Installed.
+                           [01]: Intel(R) 82562V-2 10/100 Network Connection
+                                 Connection Name: Local Area Connection 2
+                                 Status:          Media disconnected

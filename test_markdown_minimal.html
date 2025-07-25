@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal Markdown Test</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #editor {
+            width: 600px;
+            min-height: 200px;
+            padding: 20px;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        strong { font-weight: bold; color: #4fc3f7; }
+        em { font-style: italic; color: #81c784; }
+        #log {
+            margin-top: 20px;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #0f0;
+            font-family: monospace;
+            font-size: 12px;
+            color: #0f0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Minimal Markdown Test</h1>
+    <p>Type **bold** or *italic* and move cursor away to see it convert</p>
+    
+    <div id="editor" contenteditable="true">Try typing **bold** text here</div>
+    
+    <div id="log">Log:</div>
+
+    <script>
+        const editor = document.getElementById('editor');
+        const log = document.getElementById('log');
+        
+        function addLog(msg) {
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `\n[${time}] ${msg}`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        addLog('Editor initialized');
+        
+        // Simple markdown processor
+        function processMarkdown() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            
+            const range = selection.getRangeAt(0);
+            const node = range.startContainer;
+            
+            if (node.nodeType !== Node.TEXT_NODE) return;
+            
+            const text = node.textContent;
+            const offset = range.startOffset;
+            
+            addLog(`Checking at offset ${offset} in: "${text}"`);
+            
+            // Check for bold pattern
+            const boldMatch = text.match(/\*\*([^*]+)\*\*/);
+            if (boldMatch) {
+                const start = text.indexOf(boldMatch[0]);
+                const end = start + boldMatch[0].length;
+                
+                // Check if cursor just left the pattern
+                if (offset >= end || offset <= start) {
+                    addLog(`Found bold text: "${boldMatch[1]}"`);
+                    
+                    // Create bold element
+                    const before = text.substring(0, start);
+                    const after = text.substring(end);
+                    const bold = document.createElement('strong');
+                    bold.textContent = boldMatch[1];
+                    
+                    // Replace the text node
+                    const parent = node.parentNode;
+                    
+                    if (before) {
+                        parent.insertBefore(document.createTextNode(before), node);
+                    }
+                    parent.insertBefore(bold, node);
+                    if (after) {
+                        parent.insertBefore(document.createTextNode(after), node);
+                    }
+                    parent.removeChild(node);
+                    
+                    // Place cursor after the bold element
+                    const newRange = document.createRange();
+                    if (after) {
+                        newRange.setStart(bold.nextSibling, 0);
+                        newRange.setEnd(bold.nextSibling, 0);
+                    } else {
+                        newRange.setStartAfter(bold);
+                        newRange.setEndAfter(bold);
+                    }
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                    
+                    addLog('Bold element created!');
+                }
+            }
+            
+            // Check for italic pattern
+            const italicMatch = text.match(/(?<!\*)\*([^*]+)\*(?!\*)/);
+            if (italicMatch) {
+                const start = text.indexOf(italicMatch[0]);
+                const end = start + italicMatch[0].length;
+                
+                // Check if cursor just left the pattern
+                if (offset >= end || offset <= start) {
+                    addLog(`Found italic text: "${italicMatch[1]}"`);
+                    
+                    // Create italic element
+                    const before = text.substring(0, start);
+                    const after = text.substring(end);
+                    const italic = document.createElement('em');
+                    italic.textContent = italicMatch[1];
+                    
+                    // Replace the text node
+                    const parent = node.parentNode;
+                    
+                    if (before) {
+                        parent.insertBefore(document.createTextNode(before), node);
+                    }
+                    parent.insertBefore(italic, node);
+                    if (after) {
+                        parent.insertBefore(document.createTextNode(after), node);
+                    }
+                    parent.removeChild(node);
+                    
+                    // Place cursor after the italic element
+                    const newRange = document.createRange();
+                    if (after) {
+                        newRange.setStart(italic.nextSibling, 0);
+                        newRange.setEnd(italic.nextSibling, 0);
+                    } else {
+                        newRange.setStartAfter(italic);
+                        newRange.setEndAfter(italic);
+                    }
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                    
+                    addLog('Italic element created!');
+                }
+            }
+        }
+        
+        // Listen for selection changes
+        document.addEventListener('selectionchange', function() {
+            if (document.activeElement === editor) {
+                processMarkdown();
+            }
+        });
+        
+        // Test function
+        window.testMarkdown = function() {
+            editor.innerHTML = 'This is **bold** and this is *italic* text';
+            addLog('Test content added');
+        };
+        
+        addLog('Event listeners attached');
+        addLog('Type testMarkdown() in console to add test content');
+    </script>
+</body>
+</html>

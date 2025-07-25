@@ -11,22 +11,22 @@ def universal_background() -> rx.Component:
     return rx.box(
         # Clean dark background
         rx.box(
-            position="absolute",
+            position="fixed",
             top="0",
             left="0",
-            width="100%",
-            height="100%",
+            width="100vw",
+            height="100vh",
             background="radial-gradient(circle at 50% 0%, rgba(20, 20, 20, 1) 0%, rgba(0, 0, 0, 1) 100%)",
             z_index="-3",
         ),
         
         # Subtle gradient overlay
         rx.box(
-            position="absolute",
+            position="fixed",
             top="0",
             left="0",
-            width="100%",
-            height="100%",
+            width="100vw",
+            height="100vh",
             background="radial-gradient(ellipse 100% 40% at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 50%)",
             z_index="-2",
         ),

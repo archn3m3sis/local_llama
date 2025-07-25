@@ -68,7 +68,7 @@ def software_catalog_table() -> rx.Component:
                 rx.spacer(),
                 # Clear filters button
                 rx.button(
-                    rx.icon(tag="x-circle", size=16),
+                    rx.icon(tag="x", size=16),
                     "Clear All Filters",
                     on_click=ConfigurationManagementState.clear_all_filters,
                     style={
@@ -294,7 +294,7 @@ def software_catalog_table() -> rx.Component:
                                                         "check-circle",  # Check icon for DoD compliant
                                                         rx.cond(
                                                             sw["compliance_status"] == "POTENTIAL HAZARD",
-                                                            "alert-triangle",  # Alert icon for potential hazard
+                                                            "triangle-alert",  # Alert icon for potential hazard
                                                             "circle"  # Default circle icon
                                                         )
                                                     )

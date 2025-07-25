@@ -579,3 +579,14 @@ return rx.vstack(
 - `VirtualMachine` - VM instance tracking table (populated by VM creation workflows)
 
 These activity tracking tables are designed to be populated through user interactions and don't require seed data.
+
+### CodeMirror Integration in Reflex
+- **CRITICAL**: Third-party React components like CodeMirror require proper Reflex component wrapping
+- **Solution**: Create a custom component class that extends `rx.Component` with:
+  - `library`: NPM package name (e.g., "@uiw/react-codemirror")
+  - `tag`: Component tag name (use "default" for default exports)
+  - Event handlers defined in `get_event_triggers()` method
+  - Custom code in `_get_custom_code()` for imports and setup
+- **Example**: See `components/codemirror_wrapper.py` for working implementation
+- **Key Pattern**: Use `super()._render()` and add props, don't override render completely
+- **Working Implementation**: Successfully integrated CodeMirror with markdown support and custom theming

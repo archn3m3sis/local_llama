@@ -8,16 +8,71 @@ class PlaybookEditorState(rx.State):
     """State for the Playbook Editor page."""
     
     # Editor content
-    title: str = ""
-    content: str = ""
-    category: str = ""
-    tags: List[str] = []
+    title: str = "Sample Incident Response Playbook"
+    content: str = """# Sample Incident Response Playbook
+
+This is a **sample playbook** to demonstrate the markdown editor.
+
+## Overview
+
+This playbook provides step-by-step guidance for handling security incidents.
+
+## Prerequisites
+
+- Access to incident response tools
+- Communication channels established
+- Team members assigned
+
+## Response Steps
+
+### 1. Initial Assessment
+
+- [ ] Identify the nature of the incident
+- [ ] Determine severity level
+- [ ] Notify relevant stakeholders
+
+### 2. Containment
+
+```bash
+# Example: Isolate affected systems
+sudo iptables -A INPUT -s suspicious_ip -j DROP
+```
+
+### 3. Investigation
+
+| Task | Owner | Status |
+|------|-------|--------|
+| Log Analysis | Security Team | Pending |
+| Forensics | IR Team | In Progress |
+| Root Cause | Lead Analyst | Not Started |
+
+### 4. Recovery
+
+1. Restore from clean backups
+2. Apply security patches
+3. Monitor for recurrence
+
+> **Important:** Document all actions taken during the incident response process.
+
+## Contact Information
+
+- Security Team: security@example.com
+- On-call: +1-555-0123
+
+---
+
+*Last updated: {datetime.now().strftime("%Y-%m-%d")}*
+"""
+    category: str = "Incident Response"
+    tags: List[str] = ["security", "incident", "response"]
     tag_input: str = ""
     
     # Editor state
     preview_mode: bool = False
     split_view: bool = False
     auto_saved: bool = False
+    show_source: bool = False  # For WYSIWYG editor
+    is_public: bool = False  # Personal/Public toggle
     
     # Metadata
     status: str = "Draft"
@@ -73,17 +128,21 @@ class PlaybookEditorState(rx.State):
         """Toggle between edit and preview modes."""
         self.preview_mode = not self.preview_mode
     
+    def toggle_show_source(self):
+        """Toggle showing markdown source in WYSIWYG editor."""
+        self.show_source = not self.show_source
+    
+    def set_is_public(self, value: bool):
+        """Set whether the playbook is public or personal."""
+        self.is_public = value
+        self.auto_save()
+    
     def auto_save(self):
         """Trigger auto-save (simulation)."""
         self.auto_saved = True
         self.modified_date = datetime.now().strftime("%Y-%m-%d %H:%M")
         # In real implementation, this would save to database
-        # Reset auto-saved indicator after 2 seconds
-        rx.call_script("""
-            setTimeout(() => {
-                window.reflex_updateState({auto_saved: false});
-            }, 2000);
-        """)
+        # Note: Auto-save indicator would normally reset after a delay
     
     def save_draft(self):
         """Save the playbook as a draft."""
@@ -92,7 +151,7 @@ class PlaybookEditorState(rx.State):
         # TODO: Save to database
         rx.toast.success("Draft saved successfully!")
     
-    def publish(self):
+    def publish_playbook(self):
         """Publish the playbook."""
         if not self.title:
             rx.toast.error("Please add a title before publishing")
@@ -212,3 +271,169 @@ modified: {self.modified_date}
         if self.content and not self.content.endswith("\n"):
             self.content += "\n"
         self.content += prefix
+    
+    def load_template(self, template_type: str):
+        """Load a template based on type."""
+        templates = {
+            "incident": """# Incident Response Playbook
+
+## Overview
+This playbook provides step-by-step guidance for handling security incidents.
+
+## Incident Classification
+- [ ] Security Breach
+- [ ] Data Leak
+- [ ] Malware Infection
+- [ ] Unauthorized Access
+- [ ] Other: _______________
+
+## Initial Response Steps
+
+### 1. Detection and Analysis
+- [ ] Identify the incident type
+- [ ] Determine the scope and impact
+- [ ] Document initial findings
+- [ ] Assign severity level (Critical/High/Medium/Low)
+
+### 2. Containment
+- [ ] Isolate affected systems
+- [ ] Preserve evidence
+- [ ] Prevent further damage
+- [ ] Document actions taken
+
+### 3. Eradication
+- [ ] Remove malicious code/access
+- [ ] Patch vulnerabilities
+- [ ] Update security controls
+- [ ] Verify remediation
+
+### 4. Recovery
+- [ ] Restore systems from clean backups
+- [ ] Monitor for recurrence
+- [ ] Validate system integrity
+- [ ] Return to normal operations
+
+### 5. Post-Incident Activities
+- [ ] Complete incident report
+- [ ] Conduct lessons learned session
+- [ ] Update security procedures
+- [ ] Share threat intelligence
+
+## Contact Information
+- Security Team: security@company.com
+- On-Call: +1-555-0123
+- Management: management@company.com
+""",
+            "audit": """# Security Audit Playbook
+
+## Audit Overview
+**Audit Type:** [System/Application/Network/Compliance]
+**Audit Date:** [Date]
+**Auditor:** [Name]
+
+## Pre-Audit Checklist
+- [ ] Define audit scope
+- [ ] Gather system documentation
+- [ ] Identify stakeholders
+- [ ] Schedule audit activities
+- [ ] Prepare audit tools
+
+## Audit Areas
+
+### 1. Access Control
+- [ ] Review user accounts and permissions
+- [ ] Check password policies
+- [ ] Verify multi-factor authentication
+- [ ] Audit privileged access
+
+### 2. Network Security
+- [ ] Review firewall rules
+- [ ] Check network segmentation
+- [ ] Verify encryption protocols
+- [ ] Test intrusion detection
+
+### 3. System Configuration
+- [ ] Review OS hardening
+- [ ] Check patch management
+- [ ] Verify logging configuration
+- [ ] Audit backup procedures
+
+### 4. Compliance
+- [ ] Review policy adherence
+- [ ] Check regulatory compliance
+- [ ] Verify data protection measures
+- [ ] Audit incident response procedures
+
+## Findings Summary
+| Finding | Severity | Recommendation | Status |
+|---------|----------|----------------|--------|
+| | | | |
+
+## Next Steps
+1. 
+2. 
+3. 
+""",
+            "maintenance": """# System Maintenance Playbook
+
+## Maintenance Window
+**Date:** [Date]
+**Time:** [Start Time] - [End Time]
+**Systems Affected:** [List of systems]
+**Impact:** [Description of impact]
+
+## Pre-Maintenance Checklist
+- [ ] Send maintenance notification
+- [ ] Backup critical data
+- [ ] Document current configuration
+- [ ] Prepare rollback plan
+- [ ] Verify maintenance tools
+
+## Maintenance Tasks
+
+### 1. System Updates
+- [ ] Apply OS patches
+- [ ] Update applications
+- [ ] Upgrade firmware
+- [ ] Install security updates
+
+### 2. Configuration Changes
+- [ ] Update system settings
+- [ ] Modify network configuration
+- [ ] Adjust security policies
+- [ ] Optimize performance settings
+
+### 3. Health Checks
+- [ ] Verify system functionality
+- [ ] Test critical services
+- [ ] Check system resources
+- [ ] Review error logs
+
+### 4. Documentation
+- [ ] Update configuration records
+- [ ] Document changes made
+- [ ] Update system diagrams
+- [ ] Record test results
+
+## Post-Maintenance
+- [ ] Verify system operation
+- [ ] Monitor for issues
+- [ ] Send completion notification
+- [ ] Update maintenance log
+
+## Rollback Procedure
+1. 
+2. 
+3. 
+
+## Contact Information
+- Primary Contact: [Name/Email]
+- Backup Contact: [Name/Email]
+- Emergency: [Phone]
+"""
+        }
+        
+        if template_type in templates:
+            self.content = templates[template_type]
+            self.title = f"{template_type.capitalize()} Response Playbook"
+            self.auto_save()

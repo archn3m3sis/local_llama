@@ -1,0 +1,64 @@
+
+Host Name:                 K-N9030B-70980
+OS Name:                   Microsoft Windows 10 Enterprise 2016 LTSB
+OS Version:                10.0.14393 N/A Build 14393
+OS Manufacturer:           Microsoft Corporation
+OS Configuration:          Standalone Workstation
+OS Build Type:             Multiprocessor Free
+Registered Owner:          Keysight Technologies
+Registered Organization:   Keysight Technologies
+Product ID:                00380-71600-10313-AAOEM
+Original Install Date:     3/23/2021, 10:34:30 PM
+System Boot Time:          7/22/2025, 7:58:51 PM
+System Manufacturer:       To be filled by O.E.M.
+System Model:              To be filled by O.E.M.
+System Type:               x64-based PC
+Processor(s):              1 Processor(s) Installed.
+                           [01]: Intel64 Family 6 Model 58 Stepping 9 GenuineIntel ~2295 Mhz
+BIOS Version:              American Megatrends Inc. KSA1R104, 3/21/2018
+Windows Directory:         C:\WINDOWS
+System Directory:          C:\WINDOWS\system32
+Boot Device:               \Device\HarddiskVolume1
+System Locale:             en-us;English (United States)
+Input Locale:              en-us;English (United States)
+Time Zone:                 (UTC-05:00) Eastern Time (US & Canada)
+Total Physical Memory:     16,262 MB
+Available Physical Memory: 13,350 MB
+Virtual Memory: Max Size:  22,406 MB
+Virtual Memory: Available: 16,557 MB
+Virtual Memory: In Use:    5,849 MB
+Page File Location(s):     C:\pagefile.sys
+Domain:                    Workgroup
+Logon Server:              \\K-N9030B-70980
+Hotfix(s):                 20 Hotfix(s) Installed.
+                           [01]: KB3186568
+                           [02]: KB3199209
+                           [03]: KB3199986
+                           [04]: KB4022632
+                           [05]: KB4033631
+                           [06]: KB4035631
+                           [07]: KB4049065
+                           [08]: KB4049411
+                           [09]: KB4054507
+                           [10]: KB4089510
+                           [11]: KB4091664
+                           [12]: KB4132216
+                           [13]: KB4346087
+                           [14]: KB4485447
+                           [15]: KB4489907
+                           [16]: KB4509091
+                           [17]: KB4535680
+                           [18]: KB4576750
+                           [19]: KB4580325
+                           [20]: KB4598243
+Network Card(s):           1 NIC(s) Installed.
+                           [01]: Intel(R) 82579LM Gigabit Network Connection
+                                 Connection Name: Ethernet
+                                 DHCP Enabled:    No
+                                 IP address(es)
+                                 [01]: 192.168.1.52
+                                 [02]: fe80::a460:6a18:7df8:2b0f
+Hyper-V Requirements:      VM Monitor Mode Extensions: Yes
+                           Virtualization Enabled In Firmware: No
+                           Second Level Address Translation: Yes
+                           Data Execution Prevention Available: Yes

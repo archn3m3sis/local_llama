@@ -232,7 +232,7 @@ def security_speed_dial() -> rx.Component:
         {"icon": "file-plus", "label": "Create Playbook", "route": "/playbook/create"},
         {"icon": "folder-open", "label": "Browse Templates", "route": "/playbook/templates"},
         {"icon": "shield", "label": "Security Policies", "route": "/security/policies"},
-        {"icon": "alert-triangle", "label": "Incident Response", "route": "/security/incidents"},
+        {"icon": "triangle-alert", "label": "Incident Response", "route": "/security/incidents"},
         {"icon": "lock", "label": "Access Control", "route": "/security/access"}
     ]
     
@@ -780,7 +780,7 @@ def playbook_speed_dial() -> rx.Component:
     """Create a playbook-focused speed dial component."""
     nav_items = [
         {"icon": "home", "label": "Playbook Home", "route": "/playbook"},
-        {"icon": "edit", "label": "Playbook Editor", "route": "/playbook/editor"},
+        {"icon": "pencil", "label": "Playbook Editor", "route": "/playbook/editor"},
         {"icon": "book-open", "label": "SOP Documentation", "route": "/playbook/sop"},
         {"icon": "workflow", "label": "Internal Processes", "route": "/playbook/processes"},
         {"icon": "file-text", "label": "Technical Documentation", "route": "/playbook/technical"},

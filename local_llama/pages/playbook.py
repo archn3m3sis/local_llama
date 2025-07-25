@@ -725,7 +725,7 @@ def Playbook() -> rx.Component:
                     rx.box(
                         rx.vstack(
                             rx.icon(
-                                tag="download-cloud",
+                                tag="cloud-download",
                                 size=24,
                                 style={"color": "#10b981"}
                             ),

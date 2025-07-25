@@ -6,6 +6,7 @@ from .tickets import Tickets
 from .assets import Assets
 from .playbook import Playbook
 from .playbook_editor import PlaybookEditor
+from .playbook_editor_enhanced import PlaybookEditorEnhanced
 from .software import Software
 from .vulnerabilities import Vulnerabilities
 from .vm_creation import VMCreation

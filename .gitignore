@@ -94,3 +94,4 @@ rxconfig.py
 # Ignore offline demo files
 offline_app/
 npm-offline-cache/
+database/data/

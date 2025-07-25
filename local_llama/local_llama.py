@@ -8,7 +8,7 @@ except ImportError:
     ta = None  # Handle gracefully for offline mode
 
 from rxconfig import config
-from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, PlaybookEditor, Software, Vulnerabilities, VMCreation, Analytics, ConfigurationManagement
+from .pages import Dashboard, Dats, Images, Logs, Tickets, Assets, Playbook, PlaybookEditor, PlaybookEditorEnhanced, Software, Vulnerabilities, VMCreation, Analytics, ConfigurationManagement
 from .models import Employee, AppUser, Project, HardwareManufacturer, SWManufacturer, LogType, ImagingMethod, SysArchitecture, CPUType, GPUType
 from .components import advanced_smoke_system, page_wrapper, universal_background, radial_speed_dial
 
@@ -1163,4 +1163,35 @@ def playbook_editor_with_custom_wrapper():
         register_user_state=True,
     )
 
-app.add_page(playbook_editor_with_custom_wrapper, route="/playbook/editor")
+app.add_page(playbook_editor_with_custom_wrapper, route="/playbook/editor-old")
+
+# Enhanced editor with WYSIWYG capabilities
+def playbook_editor_enhanced_with_custom_wrapper():
+    """PlaybookEditorEnhanced with custom wrapper."""
+    return clerk.clerk_provider(
+        clerk.clerk_loaded(
+            clerk.signed_in(
+                rx.fragment(
+                    universal_background(),
+                    PlaybookEditorEnhanced()
+                )
+            ),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="5",
+                        align="center",
+                    )
+                )
+            )
+        ),
+        publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
+        secret_key=os.environ["CLERK_SECRET_KEY"],
+        register_user_state=True,
+    )
+
+# Use enhanced editor as the main editor
+app.add_page(playbook_editor_enhanced_with_custom_wrapper, route="/playbook/editor")

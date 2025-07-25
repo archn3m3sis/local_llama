@@ -6,6 +6,7 @@ from sqlmodel import Session, select, func, and_, or_, create_engine
 from ..models import (
     SoftwareCatalog, AssetSoftware, Asset, Project,
     SWManufacturer, SoftwareVersion, Department
+
 )
 from ..utils.export_utils import export_to_csv, export_to_json, export_to_excel, export_to_print
 
@@ -548,7 +549,7 @@ class ConfigurationManagementState(rx.State):
         """Check if all items on current page are selected."""
         current_page_names = [sw["name"] for sw in self.paginated_software]
         return len(current_page_names) > 0 and all(name in self.selected_rows for name in current_page_names)
-    
+
     @rx.var
     def current_page_count(self) -> int:
         """Get the number of items on the current page."""
@@ -572,7 +573,7 @@ class ConfigurationManagementState(rx.State):
             return export_to_excel(export_data, "software_catalog_page", "Software Catalog")
         elif format == "print":
             return export_to_print(export_data, "Software Catalog Report")
-    
+
     def export_all_data(self, format: str):
         """Export all filtered software data (entire dataset)."""
         # Export all filtered data regardless of pagination

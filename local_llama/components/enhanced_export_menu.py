@@ -172,7 +172,7 @@ def enhanced_export_menu(
                     rx.menu.item(
                         rx.hstack(
                             rx.icon(
-                                tag="alert-triangle",
+                                tag="triangle-alert",
                                 size=14,
                                 color="#f59e0b",
                             ),

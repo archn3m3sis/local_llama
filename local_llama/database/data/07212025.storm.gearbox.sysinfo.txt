@@ -1,0 +1,51 @@
+
+Host Name:                 TESTAUTO
+OS Name:                   Microsoft Windows XP Professional
+OS Version:                5.1.2600 Service Pack 2 Build 2600
+OS Manufacturer:           Microsoft Corporation
+OS Configuration:          Standalone Workstation
+OS Build Type:             Multiprocessor Free
+Registered Owner:          TAS
+Registered Organization:   Test Automation Services
+Product ID:                76487-OEM-0027147-45758
+Original Install Date:     2/6/2008, 3:33:24 AM
+System Up Time:            0 Days, 0 Hours, 2 Minutes, 16 Seconds
+System Manufacturer:       INTEL_
+System Model:              DP965LT_
+System type:               X86-based PC
+Processor(s):              2 Processor(s) Installed.
+                           [01]: x86 Family 6 Model 15 Stepping 13 GenuineIntel ~2197 Mhz
+                           [02]: x86 Family 6 Model 15 Stepping 13 GenuineIntel ~2197 Mhz
+BIOS Version:              INTEL  - 697
+Windows Directory:         C:\WINDOWS
+System Directory:          C:\WINDOWS\system32
+Boot Device:               \Device\HarddiskVolume1
+System Locale:             en-us;English (United States)
+Input Locale:              en-us;English (United States)
+Time Zone:                 (GMT-05:00) Eastern Time (US & Canada)
+Total Physical Memory:     1,014 MB
+Available Physical Memory: 744 MB
+Virtual Memory: Max Size:  2,048 MB
+Virtual Memory: Available: 2,001 MB
+Virtual Memory: In Use:    47 MB
+Page File Location(s):     C:\pagefile.sys
+Domain:                    WORKGROUP
+Logon Server:              \\TESTAUTO
+Hotfix(s):                 8 Hotfix(s) Installed.
+                           [01]: File 1
+                           [02]: File 1
+                           [03]: File 1
+                           [04]: File 1
+                           [05]: Q147222
+                           [06]: KB893803v2 - Update
+                           [07]: KB898461 - Update
+                           [08]: KB911164 - Update
+NetWork Card(s):           2 NIC(s) Installed.
+                           [01]: 1394 Net Adapter
+                                 Connection Name: 1394 Connection
+                                 DHCP Enabled:    Yes
+                                 DHCP Server:     N/A
+                                 IP address(es)
+                           [02]: Intel(R) 82566DC Gigabit Network Connection
+                                 Connection Name: Local Area Connection
+                                 Status:          Media disconnected

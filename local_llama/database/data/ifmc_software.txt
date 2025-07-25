@@ -1,0 +1,25 @@
+# ifmc assets software list breakdown
+# assets will be denoted by a "#" and then a line that says: "asset_name: <asset_name>"
+
+
+# asset_name: ifmc.2058
+
+# asset_name: ifmc.gets35a
+
+# asset_name: ifmc.gets35b
+
+
+# asset_name: ifmc.termini 
+# no software reporting able to be collected...
+# blue screen will need to be diagnosed: 
+
+    Technical Informaiton: 
+    STOP: 0x0000007B (0xBA4C3524, 0xC0000034, 0x00000000, 0x00000000) 
+
+    Based on what I remember from this code output it is something to do with the CMOS battery 
+    Manufacturer of PC: Dell
+    Model Type: Dell Optiplex 755 Bios Version" A22 (06/11/12)
+Service Tag: 7NQ1TC1 16671953233
+Asset Tag: None 
+
+

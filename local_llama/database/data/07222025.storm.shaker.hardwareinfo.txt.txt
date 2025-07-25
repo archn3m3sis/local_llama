@@ -1,0 +1,9 @@
+Belarc Personal Edition will only perform the proper functionality on Windows 7 OS systems and later...
+
+Hardware: Dell Optiplex Tower 755 Workstation 
+Serial Number: S2248 / 59PzJH1 (Peripheral LASERUSB System under the monitor has serial of S2249)
+Letterkenny Barcode: WOL6AAS2248
+Letterkenny Barcode For LASERUSB: WOL6AA2249 
+Serial For LASERUSB: S2249 / 12481364 (under lett barcode)
+Manufacturer For The LASER USB Shaker Control System: LDS Dactron
+
