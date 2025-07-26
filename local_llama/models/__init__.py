@@ -44,3 +44,4 @@ from .ci_relationship import CIRelationship
 from .software_catalog import SoftwareCatalog
 from .asset_software import AssetSoftware
 from .software_version import SoftwareVersion
+from .file_storage import FileMetadata, FileContent, FileVersion, DocumentLink, FileType, StorageLocation, FileDirectory, DirectoryType

@@ -21,7 +21,8 @@ def radial_speed_dial() -> rx.Component:
         {"icon": "server", "label": "VM Creation", "route": "/vm_creation"},
         {"icon": "user", "label": "Access Control", "route": "/access"},
         {"icon": "git-branch", "label": "Change Management", "route": "/configuration_management"},
-        {"icon": "book", "label": "Playbook Library", "route": "/playbook"}
+        {"icon": "book", "label": "Playbook Library", "route": "/playbook"},
+        {"icon": "folder", "label": "File Management", "route": "/files"}
     ]
     
     def create_nav_item(item: Dict[str, str], index: int) -> rx.Component:

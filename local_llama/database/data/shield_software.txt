@@ -1,0 +1,13 @@
+# asset_name: shield.afcc.software ################
+
+# pre software listing tasks for completion ####### 
+[x] successful logs capture (app,sec,sys)
+[x] belarc_sec_audit
+[x] winaudit
+[x] av_version3 update "5956dat.exe" 
+
+# shield.afcc software listing comprehensive ######
+
+
+
+

@@ -31,3 +31,36 @@ def get_card_style_with_hover(hover_color: str = None):
     
     base_style["_hover"] = hover_style
     return base_style
+
+# Modern cyan button styles
+BUTTON_STYLE = {
+    "background": "linear-gradient(135deg, #00d4ff 0%, #0099cc 100%)",
+    "color": "white",
+    "border_radius": "lg",  # More rounded corners
+    "font_weight": "500",
+    "transition": "all 0.3s ease",
+    "_hover": {
+        "background": "linear-gradient(135deg, #00e6ff 0%, #00aadd 100%)",
+        "transform": "translateY(-2px)",
+        "box_shadow": "0 4px 20px rgba(0, 212, 255, 0.4)",
+    },
+    "_active": {
+        "transform": "translateY(0)",
+        "box_shadow": "0 2px 10px rgba(0, 212, 255, 0.3)",
+    }
+}
+
+# Soft variant for secondary buttons
+BUTTON_SOFT_STYLE = {
+    "background": "rgba(0, 212, 255, 0.1)",
+    "color": "#00d4ff",
+    "border": "1px solid rgba(0, 212, 255, 0.3)",
+    "border_radius": "lg",
+    "font_weight": "500",
+    "transition": "all 0.3s ease",
+    "_hover": {
+        "background": "rgba(0, 212, 255, 0.2)",
+        "border_color": "rgba(0, 212, 255, 0.5)",
+        "transform": "translateY(-1px)",
+    }
+}

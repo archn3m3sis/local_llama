@@ -195,16 +195,14 @@ def performance_breakdown_tab() -> rx.Component:
 
 def Dashboard() -> rx.Component:
     
-    return rx.fragment(
-        # Asset stats panel (positioned absolutely)
-        asset_stats_panel(
-            DashboardState.total_assets,
-            DashboardState.total_projects,
-            DashboardState.total_operating_systems
-        ),
-        
-        # Main content
-        rx.vstack(
+    return rx.vstack(
+            # Asset stats panel (positioned absolutely)
+            asset_stats_panel(
+                DashboardState.total_assets,
+                DashboardState.total_projects,
+                DashboardState.total_operating_systems
+            ),
+            
             # Massive 3D chrome metallic title
             metallic_title("Industrial Cyber Dashboard"),
             
@@ -255,5 +253,4 @@ def Dashboard() -> rx.Component:
         min_height="100vh",
         z_index="10",
         on_mount=DashboardState.load_dashboard_data,
-        )
     )

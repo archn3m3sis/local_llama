@@ -6,23 +6,32 @@ def advanced_smoke_system() -> rx.Component:
         rx.el.div(
             id="tsparticles-smoke",
             style={
-                "position": "absolute",
+                "position": "fixed",
                 "top": "0",
                 "left": "0", 
                 "width": "100%",
                 "height": "100%",
                 "pointer_events": "none",
-                "z_index": "100",
+                "z_index": "-1",
             }
         ),
         rx.script("""
-            // Robust particle system with DOM observer
-            (async () => {
-                // Skip if already initializing
-                if (window.particlesInitializing) return;
-                window.particlesInitializing = true;
-                
-                try {
+            // Wait for DOM and all scripts to be ready
+            function initializeParticles() {
+                // Robust particle system with DOM observer
+                (async () => {
+                    console.log('Smoke system script starting...');
+                    console.log('Particles container found:', !!document.getElementById('tsparticles-smoke'));
+                    
+                    // Skip if already initializing
+                    if (window.particlesInitializing) {
+                        console.log('Particles already initializing, skipping...');
+                        return;
+                    }
+                    window.particlesInitializing = true;
+                    
+                    try {
+                        console.log('Loading tsParticles modules...');
                     // Load tsParticles modules if not already loaded
                     if (!window.tsParticlesEngine) {
                         const { tsParticles } = await import("https://cdn.jsdelivr.net/npm/@tsparticles/engine@3.0.3/+esm");
@@ -153,6 +162,9 @@ def advanced_smoke_system() -> rx.Component:
                                 id: "tsparticles-smoke",
                                 options: options
                             });
+                            console.log('✅ Particles loaded successfully!');
+                        } else {
+                            console.error('❌ Particles container not found in DOM');
                         }
                     } catch (error) {
                         console.log('Particle initialization error:', error);
@@ -189,5 +201,14 @@ def advanced_smoke_system() -> rx.Component:
                     window.particlesInitializing = false;
                 }
             })();
+            }
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeParticles);
+            } else {
+                // DOM is already ready, but wait a bit for Clerk to finish
+                setTimeout(initializeParticles, 500);
+            }
         """)
     )

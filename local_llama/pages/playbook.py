@@ -550,12 +550,12 @@ def Playbook() -> rx.Component:
                             on_click=lambda: PlaybookState.filter_by_category("Security")
                         ),
                         floating_card(
-                            title="Operations",
+                            title="Standard Operating Procedures",
                             description="Daily operational procedures and checklists",
                             icon="settings",
                             count=45,
                             color="#ec4899",
-                            on_click=lambda: PlaybookState.filter_by_category("Operations")
+                            on_click=lambda: PlaybookState.filter_by_category("Standard Operating Procedures")
                         ),
                         floating_card(
                             title="Training",

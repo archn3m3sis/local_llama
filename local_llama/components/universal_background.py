@@ -9,6 +9,8 @@ from .radial_speed_dial import radial_speed_dial, analytics_speed_dial, asset_da
 def universal_background() -> rx.Component:
     """Universal background with particles and mouse glow effect."""
     return rx.box(
+        # Debug script to check if background is rendering
+        rx.script("console.log('Universal background rendering');"),
         # Clean dark background
         rx.box(
             position="fixed",
@@ -53,6 +55,18 @@ def universal_background() -> rx.Component:
         
         # JavaScript for mouse tracking and Clerk popup styling
         rx.script("""
+            // Wait for DOM to be ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeUniversalBackground);
+            } else {
+                initializeUniversalBackground();
+            }
+            
+            function initializeUniversalBackground() {
+                console.log('Universal background script starting...');
+                console.log('Mouse glow element:', document.getElementById('mouse-glow'));
+                console.log('Particles container:', document.getElementById('tsparticles-smoke'));
+                
             (function() {
                 // Throttled mouse movement for better performance
                 let mouseTimeout;
@@ -156,6 +170,7 @@ def universal_background() -> rx.Component:
             // Also try to style any existing popups
             styleClerkPopup();
             })();
+            } // End of initializeUniversalBackground
         """),
         
         
@@ -202,7 +217,16 @@ def universal_background() -> rx.Component:
                 cursor="pointer",
                 _hover={"transform": "scale(1.05)", "bg": "rgba(255, 255, 255, 0.15)"},
                 transition="all 0.2s ease",
-                on_click=rx.call_script("toggleUserDropdown()")
+                on_click=rx.call_script("""
+                    if (typeof toggleUserDropdown === 'function') {
+                        toggleUserDropdown();
+                    } else {
+                        const dropdown = document.getElementById('user-dropdown');
+                        if (dropdown) {
+                            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                        }
+                    }
+                """)
             ),
             # Dropdown menu (initially hidden)
             rx.box(

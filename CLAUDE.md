@@ -59,7 +59,10 @@ local_llama/
 │       └── (25+ other seeds)
 ├── states/                 # Reflex state management
 │   ├── configuration_management_state.py  # Config mgmt page state
+│   ├── file_storage_state.py  # File upload/download management
 │   └── (other state files)
+├── api/                    # API endpoints
+│   └── file_handler.py     # File serving API
 └── alembic/                # Database migration files
     └── versions/           # Migration version files
 ```
@@ -132,6 +135,12 @@ local_llama/
 - `ConfigurationItem`: CMDB items with full lifecycle tracking
 - `CIRelationship`: Configuration item relationships
 
+#### File Storage Models (NEW)
+- `FileMetadata`: File metadata and properties (filename, type, size, checksum)
+- `FileContent`: Database storage for small files (VARBINARY)
+- `FileVersion`: Version tracking for uploaded files
+- `DocumentLink`: Polymorphic links between files and system entities
+
 ### Database Table Creation Process
 
 When adding new database tables to IAMS:
@@ -185,6 +194,7 @@ Pages are organized by functionality:
 - `/logs`: Log viewing
 - `/tickets`: Ticket management
 - `/analytics`: Analytics and reporting (placeholder)
+- `/files`: File management - upload/download documents, images, PDFs
 
 ### Universal Background System
 All protected pages now use a universal background system that includes:
@@ -539,6 +549,35 @@ return rx.vstack(
 - **Content behind background?** → Missing `z_index="10"`
 - **Content not centered?** → Missing `left="50%"` and `transform="translateX(-50%)"`
 - **Using rx.container?** → STOP! Use `rx.vstack` instead
+- **Z-index not working?** → **CRITICAL**: z-index ONLY works with positioned elements (position: relative, absolute, or fixed). Without position, z-index is ignored!
+
+### ⚠️ CRITICAL FIX: Page Not Rendering at All ⚠️
+
+**PROBLEM**: Entire page content not rendering, only background elements show (navigation, mouse glow, etc.)
+
+**ROOT CAUSE**: Page component structure doesn't match the custom wrapper pattern used in the main app file.
+
+**SOLUTION**: When using custom wrappers (like `files_with_custom_wrapper()`), the page component MUST use `rx.fragment()` as the root element:
+
+```python
+def YourPage() -> rx.Component:
+    """Your page description."""
+    return rx.fragment(  # CRITICAL: Must use rx.fragment as root
+        rx.vstack(
+            # Your page content here
+            
+            # Positioning properties
+            position="absolute",
+            top="0",
+            left="50%",
+            transform="translateX(-50%)",
+            z_index="10",
+            # ... other properties
+        )
+    )
+```
+
+**This was discovered when Files page showed only background but no content - the fix was changing from `rx.vstack()` as root to `rx.fragment(rx.vstack())`**
 
 ### Complete Seed File List (27 files)
 **Current Database Tables with Models**: 42 tables total (30 original + 12 configuration management)
@@ -587,6 +626,104 @@ These activity tracking tables are designed to be populated through user interac
   - `tag`: Component tag name (use "default" for default exports)
   - Event handlers defined in `get_event_triggers()` method
   - Custom code in `_get_custom_code()` for imports and setup
+
+### React Component Wrapping in Reflex - CRITICAL LESSONS
+
+**DO NOT** add packages to `frontend_packages` in rxconfig.py when wrapping React components:
+- Reflex automatically infers packages from `Component.library`
+- Adding to `frontend_packages` causes duplicate import errors
+- You'll see: "Warning: React packages and their dependencies are inferred from Component.library"
+
+**DO NOT** use `_get_custom_code()` to manually import the component:
+- This causes "The symbol has already been declared" errors
+- Reflex handles imports automatically based on `library` and `tag` properties
+
+**CORRECT React Component Wrapping Pattern**:
+```python
+class MyReactComponent(rx.Component):
+    library = "@org/package-name"  # NPM package name
+    tag = "ComponentName"          # React component name
+    
+    # Define props
+    my_prop: rx.Var[str]
+    
+    # Import CSS if needed
+    def add_imports(self) -> Dict[str, List[str]]:
+        return {
+            "@org/package-name/styles.css": [],
+        }
+    
+    # Define event handlers
+    def get_event_triggers(self) -> dict:
+        return {
+            **super().get_event_triggers(),
+            "on_click": lambda e0: [e0],
+        }
+
+# Create the component
+my_component = MyReactComponent.create
+```
+
+**Common Mistakes to Avoid**:
+1. Adding the npm package to `frontend_packages` - DON'T DO THIS
+2. Using `_get_custom_code()` for imports - DON'T DO THIS
+3. Using `is_default = True` without verifying the export type
+4. Not properly handling CSS imports via `add_imports()`
 - **Example**: See `components/codemirror_wrapper.py` for working implementation
 - **Key Pattern**: Use `super()._render()` and add props, don't override render completely
 - **Working Implementation**: Successfully integrated CodeMirror with markdown support and custom theming
+
+### File Storage Implementation
+**Hybrid Storage Architecture**: Implemented a flexible file storage system
+- **Database Storage**: Small files (<10MB) stored in MSSQL using VARBINARY(MAX)
+- **Filesystem Storage**: Large files stored on disk with metadata in database
+- **File Types Supported**: .md, .txt, .pdf, .svg, .png, .jpg
+- **Features**:
+  - Automatic checksum validation (SHA-256)
+  - File versioning support
+  - Polymorphic linking to any entity
+  - Creative upload animations with particle effects
+  - Animated floating cloud upload icon
+  - Smooth file list animations on load
+  - Auto-refresh toggle for live updates
+  - Drag-and-drop upload zone with hover effects
+  - Download and delete functionality
+- **Storage Decision Logic**: Text files (.md, .txt) under 10MB go to database for searchability, all others to filesystem
+- **Page Route**: `/files` - Full file management interface with modern UI
+- **Upload Experience**: 
+  - Floating cloud icon animation
+  - Creative particle effect animation during upload
+  - Progress ring animation
+  - File items slide in with staggered animation
+- **Auto-refresh**: Toggle switch to enable/disable automatic file list updates
+
+### TODO: Playbook Database Storage Implementation
+**Future Task**: Implement database storage for playbook content
+- **Current State**: Playbook editor is fully functional with markdown editing and preview
+- **Next Steps**:
+  1. Create database table for playbooks (suggested schema):
+     - `id`: Primary key
+     - `title`: Playbook title
+     - `content`: Markdown content (TEXT field)
+     - `category`: Category selection
+     - `tags`: JSON array of tags
+     - `is_public`: Boolean for personal/public toggle
+     - `author_id`: Foreign key to employee/user
+     - `created_at`: Timestamp
+     - `updated_at`: Timestamp
+     - `version`: Version number for revision tracking
+     - `status`: Draft/Published status
+  2. Update `PlaybookEditorState` to include database operations:
+     - `save_to_database()`: Save playbook to database
+     - `load_from_database()`: Load existing playbook
+     - `list_user_playbooks()`: Get user's playbooks
+     - `search_playbooks()`: Search functionality
+  3. Add version control/revision history
+  4. Implement auto-save functionality
+  5. Add playbook templates storage
+  6. Create playbook library page for browsing/searching
+- **Considerations**:
+  - Large markdown content storage optimization
+  - Full-text search capabilities
+  - Access control based on is_public flag
+  - Backup and export functionality
