@@ -688,7 +688,22 @@ def dashboard_with_custom_wrapper():
                     Dashboard()  # Dashboard now has position="absolute" from your changes
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(
+                            rx.button("Go to Home", color_scheme="blue"),
+                            href="/",
+                        ),
+                        spacing="4",
+                        align="center",
+                        justify="center",
+                        min_height="85vh",
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -719,7 +734,16 @@ def assets_with_custom_wrapper():
                     Assets()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -747,7 +771,16 @@ def vulnerabilities_with_custom_wrapper():
                     Vulnerabilities()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -775,7 +808,16 @@ def playbook_with_custom_wrapper():
                     Playbook()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -803,7 +845,16 @@ def software_with_custom_wrapper():
                     Software()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -839,7 +890,16 @@ def dats_with_custom_wrapper():
                     Dats()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -867,7 +927,16 @@ def images_with_custom_wrapper():
                     Images()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -895,7 +964,16 @@ def logs_with_custom_wrapper():
                     Logs()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -923,7 +1001,16 @@ def tickets_with_custom_wrapper():
                     Tickets()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -952,7 +1039,16 @@ def analytics_with_custom_wrapper():
                     Analytics()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -981,7 +1077,16 @@ def vm_creation_with_custom_wrapper():
                     VMCreation()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -1021,7 +1126,17 @@ def configuration_management_with_custom_wrapper():
                     ConfigurationManagement()
                 )
             ),
-            clerk.signed_out(signed_out_page())
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="5",
+                        align="center",
+                    )
+                )
+            )
         ),
         publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
         secret_key=os.environ["CLERK_SECRET_KEY"],
@@ -1040,7 +1155,16 @@ def files_with_custom_wrapper():
                     Files()
                 )
             ),
-            clerk.signed_out(signed_out_page()),
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="4", align="center", justify="center", min_height="85vh"
+                    )
+                )
+            ),
         ),
         clerk.clerk_loading(
             rx.center(
@@ -1070,7 +1194,17 @@ def playbook_editor_with_custom_wrapper():
                     PlaybookEditor()
                 )
             ),
-            clerk.signed_out(signed_out_page())
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="5",
+                        align="center",
+                    )
+                )
+            )
         ),
         publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
         secret_key=os.environ["CLERK_SECRET_KEY"],
@@ -1090,7 +1224,17 @@ def playbook_editor_enhanced_with_custom_wrapper():
                     PlaybookEditorEnhanced()
                 )
             ),
-            clerk.signed_out(signed_out_page())
+            clerk.signed_out(
+                page_wrapper(
+                    rx.vstack(
+                        rx.heading("Access Denied", size="6", color="white"),
+                        rx.text("Please sign in to access this page.", color="gray.300"),
+                        rx.link(rx.button("Go to Home", color_scheme="blue"), href="/"),
+                        spacing="5",
+                        align="center",
+                    )
+                )
+            )
         ),
         publishable_key=os.environ["CLERK_PUBLISHABLE_KEY"],
         secret_key=os.environ["CLERK_SECRET_KEY"],

@@ -19,6 +19,7 @@ class DirectoryState(rx.State):
     creating_directory_in_progress: bool = False
     new_directory_name: str = ""
     new_directory_description: str = ""
+    directory_creation_error: str = ""
     selected_directory_id: Optional[int] = None
     directory_tree: List[Dict[str, Any]] = []
     expanded_directories: List[int] = []
@@ -27,6 +28,7 @@ class DirectoryState(rx.State):
     react_file_tree: Dict[str, Any] = {}  # Tree structure for react-file-tree
     activated_uri: str = ""
     has_directories: bool = False  # Flag to indicate if directories are loaded
+    total_file_count: int = 0  # Total files discovered
     
     # Add property to store current user id
     current_user_id: Optional[int] = None
@@ -34,6 +36,13 @@ class DirectoryState(rx.State):
     def set_current_user_id(self, user_id: Optional[int]):
         """Set the current user ID for filtering."""
         self.current_user_id = user_id
+    
+    def sync_user_from_auth(self):
+        """Sync user ID from AuthState."""
+        # For now, hardcode user ID until we can properly access AuthState
+        # TODO: Implement proper user authentication integration
+        self.current_user_id = 1  # Temporary hardcoded user ID
+        print(f"DirectoryState: Set current_user_id to {self.current_user_id} (hardcoded)")
         
     def load_directory_tree(self):
         """Load the directory tree structure (temporarily showing all directories)."""
@@ -80,6 +89,27 @@ class DirectoryState(rx.State):
             
             # Update directory count
             self.directory_count = f"{len(self.directories)} directories loaded"
+            
+            # Calculate total file count
+            def count_files_recursive(nodes):
+                total = 0
+                if isinstance(nodes, dict):
+                    # If it's a single node (dict), process it
+                    total += nodes.get("file_count", 0)
+                    if "children" in nodes and nodes["children"]:
+                        for child in nodes["children"]:
+                            total += count_files_recursive(child)
+                elif isinstance(nodes, list):
+                    # If it's a list of nodes, process each
+                    for node in nodes:
+                        total += count_files_recursive(node)
+                return total
+            
+            # Only count if we have a valid tree structure
+            if self.react_file_tree:
+                self.total_file_count = count_files_recursive(self.react_file_tree)
+            else:
+                self.total_file_count = 0
             
             # Build HTML for directory list
             self._build_directories_html()
@@ -199,18 +229,84 @@ class DirectoryState(rx.State):
     
     def create_directory_and_close(self):
         """Create directory and close modal on success."""
+        print("create_directory_and_close called")
         self.create_directory()
-        if not self.creating_directory_in_progress:  # If creation completed
-            self.creating_directory = False
+        # Always close the dialog after attempting to create
+        self.creating_directory = False
+        print("Dialog closed")
+    
+    def ensure_user_public_folder(self, user_id: int, user_name: str = None):
+        """Ensure user has a public folder in their directory structure."""
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            return
+            
+        engine = create_engine(database_url)
+        with Session(engine) as session:
+            from ..models.file_storage import DirectoryType
+            
+            # Check if user already has a personal directory
+            user_dir = session.exec(
+                select(FileDirectory)
+                .where(FileDirectory.owner_id == user_id)
+                .where(FileDirectory.name.like(f"%personal%"))
+                .where(FileDirectory.parent_id == None)
+            ).first()
+            
+            if not user_dir:
+                # Create user's personal directory
+                user_dir = FileDirectory(
+                    name=f"{user_name or f'User_{user_id}'}_personal",
+                    full_path=f"/{user_name or f'User_{user_id}'}_personal",
+                    owner_id=user_id,
+                    directory_type=DirectoryType.USER,
+                    is_public=False,
+                    description=f"Personal directory for {user_name or f'User {user_id}'}",
+                    icon="user",
+                    color="#3b82f6",
+                )
+                session.add(user_dir)
+                session.flush()
+            
+            # Check if public folder exists
+            public_folder = session.exec(
+                select(FileDirectory)
+                .where(FileDirectory.parent_id == user_dir.directory_id)
+                .where(FileDirectory.name == "public")
+            ).first()
+            
+            if not public_folder:
+                # Create public folder
+                public_folder = FileDirectory(
+                    name="public",
+                    parent_id=user_dir.directory_id,
+                    full_path=f"{user_dir.full_path}/public",
+                    owner_id=user_id,
+                    directory_type=DirectoryType.USER,
+                    is_public=True,
+                    description="Public folder - Other users can view and upload files here",
+                    icon="globe",
+                    color="#10b981",
+                )
+                session.add(public_folder)
+                
+            session.commit()
+            print(f"Ensured public folder for user {user_id}")
     
     def create_directory(self):
         """Create a new directory in the current location."""
+        print(f"create_directory called with name: '{self.new_directory_name}', description: '{self.new_directory_description}'")
+        print(f"Current user ID: {self.current_user_id}")
+        print(f"Current directory ID: {self.current_directory_id}")
+        
         if not self.new_directory_name.strip():
+            print("Directory name is empty, returning")
             return
         
         self.creating_directory_in_progress = True
         database_url = os.getenv("DATABASE_URL")
         if not database_url:
+            print("No database URL found")
             self.creating_directory_in_progress = False
             return
         
@@ -220,7 +316,17 @@ class DirectoryState(rx.State):
             if self.current_directory_id:
                 parent_dir = session.get(FileDirectory, self.current_directory_id)
                 if not parent_dir or not parent_dir.can_create_subdirs:
+                    print(f"Parent directory does not allow subdirectories")
                     self.creating_directory = False
+                    self.creating_directory_in_progress = False
+                    return
+                
+                # Check if user has permission to create in this directory
+                if parent_dir.owner_id != self.current_user_id and not parent_dir.is_public:
+                    print(f"User {self.current_user_id} does not have permission to create in directory owned by {parent_dir.owner_id}")
+                    self.directory_creation_error = f"You don't have permission to create directories here. This directory is owned by user {parent_dir.owner_id}."
+                    self.creating_directory = False
+                    self.creating_directory_in_progress = False
                     return
                 
                 parent_path = parent_dir.full_path
@@ -235,7 +341,7 @@ class DirectoryState(rx.State):
                 parent_id=self.current_directory_id,
                 full_path=full_path,
                 directory_type=DirectoryType.USER,
-                owner_id=1,  # TODO: Get from current user
+                owner_id=self.current_user_id or 1,  # Use current user ID or default to 1 (temporary fix)
                 description=self.new_directory_description,
                 is_public=False,
                 is_system_directory=False,
@@ -243,19 +349,26 @@ class DirectoryState(rx.State):
                 can_upload_files=True,
             )
             
-            session.add(new_dir)
-            session.commit()
-        
-        # Clear form and reload
-        self.new_directory_name = ""
-        self.new_directory_description = ""
-        self.creating_directory_in_progress = False
-        
-        # Reload current directory
-        if self.current_directory_id:
-            self.navigate_to_directory(self.current_directory_id)
-        else:
-            self.load_directory_tree()
+            try:
+                session.add(new_dir)
+                session.commit()
+                print(f"Successfully created directory: {new_dir.name} with ID: {new_dir.directory_id}")
+                
+                # Clear form and reload
+                self.new_directory_name = ""
+                self.new_directory_description = ""
+                self.creating_directory_in_progress = False
+                
+                print("Directory creation complete, reloading directory tree...")
+                # Reload current directory
+                if self.current_directory_id:
+                    self.navigate_to_directory(self.current_directory_id)
+                else:
+                    self.load_directory_tree()
+            except Exception as e:
+                print(f"Error creating directory: {str(e)}")
+                session.rollback()
+                self.creating_directory_in_progress = False
     
     def toggle_directory_expanded(self, directory_id: int):
         """Toggle whether a directory is expanded in the tree view."""
@@ -409,12 +522,19 @@ class DirectoryState(rx.State):
             self.has_directories = False
             return
         
+        # Get database session for file counts
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            return
+            
+        engine = create_engine(database_url)
+        
         # Build tree recursively
-        def build_node(directory: FileDirectory) -> Dict[str, Any]:
+        def build_node(directory: FileDirectory, session: Session) -> Dict[str, Any]:
             children = []
             for d in directories:
                 if d.parent_id == directory.directory_id:
-                    children.append(build_node(d))
+                    children.append(build_node(d, session))
             
             # Sort children: directories first, then by name
             children.sort(key=lambda x: (x["type"] != "directory", x["uri"].lower()))
@@ -425,6 +545,7 @@ class DirectoryState(rx.State):
                 "expanded": directory.directory_id in self.expanded_directories,
                 "name": directory.name,
                 "directory_id": directory.directory_id,
+                "file_count": self._get_file_count(session, directory.directory_id),
             }
             
             if children:
@@ -432,20 +553,22 @@ class DirectoryState(rx.State):
             
             return node
         
-        # If we have multiple root directories, create a virtual root node
-        if len(root_dirs) > 1:
-            children = [build_node(d) for d in root_dirs]
-            children.sort(key=lambda x: x["uri"].lower())
-            self.react_file_tree = {
-                "type": "directory",
-                "uri": "/",
-                "name": "Root",
-                "expanded": True,
-                "children": children
-            }
-        else:
-            # Single root directory
-            self.react_file_tree = build_node(root_dirs[0])
+        # Build tree with session context
+        with Session(engine) as session:
+            # If we have multiple root directories, create a virtual root node
+            if len(root_dirs) > 1:
+                children = [build_node(d, session) for d in root_dirs]
+                children.sort(key=lambda x: x["uri"].lower())
+                self.react_file_tree = {
+                    "type": "directory",
+                    "uri": "/",
+                    "name": "Root",
+                    "expanded": True,
+                    "children": children
+                }
+            else:
+                # Single root directory
+                self.react_file_tree = build_node(root_dirs[0], session)
         
         # Debug output
         import json
@@ -455,6 +578,27 @@ class DirectoryState(rx.State):
         
         # Set flag to indicate we have directories
         self.has_directories = bool(self.react_file_tree)
+        
+        # Update total file count
+        def count_files_recursive(nodes):
+            total = 0
+            if isinstance(nodes, dict):
+                # If it's a single node (dict), process it
+                total += nodes.get("file_count", 0)
+                if "children" in nodes and nodes["children"]:
+                    for child in nodes["children"]:
+                        total += count_files_recursive(child)
+            elif isinstance(nodes, list):
+                # If it's a list of nodes, process each
+                for node in nodes:
+                    total += count_files_recursive(node)
+            return total
+        
+        # Only count if we have a valid tree structure
+        if self.react_file_tree:
+            self.total_file_count = count_files_recursive(self.react_file_tree)
+        else:
+            self.total_file_count = 0
     
     def initialize_expanded_directories(self):
         """Initialize expanded directories to show some content by default."""

@@ -95,3 +95,6 @@ rxconfig.py
 offline_app/
 npm-offline-cache/
 database/data/
+
+# Ignore uploads directory to prevent recompiling
+uploads/

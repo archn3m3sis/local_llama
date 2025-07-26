@@ -25,12 +25,6 @@ def creative_upload_animation() -> rx.Component:
             </div>
         </div>
         <div class="upload-text">Uploading files...</div>
-        <div class="progress-ring">
-            <svg width="120" height="120">
-                <circle class="progress-ring-circle" cx="60" cy="60" r="50" />
-                <circle class="progress-ring-fill" cx="60" cy="60" r="50" />
-            </svg>
-        </div>
         
         <style>
         .upload-animation-container {
@@ -58,12 +52,12 @@ def creative_upload_animation() -> rx.Component:
         
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
         
         @keyframes arrow-move {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            0%, 100% { transform: translateY(0); opacity: 0.8; }
+            50% { transform: translateY(-3px); opacity: 1; }
         }
         
         .particle-container {
@@ -183,33 +177,6 @@ def creative_upload_animation() -> rx.Component:
         @keyframes pulse {
             0%, 100% { opacity: 0.8; }
             50% { opacity: 1; }
-        }
-        
-        .progress-ring {
-            position: relative;
-            transform: rotate(-90deg);
-        }
-        
-        .progress-ring-circle {
-            fill: none;
-            stroke: rgba(59, 130, 246, 0.1);
-            stroke-width: 4;
-        }
-        
-        .progress-ring-fill {
-            fill: none;
-            stroke: #3b82f6;
-            stroke-width: 4;
-            stroke-dasharray: 314;
-            stroke-dashoffset: 314;
-            animation: progress 2s ease-out infinite;
-            filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5));
-        }
-        
-        @keyframes progress {
-            0% { stroke-dashoffset: 314; }
-            50% { stroke-dashoffset: 157; }
-            100% { stroke-dashoffset: 0; }
         }
         </style>
     </div>
